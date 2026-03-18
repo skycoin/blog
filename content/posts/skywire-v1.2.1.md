@@ -1,6 +1,7 @@
 +++
 date = "2022-09-15"
 image = "img/skywire-the-next-internet.png"
+image_position = "left bottom"
 tags = ["Announcements", "Skywire"]
 title = "Skywire v1.2.1 Released"
 +++

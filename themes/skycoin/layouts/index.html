@@ -29,7 +29,7 @@
                   	     so strip it if present before passing it to absURL */}}
                     {{ with strings.TrimLeft "/" .Params.image }}
                     <div class="list__item-image">
-                        <div style="background-image: url({{ . | absURL }})" class="list__image"></div>
+                        <div style="background-image: url({{ . | absURL }}){{ with $.Params.image_position }}; background-position: {{ . }}{{ end }}" class="list__image"></div>
                     </div>
                     {{ end }}
                   {{ else }}
