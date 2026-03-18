@@ -27,17 +27,17 @@ pygmentsCodeFences = true
 pygmentsStyle = "murphy"
 
 [permalinks]
-	posts = "/posts/:filename/"
-	spanish = "/posts/:filename/"
-	greek = "/posts/:filename/"
-	chinese = "/posts/:filename/"
-	russian = "/posts/:filename/"
-	italian = "/posts/:filename/"
-	french = "/posts/:filename/"
-	korean = "/posts/:filename/"
-	japanese = "/posts/:filename/"
-	portuguese = "/posts/:filename/"
-	german = "/posts/:filename/"
+	posts = "/posts/:contentbasename/"
+	spanish = "/posts/:contentbasename/"
+	greek = "/posts/:contentbasename/"
+	chinese = "/posts/:contentbasename/"
+	russian = "/posts/:contentbasename/"
+	italian = "/posts/:contentbasename/"
+	french = "/posts/:contentbasename/"
+	korean = "/posts/:contentbasename/"
+	japanese = "/posts/:contentbasename/"
+	portuguese = "/posts/:contentbasename/"
+	german = "/posts/:contentbasename/"
 
 [[menu.main]]
     name = "Downloads"
