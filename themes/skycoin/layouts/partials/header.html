@@ -14,8 +14,22 @@
   {{ if .Params.Author }}
   <meta property="author" content="{{ .Params.author }}">
   {{ end }}
-  <meta name="description" content="{{ .Description }}">
-  <meta name="robots" content="index">
+  {{ $desc := .Description | default .Summary | default .Site.Params.description }}
+  <meta name="description" content="{{ $desc | plainify | truncate 160 }}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ .Permalink }}">
+  <meta property="og:title" content="{{ .Title }}">
+  <meta property="og:description" content="{{ $desc | plainify | truncate 200 }}">
+  <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+  <meta property="og:url" content="{{ .Permalink }}">
+  {{ with .Params.image }}<meta property="og:image" content="{{ . | absURL }}">{{ end }}
+  <meta property="og:site_name" content="{{ .Site.Title }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ .Title }}">
+  <meta name="twitter:description" content="{{ $desc | plainify | truncate 200 }}">
+  {{ with .Params.image }}<meta name="twitter:image" content="{{ . | absURL }}">{{ end }}
+  {{ if .IsPage }}<meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ end }}
+  {{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
 </head>
 
 <body>

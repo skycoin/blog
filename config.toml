@@ -1,6 +1,6 @@
 baseURL = "https://skycoin.github.io/blog/"
 languageCode = "en-us"
-title = "Blog"
+title = "Skycoin Blog"
 defaultContentLanguage = "en"
 
 relativeURLs = true
