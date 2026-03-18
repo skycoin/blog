@@ -51,4 +51,6 @@ The hardware wallet utilities require libusb (bundled statically in release buil
 - **Consistent versioning** — all tools share the same version and are tested together
 - **Fibercoin ready** — the same binary serves as the wallet and toolchain for any Fiber blockchain
 
+The full Skycoin toolchain is also embedded in the [unified Skywire binary](/posts/skywire-unified-binary/), accessible as `skywire skycoin`.
+
 Downloads are available on the [GitHub release page](https://github.com/skycoin/skycoin/releases).
