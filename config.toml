@@ -48,7 +48,6 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   keywords = "skycoin"
   rss = "/index.xml"
   telegram = "https://t.me/Skycoin"
-  discord = "https://discord.gg/EgBenrW"
   description = "Skycoin Project Updates"
   email = ""
   github = "skycoin"
