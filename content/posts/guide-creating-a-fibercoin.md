@@ -90,17 +90,36 @@ Flags:
 $ skycoin newcoin config > mycoin.toml
 ```
 
-Edit these fields in `mycoin.toml`:
+Edit these fields in `mycoin.toml`. For initial chain creation and localhost testing, you only need to change the branding and ports. Peer addresses come later when you deploy to other machines:
 
-| Field | Description | Required |
-|-------|-------------|----------|
-| `display_name` | What users see (e.g., "MyCoin") | Yes |
-| `ticker` | Trading symbol (e.g., "MYC") | Yes |
-| `port` | P2P network port | Yes |
-| `web_interface_port` | Wallet API port | Yes |
-| `default_connections` | Peer addresses (e.g., `["your.server.ip:6000"]`) | Yes |
-| `genesis_coin_volume` | Total coin supply in droplets | Optional |
-| `initial_unlocked_count` | Distribution addresses to unlock initially | Optional |
+```toml
+# === Required: change these before first run ===
+[node]
+display_name = "MyCoin"
+ticker = "MYC"
+coin_hours_display_name = "MyCoin Hours"
+coin_hours_display_name_singular = "MyCoin Hour"
+coin_hours_ticker = "MCH"
+qr_uri_prefix = "mycoin"
+port = 7000
+web_interface_port = 7420
+data_directory = "$HOME/.mycoin"
+bip44_coin = 9000
+
+# === Optional: customize supply ===
+[params]
+# genesis_coin_volume = 100000000000000
+# initial_unlocked_count = 25
+
+# === Set later when deploying to other machines ===
+# [node]
+# default_connections = ["your.server.ip:7000"]
+# peerlist_url = "https://downloads.mycoin.com/blockchain/peers.txt"
+# explorer_url = "https://explorer.mycoin.com"
+# version_url = "https://version.mycoin.com/mycoin/version.txt"
+```
+
+For localhost testing, the daemon flags `--download-peerlist=false --disable-default-peers` handle the fact that there are no peers yet. You can add `default_connections` and `peerlist_url` later when you have other nodes running.
 
 **Leave blank** (auto-populated on first run): `genesis_address_str`, `blockchain_pubkey_str`, `genesis_signature_str`, `distribution_addresses`
 
