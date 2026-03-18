@@ -162,7 +162,7 @@ The 3rd party server is unable to steal your coins. If the transaction fails (so
 
 There are three axises that information is leaked in Bitcoin
 1. addresses from single wallet are colocated in transactions
-2. multiple input addresses, single output adddress + change (vs multiple input with sender's coins going into multiple outputs addresses)
+2. multiple input addresses, single output address + change (vs multiple input with sender's coins going into multiple outputs addresses)
 3. coin balances vs change addresses are identifiable. If you have 15.328942343 coins and send someone 1.0 coins, then you will have 1.0000 coins in one output and 14.328942343 in the change output. In practice this makes it easy to identify the output address.
 
 Skycoin addresses #1 with CoinJoin for spatial diffusion

@@ -30,7 +30,7 @@ No. Chen withdrew them because he wanted people to quote then from the ACM journ
 
 **Synth**
 
-And chen thinks that one of the papers should be withdrawn because of minor error which is irrelevent.
+And chen thinks that one of the papers should be withdrawn because of minor error which is irrelevant.
 
 the algorithm in that paper is only 3rd generation of the consensus algorithm and we are generation 5 and need implementation white paper
 
@@ -54,7 +54,7 @@ there is an error in one paper that I told him about months before he published 
 
 **Synth**
 
-but its not relevent. The idea is based upon energy minimization and comes from statistical physics.
+but its not relevant. The idea is based upon energy minimization and comes from statistical physics.
 
 Chen was trying to create total ordering with some weird hashing thing that does not work.
 

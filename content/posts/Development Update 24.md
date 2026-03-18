@@ -78,7 +78,7 @@ Most applications are websites. The data for the website is decentralized and st
 
 The marketing team with have a wiki and discussion board. They are responsible for creating marketing messages for specific groups, doing promotion and organizing groups for meshnet deployment.
 
-They will work with PR firm and liason with media. For instance, marketing group may coordinate with local meshnet groups, setup interviews of local meshnet group with media. The media group will organize and provide "Antenna Porn", dramatic pictures of Antenna Deployments for publication, setup interviews with local meshnet groups to get sound bites for news article and otherwise liaison with media.
+They will work with PR firm and liaison with media. For instance, marketing group may coordinate with local meshnet groups, setup interviews of local meshnet group with media. The media group will organize and provide "Antenna Porn", dramatic pictures of Antenna Deployments for publication, setup interviews with local meshnet groups to get sound bites for news article and otherwise liaison with media.
 
 ## Security Projects Team
 

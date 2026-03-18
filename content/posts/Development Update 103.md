@@ -32,7 +32,7 @@ The idea is that you do not hold the coins in the exchange. So if the exchange i
 
 You can move skycoin into the exchange in 2 to 10 seconds, perform your trades and then withdrawal the coins back to your local wallet. There is a "local wallet" for each coin, where you can withdrawal your litecoin, dogecoin, ethereum to and where you control the private key for each address. Without having to run the blockchain for each coin.
 
-This solves the problem, that people are trading on dozens of coins and never withdrawing the coins to their wallets, because they cannot have the blockchains installed for twenty seperate coins.
+This solves the problem, that people are trading on dozens of coins and never withdrawing the coins to their wallets, because they cannot have the blockchains installed for twenty separate coins.
 - therefore the users never withdraw the coins
 - therefore the exchanges sell coins that do not exist and that they do not have, knowing that the user will never withdraw them.
 - this avoids the problem of where the exchanges are running on fractional reserve and where when a large user attempts a withdrawal, the exchange has to go and buy up the coins from other exchanges (who may not have them and in term has to buy them from another exchange).

@@ -19,7 +19,7 @@ This system will quickly eliminate need for PoW for securing blockchains. I will
 
 ## Meshnet Update
 
-It has been two and a half years since the begining of project meshnet and OP redecentralize.
+It has been two and a half years since the beginning of project meshnet and OP redecentralize.
 
 https://www.youtube.com/watch?v=1tEkyLOh-tY
 

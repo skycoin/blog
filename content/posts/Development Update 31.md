@@ -73,7 +73,7 @@ The RPC and binary serialization format are extremely low overhead compared to P
 
 ## Changes to Daemon
 
-There are major changes to the networking stack occuring.
+There are major changes to the networking stack occurring.
 
 Currently the application stack is
 gnet -> Skywire -> Applications

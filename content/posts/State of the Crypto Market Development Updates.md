@@ -211,7 +211,7 @@ budget comes from.
   is why they are only listing scam coins, who can guarantee high volumes and
   fees)
 
-Exchanges will not list a coin unless they are guanteed to make a minimum of
+Exchanges will not list a coin unless they are guaranteed to make a minimum of
 $5,000 or $40,000 a day in trading fees. So the coin has to be heavily marketed
 to scalp that much money off the user community after the ICO. The exchanges
 are taking 0.1% on each side (0.2% per trade because they are trading against

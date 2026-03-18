@@ -170,7 +170,7 @@ https://docs.google.com/spreadsheets/d/1FGo3FkC3uSWXGHatPQyny2brMWjAIJsHFCR-Lhkl
 
 running a consensus node does not cost anything. You can run it on a raspberry pi.
 The important thing is that if the people doing consensus are doing a bad job, that the community can get rid of them and replace them. The other important thing, is that they can be audited and determined automatically if they are obeying the protocol.
-the miners in skycoin are not very powerful and cannot do anything except slow down transactions. They are unable to spend other people's money without their private keys, so the consensus/mining nodes are almost irrelevent. It is not like Bitcoin where the miners can hold the network hostage or act selfishly (driving up the transactions fees for their own personal benefit and delaying any innovations that would improve bitcoin for everyone, etc).
+the miners in skycoin are not very powerful and cannot do anything except slow down transactions. They are unable to spend other people's money without their private keys, so the consensus/mining nodes are almost irrelevant. It is not like Bitcoin where the miners can hold the network hostage or act selfishly (driving up the transactions fees for their own personal benefit and delaying any innovations that would improve bitcoin for everyone, etc).
 
 > So Skycoin is a Proof of Resource coin where its value is actually backed by provision of a useful service, in this case private and secure networking? Are there plans to add decentralized storage and even distributed processing to it?
 
@@ -283,7 +283,7 @@ We also have a lot of very very early Bitcoin people, hardcore crypto people tha
 On the Chinese side we have an early investor in Alibaba and telecom investor. And are doing pilot with china aviation group (owns four publicly traded airline companies) and apparently now Sinopec (which is 2nd largest publicly traded corporation in world).
 Then we have people who are part of israeli and US intelligence and are probably doing some sort of money laundering or phychological operations background, who just showed up for some reason. This group seems very interested in the "applications" of these coins and how to improve tranaction privacy and the specifics of the CoinJoin protocol implementation. We got a lot of advice from people experienced in forensic accounting and what they wanted to see and where they felt Bitcoin was deficient and where it leaked metadata.
 Then a bunch of PHD level people doing research into distributed database consensus algorithms and another group doing programming language research.
-Then a lot of people from the deep darknet, anon, frog twitter and cipher punks and bitorrent communities. (really should be listed as two seperate groups). And people from the Russian darknet community. We have like eight Ivans. (edited)
+Then a lot of people from the deep darknet, anon, frog twitter and cipher punks and bitorrent communities. (really should be listed as two separate groups). And people from the Russian darknet community. We have like eight Ivans. (edited)
 > I see Skycoin as essentially replacing TCP/IP and providing mesh network type functionality at the hardware level, Ark would run on top of it as a top level application layer.
 
 Yes. The key functionality is two things - connecting to people by public key (networking) - distributing self validating, immutble data peer to peer (transactions, blocks etc... content addressible storage)

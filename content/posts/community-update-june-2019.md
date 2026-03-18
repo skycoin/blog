@@ -103,7 +103,7 @@ Billed as the Blockchain industry’s biggest conference, the Coinsbank Blockcha
 
 ![Skycoin at Coinsbank Cruise 2019](/img/Skycoin Coins Bank Cruise 2019.png "Skycoin at Coinsbank Cruise 2019")
 
-A range of panels and keynotes were hosted on a variety of subjects pertaining to cryptocurrency, they focussed primarily on government adoption, regulations and security tokens.
+A range of panels and keynotes were hosted on a variety of subjects pertaining to cryptocurrency, they focused primarily on government adoption, regulations and security tokens.
 
 Synth stepped into this somewhat benign setting and, with his trademark propensity for cutting to the core of the matter, delivered a show stopping keynote address. His presentation covered Blockchain in general as well as Skycoin’s progress over the last 8 years on the journey to meshnet based global dominance.
 

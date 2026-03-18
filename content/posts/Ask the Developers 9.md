@@ -288,7 +288,7 @@ anyway the distribution model is not that good now.
 
 The distribution is mathematically optimal. You cannot design a better distribution scheme than the Skycoin scheme. We enumerated all previous distribution schemes and chose the best one.
 
-You are used to seeing pump and dump style distributions and that is what people are asking for and we will not do it. We are also not going to do some NXT style scam and pretend the coin was "distributed" in a way that the user base cannot complain, when in reality three people own 98% of the coins. The undistributed Skycoins are locked, for a reason and that is to prevent a reoccurance of the dumping that destroyed NXT.
+You are used to seeing pump and dump style distributions and that is what people are asking for and we will not do it. We are also not going to do some NXT style scam and pretend the coin was "distributed" in a way that the user base cannot complain, when in reality three people own 98% of the coins. The undistributed Skycoins are locked, for a reason and that is to prevent a recurrence of the dumping that destroyed NXT.
 
 We combined a publicly auditable distribution scheme with with a Bitcoin tapered distribution schedule, while eliminating the capital outflows from miners. We chose this distribution scheme, because mathematically it is the best possible that can exist.
 

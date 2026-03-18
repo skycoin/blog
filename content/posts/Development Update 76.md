@@ -22,7 +22,7 @@ There are many thing we want to do, but have to focus and defer a lot of things 
 
 ## Longer Term:
 
-The GFW is a nightmare.  We funded three different teams to work on pseudo-wire implementation for tunneling traffic and designs for multi-hop, multi-homed VPNs. However, we now have VPN/TUN adapter code from the gohop project that works on linux and can seperate out the VPN front-end from the pseudo-wire implementation and get something working quickly.
+The GFW is a nightmare.  We funded three different teams to work on pseudo-wire implementation for tunneling traffic and designs for multi-hop, multi-homed VPNs. However, we now have VPN/TUN adapter code from the gohop project that works on linux and can separate out the VPN front-end from the pseudo-wire implementation and get something working quickly.
 
 ##### Experience with the GFW has changed the design requirements for the VPN/meshnet.
 

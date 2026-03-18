@@ -10,7 +10,7 @@ title = "Development Update #52: Bug Fixes and Polishing"
 
 There is a major problem. All of the coins are in the genesis address and I cannot spend them for an unknown reason. The output is not being found. I working on this.
 
-- The unit tests, test for this and the genesis spend test passes and the later spends work. This should not be occuring.
+- The unit tests, test for this and the genesis spend test passes and the later spends work. This should not be occurring.
 - The problem may be in the wallet code I changed yesterday
 - More functions are being added to troubleshoot. The whole blockchain explorer can run inside of the local webclient if enough API functions are added.
 - The balance function may have broken.

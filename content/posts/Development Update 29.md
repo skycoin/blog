@@ -22,7 +22,7 @@ We end up writing everything five times and refactoring it before its perfect. S
 ###### We have mathematical proof that 51% attack proof is achievable with a single trusted timestamping server.
 - Distributed time stamping did not meet conditions for proof
 - However, distributed time stamping useful for detecting 51% attack.
-- If 51% attack can be detected reliably, it can be eliminated. Practical 51% attack now require compromosing two seperate indepedent systems.
+- If 51% attack can be detected reliably, it can be eliminated. Practical 51% attack now require compromising two seperate independent systems.
 
 ## Mathematical Results:
 - There is no deterministic adversarial Paxos solution for the blockchain.
