@@ -92,36 +92,51 @@ $ skycoin newcoin config > mycoin.toml
 
 Edit these fields in `mycoin.toml`. For initial chain creation and localhost testing, you only need to change the branding and ports. Peer addresses come later when you deploy to other machines:
 
+**Important:** The default `fiber.toml` contains Skycoin mainnet values (genesis address, peers, blockchain public key, etc.). You must explicitly blank out or override every field that differs — commenting them out will leave Skycoin's defaults in place.
+
 ```toml
-# === Required: change these before first run ===
 [node]
+# === Branding ===
 display_name = "MyCoin"
 ticker = "MYC"
 coin_hours_display_name = "MyCoin Hours"
 coin_hours_display_name_singular = "MyCoin Hour"
 coin_hours_ticker = "MCH"
 qr_uri_prefix = "mycoin"
+bip44_coin = 9000
+
+# === Network ports (must differ from Skycoin defaults) ===
 port = 7000
 web_interface_port = 7420
 data_directory = "$HOME/.mycoin"
-bip44_coin = 9000
 
-# === Optional: customize supply ===
+# === Blank these out — they get auto-populated on first run ===
+genesis_address_str = ""
+blockchain_pubkey_str = ""
+genesis_signature_str = ""
+genesis_coin_volume = 100000000000000
+genesis_timestamp = 0
+
+# === Blank out Skycoin's default peers — set your own later ===
+default_connections = []
+peerlist_url = ""
+explorer_url = ""
+version_url = ""
+
 [params]
-# genesis_coin_volume = 100000000000000
-# initial_unlocked_count = 25
-
-# === Set later when deploying to other machines ===
-# [node]
-# default_connections = ["your.server.ip:7000"]
-# peerlist_url = "https://downloads.mycoin.com/blockchain/peers.txt"
-# explorer_url = "https://explorer.mycoin.com"
-# version_url = "https://version.mycoin.com/mycoin/version.txt"
+# distribution_addresses will be auto-populated by fiberAddressGen
+distribution_addresses = []
 ```
 
-For localhost testing, the daemon flags `--download-peerlist=false --disable-default-peers` handle the fact that there are no peers yet. You can add `default_connections` and `peerlist_url` later when you have other nodes running.
+For initial chain creation and localhost testing, the daemon flags `--download-peerlist=false --disable-default-peers` handle the fact that there are no peers yet. Add `default_connections` and `peerlist_url` later when you have other nodes running:
 
-**Leave blank** (auto-populated on first run): `genesis_address_str`, `blockchain_pubkey_str`, `genesis_signature_str`, `distribution_addresses`
+```toml
+# After deploying to other machines, update these:
+default_connections = ["your.server.ip:7000"]
+peerlist_url = "https://downloads.mycoin.com/blockchain/peers.txt"
+explorer_url = "https://explorer.mycoin.com"
+version_url = "https://version.mycoin.com/mycoin/version.txt"
+```
 
 ```
 $ skycoin newcoin --help
