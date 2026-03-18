@@ -33,101 +33,15 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 	german = "/posts/:contentbasename/"
 
 [[menu.main]]
-    name = "Downloads"
-    identifier = "downloads"
-    url = "/downloads/"
-    weight = 1
-[[menu.main]]
-    name = "Ecosystem"
-    identifier = "ecosystem"
-    url = ""
-    weight = 2
-[[menu.main]]
-    name = "Overview"
-    identifier = "overview"
-    parent="ecosystem"
-    url = "/ecosystem/"
-    weight = 1
-[[menu.main]]
-    name = "Skywire"
-    identifier = "skywire"
-    parent="ecosystem"
-    url = "/skywire/"
-    weight = 2
-[[menu.main]]
-    name = "Obelisk"
-    identifier = "obelisk"
-    parent="ecosystem"
-    url = "/obelisk/"
-    weight = 3
-[[menu.main]]
-    name = "Fiber"
-    identifier = "fiber"
-    parent="ecosystem"
-    url = "/fiber/"
-    weight = 4
-[[menu.main]]
-    name = "CX"
-    identifier = "cx"
-    parent="ecosystem"
-    url = "/cx/"
-    weight = 5
-[[menu.main]]
-    name = "CXO"
-    identifier = "cxo"
-    parent="ecosystem"
-    url = "/cxo/"
-    weight = 6
-[[menu.main]]
-    name = "Skyminer"
-    identifier = "skyminer"
-    url = "/skyminer/"
-    weight = 3
-[[menu.main]]
-    name = "Blog"
-    identifier = "blog"
-    url = "/blog/"
-    weight = 5
-[[menu.main]]
-    name = "Store"
-    identifier = "store"
-    url = "//store.skycoin.com/"
-    weight = 6
-[[menu.main]]
-    name = "Other"
-    identifier = "other"
-    url = ""
-    weight = 7
-[[menu.main]]
-    name = "Team"
-    identifier = "team"
-    url = "/team/"
-    parent="other"
-    weight = 1
-[[menu.main]]
-    name = "Gallery"
-    identifier = "gallery"
-    parent="other"
-    url = "/gallery/"
-    weight = 2
-[[menu.main]]
-    name = "Jobs"
-    identifier = "jobs"
-    parent="other"
-    url = "/jobs/"
-    weight = 3
-[[menu.main]]
     name = "Explorer"
     identifier = "explorer"
-    parent="other"
     url = "//explorer.skycoin.com"
-    weight = 4
+    weight = 1
 [[menu.main]]
     name = "Explorer API"
     identifier = "explorer-api"
-    parent="other"
     url = "//explorer.skycoin.com/api.html"
-    weight = 5
+    weight = 2
 
 [params]
   author = "Skycoin"
