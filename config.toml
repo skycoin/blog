@@ -16,15 +16,11 @@ buildExpired = true
 
 #disqusShortname = ""
 
-# hugo-xmin specific variables
-theme = "skycoin"
 ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
-preserveTaxonomyNames = true
-footnotereturnlinkcontents = "↩"
 
-# enables ```lang ``` style syntax highlighted blocks
-pygmentsCodeFences = true
-pygmentsStyle = "murphy"
+[module]
+  [[module.imports]]
+    path = "skycoin"
 
 [permalinks]
 	posts = "/posts/:contentbasename/"
