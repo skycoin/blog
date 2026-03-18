@@ -5,6 +5,7 @@
   {{ if .Params.redirectURL }}<meta http-equiv="refresh" content="0; url={{ .Params.redirectURL }}"/>{{ end }}  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ .Title }} | {{ .Site.Title }}</title>
+  <link rel="icon" type="image/x-icon" href="{{ "favicon.ico" | relURL }}">
   {{ if (getenv "CSS_VERSION") }}
     <link rel="stylesheet" href="{{ "/css/" | relURL }}main-{{ getenv "CSS_VERSION" }}.css" />
   {{ else }}
