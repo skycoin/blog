@@ -86,17 +86,27 @@ Flags:
 
 ### Step 2: Create Configuration
 
+First, print the embedded default config to see what you're working with:
+
+```
+$ skycoin newcoin config
+```
+
+This prints the full default `fiber.toml` — which contains **Skycoin mainnet values** (Skycoin's genesis address, Skycoin's peers, Skycoin's blockchain public key, etc.). You need to override all of these for your own coin.
+
+Redirect it to a file and edit it:
+
 ```
 $ skycoin newcoin config > mycoin.toml
 ```
 
-Edit these fields in `mycoin.toml`. For initial chain creation and localhost testing, you only need to change the branding and ports. Peer addresses come later when you deploy to other machines:
+**Important:** Every field you don't explicitly change keeps Skycoin's default value. Commenting a line out does **not** blank it — it falls through to the hardcoded Skycoin default. You must set fields to empty values to clear them.
 
-**Important:** The default `fiber.toml` contains Skycoin mainnet values (genesis address, peers, blockchain public key, etc.). You must explicitly blank out or override every field that differs — commenting them out will leave Skycoin's defaults in place.
+Here is a complete working `mycoin.toml` ready to copy and paste. It overrides branding, ports, and blanks out genesis fields (which get auto-populated on first run) and Skycoin's peer list (which you'll fill in later when you have other nodes):
 
 ```toml
 [node]
-# === Branding ===
+# Branding
 display_name = "MyCoin"
 ticker = "MYC"
 coin_hours_display_name = "MyCoin Hours"
@@ -105,35 +115,40 @@ coin_hours_ticker = "MCH"
 qr_uri_prefix = "mycoin"
 bip44_coin = 9000
 
-# === Network ports (must differ from Skycoin defaults) ===
+# Network — use different ports than Skycoin (6000/6420)
 port = 7000
 web_interface_port = 7420
 data_directory = "$HOME/.mycoin"
 
-# === Blank these out — they get auto-populated on first run ===
+# Genesis — leave blank, auto-populated on first run by GENESIS env var
+genesis_signature_str = ""
 genesis_address_str = ""
 blockchain_pubkey_str = ""
-genesis_signature_str = ""
-genesis_coin_volume = 100000000000000
+blockchain_seckey_str = ""
 genesis_timestamp = 0
 
-# === Blank out Skycoin's default peers — set your own later ===
+# Supply — 100 trillion droplets = 100 million coins at 6 decimal places
+# genesis_coin_volume = 100000000000000
+
+# Peers — blank for now, add your node IPs after deployment
 default_connections = []
-peerlist_url = ""
+peer_list_url = ""
+
+# URLs — blank for now, set up after you have infrastructure
 explorer_url = ""
 version_url = ""
 
 [params]
-# distribution_addresses will be auto-populated by fiberAddressGen
+# Distribution addresses — auto-populated by fiberAddressGen in Step 3
 distribution_addresses = []
 ```
 
-For initial chain creation and localhost testing, the daemon flags `--download-peerlist=false --disable-default-peers` handle the fact that there are no peers yet. Add `default_connections` and `peerlist_url` later when you have other nodes running:
+For initial chain creation and localhost testing, the daemon flags `--download-peerlist=false --disable-default-peers` handle the fact that there are no peers yet. Once you have other machines running your coin, come back and update:
 
 ```toml
-# After deploying to other machines, update these:
-default_connections = ["your.server.ip:7000"]
-peerlist_url = "https://downloads.mycoin.com/blockchain/peers.txt"
+# Update these after deploying to other machines:
+default_connections = ["node1.mycoin.com:7000", "node2.mycoin.com:7000"]
+peer_list_url = "https://downloads.mycoin.com/blockchain/peers.txt"
 explorer_url = "https://explorer.mycoin.com"
 version_url = "https://version.mycoin.com/mycoin/version.txt"
 ```
