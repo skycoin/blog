@@ -3,7 +3,7 @@ bounty = 0
 date = "2024-10-10"
 image = "img/skywire-the-next-internet.png"
 tags = ["Announcements"]
-title = "New Skywire Reward Pool Starting in Novembers"
+title = "New Skywire Reward Pool Starting in November"
 +++
 
 ### New Reward Pool Starts in November
