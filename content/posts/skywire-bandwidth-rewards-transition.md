@@ -36,7 +36,7 @@ The two architecture-based pools are being replaced with two purpose-based pools
 
 We are not rewarding bandwidth directly or proportionately. We are rewarding based on your visor's relative share of the total network bandwidth — which you can increase by actually consuming bandwidth over Skywire.
 
-For example: if the network moves 100 GB in a day and your visor contributed 10 GB, your share of the bandwidth pool is 10%. Any traffic that flows through your visor's transports counts — VPN, SOCKS5 proxy, [Skynet port forwarding](/posts/skynet-port-forwarding/), [DmsgWeb](/posts/dmsgweb-anonymous-port-forwarding/), or any other Skywire application.
+For example: if the network moves 100 GB in a day and your visor contributed 10 GB, your share of the bandwidth pool is 10%. Traffic over STCPR and SUDPH transports counts — VPN, SOCKS5 proxy, [Skynet port forwarding](/posts/skynet-port-forwarding/), or any other Skywire application using direct transports. DMSG transport bandwidth is not counted.
 
 #### Same-LAN Exception
 
@@ -177,6 +177,11 @@ The reward calculation then computes each visor's share: `visor_bandwidth / tota
 ### What This Means for Node Operators
 
 - **Keep doing what you're doing** — Pool 1 (uptime) works exactly like current rewards
-- **To earn from Pool 2** — use Skywire for actual traffic: run a VPN server, use the SOCKS5 proxy, forward ports with [Skynet](/posts/skynet-port-forwarding/), host sites with [DmsgWeb](/posts/dmsgweb-anonymous-port-forwarding/)
+- **To earn from Pool 2** — generate real traffic through your visor's transports. The most effective ways to increase your bandwidth share:
+  - **Use a VPN client** or **SOCKS5 proxy client** connected to another visor — client-side usage drives the most bandwidth since you're routing your actual internet traffic over Skywire
+  - **Forward ports with [Skynet](/posts/skynet-port-forwarding/)** — any TCP service forwarded over Skywire generates bandwidth on both ends
+  - **Run a [public visor](/posts/running-a-public-visor/)** — making your visor available as a VPN server or proxy server means other users' traffic flows through your transports
+- **DMSG bandwidth is not counted** — only STCPR and SUDPH transport bandwidth qualifies for rewards. Traffic over DMSG transports (including [DmsgWeb](/posts/dmsgweb-anonymous-port-forwarding/)) does not count toward your bandwidth share
+- **Both sides of a transport get credited** — when traffic flows through a transport, both the sending and receiving visor accumulate bandwidth
 - **Same-LAN traffic doesn't count** — bandwidth must be between visors on different public IPs
 - **Your share grows with usage** — the more real bandwidth your visor contributes to the network, the larger your share of Pool 2
