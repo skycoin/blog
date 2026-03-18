@@ -1,0 +1,49 @@
+{{ range .Site.Menus.main }}
+{{ if .HasChildren }}
+    <li class="nav-link nav-item dropdown">
+      <a href="#" class="dropdown-toggle" onclick="onClickDropdownToggle(this)" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ .Pre }} {{ .Name }} <i class="fas fa-angle-down"></i></a>
+      <ul class="dropdown-menu">
+      <!--
+        Only 1 level of dropdown permitted - create links for children.
+      -->
+      {{ range .Children }}
+        <li class="dropdown-item">
+          <a href="{{ if hasPrefix .URL "//"}} {{ .URL }} {{ else }} //www.skycoin.com{{ if not (hasPrefix (.URL | relLangURL) "/zh") }}{{ .URL }} {{ else }}{{ .URL | relLangURL }} {{ end }} {{ end }}">
+            {{ .Name }}
+          </a>
+        </li>
+      {{ end }}
+
+      </ul>
+  {{ else }}
+    <!--
+      No children so just add a link.
+    -->
+    <li class="nav-link {{if eq .Identifier "blog" }}active{{end}}">
+      <a
+        href="{{ if hasPrefix .URL "//"}} {{ .URL }} {{ else }} //www.skycoin.com{{ if not (hasPrefix (.URL | relLangURL) "/zh") }}{{ .URL }} {{ else }}{{ .URL | relLangURL }} {{ end }} {{ end }}">
+        {{ .Name }}
+      </a>
+    </li>
+
+  {{ end }}
+
+{{ end }}
+
+
+<script>
+function onClickDropdownToggle(e) {
+  console.log("e.parentElement: ",e.parentElement);
+  console.log("e.parentElement.getElementByClassName('dropdown-menu'): ",e.parentElement.querySelector('.dropdown-menu'))
+  const result = e.parentElement.querySelector('.dropdown-menu').classList.toggle("open");
+};
+
+</script>
+
+<!--{{ range .Site.Menus.main }}
+<a
+  class="nav-link {{if eq .Identifier "blog" }}active{{end}}" 
+  href="{{ if hasPrefix .URL "//"}} {{ .URL }} {{ else }} //www.skycoin.com{{ if not (hasPrefix (.URL | relLangURL) "/zh") }}{{ .URL }} {{ else }}{{ .URL | relLangURL }} {{ end }} {{ end }}">
+     {{ .Name }}
+</a>
+{{ end }}-->

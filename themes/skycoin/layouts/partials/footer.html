@@ -1,0 +1,37 @@
+  {{ partial "signup.html" . }}
+  <footer class="footer">
+    <div class="footer__container">
+      <div class="footer__menu">
+        <a href="https://www.skycoin.com">
+          <img class="logo" alt="Skycoin" src="{{ "/images/logoBlueWhite.svg" | relURL }}" />
+        </a>
+        <div class="footer-links">
+          {{ partial "menu.html" . }}
+        </div>
+      </div>
+      <div class="footer__social">
+        {{ range .Site.Params.social}}
+          <a href="{{ .url | absURL }}" target="blank">
+            <img src="{{ .image | relURL }}">
+          </a>
+        {{ end }}
+      </div>
+      <div class="footer__copyright">
+        <div class="copy">
+          <span>© Skycoin.com 2023</span>
+        </div>
+        <div class="contact">
+          <a href="mailto:contact@skycoin.com">contact@skycoin.com</a>
+        </div>
+        <div class="languages">
+            {{ range .Site.Menus.languages}}
+              <a href="{{ .URL | relURL }}">{{ .Name }}</a>
+            {{ end }}
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="{{ "/js/app.js" | relURL }}" type="text/javascript"></script>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+{{ partial "header.html" . }}
+
+<main class="list">
+    {{ if .Title }}
+      {{ if ne .Title .Site.Title }}
+      <a class="back_link" href="{{ "/" | relLangURL }}">
+        <img src="{{ "images/icArrow_2x.png" | absURL }}" /> Back
+      </a>
+      {{ end }}
+      <h1 class="list__top-title">{{ .Title }}</h1>
+    {{ end }}
+    <div id="searchOnTopOfList">
+      <form id="search-form-list">
+        {{ partial "search.html" .}}
+      </form>
+    </div>
+    <div class="list__container">
+      <section class="list__posts">
+        {{ $paginator := .Paginate (where .Data.Pages  "Section" "!=" "") 6 }}
+        <ul class="list__list">
+          {{ range $paginator.Pages }}
+            <li class="list__item">
+              <a class="list__link" href="{{ .Permalink | relLangURL }}">
+                <div class="list__item-inner">
+                  {{ if .Params.image }}
+                  	{{/* hugo's absURL ignores the path component of the baseURL if
+                  	     the input to absURL has a leading slash.
+                  	     Forestry uses a leading slash in the front matter image parameter,
+                  	     so strip it if present before passing it to absURL */}}
+                    {{ with strings.TrimLeft "/" .Params.image }}
+                    <div class="list__item-image">
+                        <div style="background-image: url({{ . | absURL }})" class="list__image"></div>
+                    </div>
+                    {{ end }}
+                  {{ else }}
+                    <div class="list__item-image">
+                      <img src="{{ "img/placeholder.svg" | relURL }}" class="list__image list__image-placeholder">
+                    </div>
+                  {{ end }}
+                  <span class="list__meta">{{ .Date.Format "Jan 2 2006" }}</span>
+                  <span class="list__title">{{ .Title }}</span>
+                </div>
+              </a>
+            </li>
+          {{ end }}
+        </ul>
+        {{ partial "pagination.html" . }}
+      </section>
+      <section class="tags">
+        <div id="searchOnTopOfTags">
+          <form id="search-form-tags">
+            {{ partial "search.html" .}}
+          </form>
+        </div>
+        {{ partial "tags.html" . }}
+      </section>
+    </div>
+  </main>
+
+  {{ partial "footer.html" . }}

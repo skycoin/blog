@@ -1,0 +1,30 @@
+{{ partial "header.html" . }}
+
+<main class="search-container">
+  <section class="search-results">
+    <div class="search">
+      <form id="searchForm">
+        <input
+          class="search__input"
+          name="search-input"
+          id="search-input"
+          placeholder="Search post here..."
+          autocomplete="off"
+          type="search"
+        />
+        <button class="search__button" type="submit">
+          <i class="fas fa-search"></i>
+        </button>
+      </form>
+      <div class="search__list" id="search-box">
+        <h3 id="results-length"></h3>
+        <ul id="results"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.6/lunr.min.js" integrity="sha256-M/Awbb/BYh+Rh0aGjpQid26p1b2OBsrk2k9yAvQxPV0=" crossorigin="anonymous"></script>
+
+<script src="{{ "/js/search.js" | relURL }}" type="text/javascript"></script>
+{{ partial "footer.html" . }}

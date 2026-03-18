@@ -1,0 +1,140 @@
+.footer {
+  background-color: $dark;
+
+  &__container {
+    @include container($container-width-base, true);
+  }
+
+  &__menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding-top: 40px;
+    padding-bottom: 24px;
+
+    @include tablet {
+      padding-bottom: 80px;
+      padding-top: 80px;
+    }
+
+    .footer-links {
+      text-align: left;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+      margin-top: 24px;
+      
+      @include tablet {
+        width: auto;
+        margin-top: 0;
+      }
+
+      .nav-link {
+        color: white;
+        padding: 0.25rem 0;
+        width: 33.3333%;
+
+        @include tablet {
+          width: auto;
+          margin-left: 2rem;
+          padding: 0.25rem;
+
+          &:first-child {
+            margin-left: 0;
+          }
+        }
+  
+        &:hover {
+          color: $gray;
+        }
+      }
+    }
+  }
+
+  &__social {
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    padding: 24px 0;
+    @media (max-width: $breakpoint-sm) {
+      padding: 8px 0;
+    } 
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    
+    a {
+      padding: 16px 0;
+      width: 9.0909%;
+      text-align: center;
+      flex-grow: 1;
+
+      @media (max-width: $breakpoint-sm) {
+        width: 16.6666%;
+        padding: 8px 0;
+      }      
+    }
+  }
+
+  &__copyright {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #616d7c;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    @include tablet {
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    & > * {
+      line-height: 1.5rem;
+      @media (max-width: $breakpoint-sm) {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
+    a {
+      font-size: 13px;
+      color: #616d7c;
+    }
+
+    .copy,
+    .contact,
+    .languages {
+      width: 100%;
+      text-align: center;
+      @include tablet {
+       width: 33.3333%;
+      }
+    }
+
+    .copy {
+      @include tablet {
+        text-align: left;
+      }
+    }
+
+    .languages {
+      @include tablet {
+        text-align: right;
+      }
+    }
+  }
+
+  .languages {
+    & > a {
+      white-space: nowrap;
+    }
+    & a:not(:first-of-type):before {
+      content: ' · '
+    }
+  }
+
+}

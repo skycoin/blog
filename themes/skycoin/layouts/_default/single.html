@@ -1,0 +1,35 @@
+{{ partial "header.html" . }}
+
+<main class="post">
+  <a class="back_link" href="https://skycoin.com/blog/">
+    <img src="{{ "images/icArrow_2x.png" | absURL }}" /> Back to list
+  </a>
+  <div class="post__container">
+    <section class="post__content">
+      {{if .Params.image }}
+        <img  src="{{ .Params.image | relURL }}">
+      {{ end }}
+      <div class="meta">
+        {{ if .Params.date }}
+          <span class="meta__date">{{ .Date.Format "Jan 2 2006" }}</span>
+        {{ end }}
+        <div class="meta__tag-list">
+          {{ range $i := (slice "tags") }}
+            {{ with ($.Param $i) }}
+                {{ range $k := . }}
+                  <a class="meta__link" href="{{ relLangURL (print "/" $i "/" $k | urlize) }}">{{$k}}</a>
+                {{ end }}
+            {{ end }}
+          {{ end }}
+        </div>
+      </div>
+      <h1 class="post__title">{{ .Title }}</h1>
+      {{ .Content }}
+    </section>
+    <div class="tags">
+      {{ partial "tags.html" . }}
+    </div>
+  </div>
+</main>
+
+{{ partial "footer.html" . }}

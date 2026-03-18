@@ -1,0 +1,32 @@
+body {
+  font-family: $font-family-sans;
+  color: $dark-gray;
+  font-size: 0.875rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: bold;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: $font-family-sans;
+  font-weight: inherit;
+}
+
+strong,
+b {
+  font-weight: bold;
+}
+
+a {
+  color: $blue;
+  cursor:pointer;
+}

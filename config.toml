@@ -1,0 +1,270 @@
+baseURL = "https://skycoin.github.io/blog/"
+languageCode = "en-us"
+title = "Blog"
+defaultContentLanguage = "en"
+
+relativeURLs = true
+canonifyURLs = true
+
+buildFuture = true
+buildExpired = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+#disqusShortname = ""
+
+# hugo-xmin specific variables
+theme = "skycoin"
+ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
+preserveTaxonomyNames = true
+footnotereturnlinkcontents = "↩"
+
+# enables ```lang ``` style syntax highlighted blocks
+pygmentsCodeFences = true
+pygmentsStyle = "murphy"
+
+[permalinks]
+	posts = "/posts/:filename/"
+	spanish = "/posts/:filename/"
+	greek = "/posts/:filename/"
+	chinese = "/posts/:filename/"
+	russian = "/posts/:filename/"
+	italian = "/posts/:filename/"
+	french = "/posts/:filename/"
+	korean = "/posts/:filename/"
+	japanese = "/posts/:filename/"
+	portuguese = "/posts/:filename/"
+	german = "/posts/:filename/"
+
+[[menu.main]]
+    name = "Downloads"
+    identifier = "downloads"
+    url = "/downloads/"
+    weight = 1
+[[menu.main]]
+    name = "Ecosystem"
+    identifier = "ecosystem"
+    url = ""
+    weight = 2
+[[menu.main]]
+    name = "Overview"
+    identifier = "overview"
+    parent="ecosystem"
+    url = "/ecosystem/"
+    weight = 1
+[[menu.main]]
+    name = "Skywire"
+    identifier = "skywire"
+    parent="ecosystem"
+    url = "/skywire/"
+    weight = 2
+[[menu.main]]
+    name = "Obelisk"
+    identifier = "obelisk"
+    parent="ecosystem"
+    url = "/obelisk/"
+    weight = 3
+[[menu.main]]
+    name = "Fiber"
+    identifier = "fiber"
+    parent="ecosystem"
+    url = "/fiber/"
+    weight = 4
+[[menu.main]]
+    name = "CX"
+    identifier = "cx"
+    parent="ecosystem"
+    url = "/cx/"
+    weight = 5
+[[menu.main]]
+    name = "CXO"
+    identifier = "cxo"
+    parent="ecosystem"
+    url = "/cxo/"
+    weight = 6
+[[menu.main]]
+    name = "Skyminer"
+    identifier = "skyminer"
+    url = "/skyminer/"
+    weight = 3
+[[menu.main]]
+    name = "Blog"
+    identifier = "blog"
+    url = "/blog/"
+    weight = 5
+[[menu.main]]
+    name = "Store"
+    identifier = "store"
+    url = "//store.skycoin.com/"
+    weight = 6
+[[menu.main]]
+    name = "Other"
+    identifier = "other"
+    url = ""
+    weight = 7
+[[menu.main]]
+    name = "Team"
+    identifier = "team"
+    url = "/team/"
+    parent="other"
+    weight = 1
+[[menu.main]]
+    name = "Gallery"
+    identifier = "gallery"
+    parent="other"
+    url = "/gallery/"
+    weight = 2
+[[menu.main]]
+    name = "Jobs"
+    identifier = "jobs"
+    parent="other"
+    url = "/jobs/"
+    weight = 3
+[[menu.main]]
+    name = "Explorer"
+    identifier = "explorer"
+    parent="other"
+    url = "//explorer.skycoin.com"
+    weight = 4
+[[menu.main]]
+    name = "Explorer API"
+    identifier = "explorer-api"
+    parent="other"
+    url = "//explorer.skycoin.com/api.html"
+    weight = 5
+
+[params]
+  author = "Skycoin"
+  keywords = "skycoin"
+  rss = "/index.xml"
+  telegram = "https://t.me/Skycoin"
+  discord = "https://discord.gg/EgBenrW"
+  description = "Skycoin Project Updates"
+  email = ""
+  github = "skycoin"
+
+[[params.social]]
+  name = "Github"
+  url = "https://github.com/skycoin/skycoin"
+  image = "images/github.svg"
+[[params.social]]
+  name = "Telegram"
+  url = "https://t.me/Skycoin"
+  image = "images/telegram.svg"
+
+[Languages]
+[Languages.en]
+	weight = -1
+	title = "Blog"
+	languageName = "English"
+
+[Languages.zh]
+	weight = 1
+	title = "天空币博客"
+	hasCJKLanguage = true
+	languageName = "中文"
+
+[Languages.ru]
+	weight = 2
+	title = "Блог"
+	languageName = "Русский"
+
+[Languages.ko]
+	weight = 3
+	title = "블로그"
+	languageName = "한국어"
+
+[Languages.es]
+	weight = 4
+	title = "Blog"
+	languageName = "Español"
+
+[Languages.de]
+	weight = 5
+	title = "Blog"
+	languageName = "Deutsch"
+
+[Languages.ja]
+    weight = 6
+    title = "Blog"
+    languageName = "日本語"
+
+[Languages.el]
+    weight = 7
+    title = "Blog"
+    languageName = "Ελληνικά"
+
+[Languages.fr]
+    weight = 8
+    title = "Blog"
+    languageName = "Français"
+
+[Languages.pt]
+    weight = 9
+    title = "Blog"
+    languageName = "Português"
+
+[Languages.it]
+    weight = 10
+    title = "Blog"
+    languageName = "Italiano"
+
+[[menu.languages]]
+  name = "English"
+  weight = -1
+  url = "/"
+[[menu.languages]]
+  name = "中文"
+  weight = 1
+  url = "/zh/"
+[[menu.languages]]
+  name = "Русский"
+  weight = 2
+  url = "/ru/"
+[[menu.languages]]
+  name = "한국어"
+  weight = 3
+  url = "/ko/"
+ [[menu.languages]]
+   name = "Español"
+   weight = 4
+   url = "/es/"
+ [[menu.languages]]
+   name = "Deutsch"
+   weight = 5
+   url = "/de/"
+ [[menu.languages]]
+   name = "日本語"
+   weight = 6
+   url = "/ja/"
+ [[menu.languages]]
+   name = "Ελληνικά"
+   weight = 7
+   url = "/el/"
+ [[menu.languages]]
+   name = "Français"
+   weight = 8
+   url = "/fr/"
+ [[menu.languages]]
+   name = "Português"
+   weight = 9
+   url = "/pt/"
+ [[menu.languages]]
+   name = "Italiano"
+   weight = 10
+   url = "/it/"
+
+[security]
+  enableInlineShortcodes = false
+  [security.exec]
+    allow = ['^dart-sass-embedded$', '^go$', '^npx$', '^postcss$']
+    osEnv = ['(?i)^(PATH|PATHEXT|APPDATA|TMP|TEMP|TERM)$']
+
+  [security.funcs]
+    getenv = ['^HUGO_', 'CSS_VERSION']
+  [security.http]
+    methods = ['(?i)GET|POST']
+    urls = ['.*']

@@ -1,0 +1,131 @@
+.search-container {
+  @include container($container-width-base);
+  .search__input {
+    width: 100%;
+    margin: auto;
+    padding: 12px;
+    padding-left: 0;
+    text-indent: 20px;
+    border-radius: 25px;
+    outline: none;
+    border: 1px solid #92a4ba;
+    font-size: 14px;
+    font-family: $font-family-sans;
+  }
+  .search__button {
+    width: 55px;
+    height: 42px;
+    background: white;
+    position: absolute;
+    top: 1.5px;
+    font-size: 16px;
+    right: 2.5px;
+    padding: 0;
+    border-radius: 50%;
+    outline: 0;
+    border: none;
+    font-family: $font-family-sans;
+    cursor: pointer;
+  }
+  
+  .search__button i {
+    color: #92a4ba;
+  }
+}
+
+.search-results {
+  margin-top: 32px;
+}
+
+.search {
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.search__list {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px;
+}
+
+.search__list ul {
+  height: 500px;
+  overflow-y: auto;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+.search__list ul li {
+  padding-bottom: 12px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.search__list ul li:last-of-type {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+#search-form {
+  margin-bottom: 24px;
+}
+
+.search__input {
+  text-indent: 4px;
+  width: 85%;
+  font-size: 14px;
+  height: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: $font-family-sans;
+}
+
+.search__button {
+  width: 33px;
+  height: 33px;
+  background: white;
+  position: absolute;
+  top: 1.5px;
+  right: 2.5px;
+  padding: 0;
+  border-radius: 50%;
+  outline: 0;
+  border: none;
+  font-family: $font-family-sans;
+  cursor: pointer;
+}
+
+.search__button i {
+  color: #92a4ba;
+}
+
+.search__field {
+  width: 100%;
+  position: relative;
+  height: 38px;
+  margin: auto;
+  padding-left: 0;
+  text-indent: 12px;
+  border-radius: 25px;
+  outline: none;
+  border: 1px solid #92a4ba;
+}
+
+
+#searchOnTopOfTags,
+#search__title {
+  display: block;
+}
+
+#searchOnTopOfList {
+  display: none;
+}
+
+@media (max-width: 830px) {
+  #searchOnTopOfTags,
+  #search__title {
+    display: none;
+  }
+  #searchOnTopOfList {
+    display: block;
+  }
+}

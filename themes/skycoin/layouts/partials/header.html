@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+  {{ $baseurl := .Site.BaseURL }}
+<head>
+  {{ if .Params.redirectURL }}<meta http-equiv="refresh" content="0; url={{ .Params.redirectURL }}"/>{{ end }}  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .Title }} | {{ .Site.Title }}</title>
+  {{ if (getenv "CSS_VERSION") }}
+    <link rel="stylesheet" href="{{ "/css/" | relURL }}main-{{ getenv "CSS_VERSION" }}.css" />
+  {{ else }}
+    <link rel="stylesheet" href="{{ "/css/main.css" | relURL }}" />
+  {{ end }}
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
+  {{ if .Params.Author }}
+  <meta property="author" content="{{ .Params.author }}">
+  {{ end }}
+  <meta name="description" content="{{ .Description }}">
+  <meta name="robots" content="index">
+</head>
+
+<body>
+  <header class="page-header">
+    <div class="header-container">
+      <div class="nav-wrapper">
+        <div class="header-inner">
+          <a href="//www.skycoin.com/" class="logo">
+            <img src="{{ "/images/logo-outlined.svg" | relURL }}" alt="Skycoin">
+          </a>
+          <div>
+            <button class="menu-toggle-btn menu-show-btn" onclick="toggleMenu(true)"></button>
+            <div class="menu-overlay" style="display:none"></div>
+            <div class="nav">
+              <div class="nav-inner">
+                <button class="menu-toggle-btn menu-hide-btn" onclick="toggleMenu(false)"></button>
+                <div class="nav-group">
+                  {{ partial "menu.html" . }}
+                </div>
+                <div class="nav-group mobile">
+                  <a href="{{ .Site.Params.telegram }}" target="_blank" class="nav-link">
+                    <img src="{{ "images/telegram.svg" | relURL }}" alt="Telegram">
+                    Telegram
+                  </a>
+                </div>
+                <!--
+                <div class="nav-group">
+                  <a href="https://skycoin.com/buy/" class="nav-button">BUY SKYCOIN</a>
+                </div>
+                -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      function toggleMenu(menuVisible)
+      {
+        if (menuVisible) {
+          $('.menu-overlay').show();
+          $('.nav-inner').addClass('visible');
+          $('body').css('overflow', 'hidden');
+        } else {
+          $('.menu-overlay').hide();
+          $('.nav-inner').removeClass('visible');
+          $('body').css('overflow', 'auto');
+        }
+      }
+    </script>
+  </header>
+  {{/* partial "categories.html" . */}}

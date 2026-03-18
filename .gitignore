@@ -1,0 +1,18 @@
+ico/
+node_modules
+.vscode/
+
+# Hugo output directory
+/public
+
+yarn.lock
+
+.DS_Store
+
+.idea
+
+# Temp files
+*.swp
+*.swo
+*.orig
+
