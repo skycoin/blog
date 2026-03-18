@@ -6,9 +6,6 @@ defaultContentLanguage = "en"
 relativeURLs = true
 canonifyURLs = true
 
-buildFuture = true
-buildExpired = true
-
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
