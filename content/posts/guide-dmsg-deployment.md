@@ -52,16 +52,24 @@ go run github.com/skycoin/skywire@develop dmsg
 ```
 
 ```text
+$ skywire dmsg
+┌┬┐┌┬┐┌─┐┌─┐
+ │││││└─┐│ ┬
+─┴┘┴ ┴└─┘└─┘
+
+Usage:
+  skywire dmsg
+
 Available Commands:
-  server      DMSG Server
-  disc        DMSG Discovery
-  web         DmsgWeb
-  curl        dmsgcurl
-  http        dmsghttp
-  pty         dmsgpty
-  socks       DMSG socks5 proxy
-  ip          dmsgip
-  conf        deployment server config
+  conf      dmsg deployment servers config
+  curl      DMSG curl utility
+  disc      DMSG Discovery Server
+  http      DMSG http file server
+  ip        DMSG IP utility
+  pty       DMSG pseudoterminal (pty)
+  server    DMSG Server
+  socks     DMSG socks5 proxy server & client
+  web       DMSG resolving proxy & browser client
 ```
 
 ---
@@ -449,6 +457,38 @@ curl http://127.0.0.1:9090/health              # Discovery health
 curl http://127.0.0.1:8082/health              # Server health
 curl http://127.0.0.1:9090/dmsg-discovery/all_servers  # All registered servers
 ```
+
+---
+
+### DMSG Direct — No Discovery Required
+
+DMSG can operate without a Discovery server using the **direct client** mode. In this mode, the client connects directly to a known DMSG server by address rather than looking it up through Discovery. This is useful for:
+
+- **Simple two-party setups** — connect directly between two known machines without deploying Discovery or Redis
+- **Restricted environments** — when you can't reach the public DMSG Discovery
+- **Testing and development** — minimal infrastructure needed
+
+The `-B` / `--direct` flag enables direct mode on supported utilities:
+
+```bash
+skywire dmsg web -B
+```
+
+```bash
+skywire dmsg curl -B dmsg://<pk>:80/
+```
+
+```bash
+skywire dmsg http -B
+```
+
+In direct mode, you specify the DMSG server address with `-A` (the server's DMSG address) instead of relying on Discovery to find servers. The client establishes a session directly with the specified server, skipping the Discovery lookup entirely.
+
+```bash
+skywire dmsg web -B -A dmsg://<server-pk>:8081
+```
+
+This means you can run a fully functional DMSG overlay with just a single DMSG Server — no Discovery, no Redis.
 
 ---
 
