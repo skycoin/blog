@@ -69,6 +69,20 @@ code {
   margin-bottom: 16px;
 }
 
+// Help output terminal colors (matches ANSI 94/94;1)
+// hb = bold bright blue (headings, command names, flags, ASCII art)
+// hd = bright blue (descriptions)
+pre code {
+  .hb {
+    color: #5f87ff;
+    font-weight: bold;
+  }
+
+  .hd {
+    color: #5f87ff;
+  }
+}
+
 // Code block wrapper with copy button
 .code-block {
   position: relative;

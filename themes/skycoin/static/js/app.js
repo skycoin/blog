@@ -1,3 +1,66 @@
+// Colorize help/output text blocks to match terminal ANSI colors
+// Terminal uses: \e[94;1m (bold bright blue) for headings/commands/ASCII art
+//               \e[94m (bright blue) for descriptions
+function colorizeHelpBlock(codeEl) {
+  var text = codeEl.textContent;
+  var lines = text.split('\n');
+  var html = [];
+  // Box-drawing chars used in ASCII art banners
+  var boxChars = /[┌┐└┘├┤┬┴┼─│╭╮╯╰┊┈┅╌╍┉╎╏┃┇┆┋╵╷╶╴╸╺╻╹┍┎┑┒┕┖┙┚┝┞┟┠┡┢┥┦┧┨┩┪┭┮┯┰┱┲┵┶┷┸┹┺┽┾┿╀╁╂╃╄╅╆╇╈╉╊]/;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var trimmed = line.trim();
+
+    if (trimmed === '') {
+      // Empty line
+      html.push('');
+    } else if (boxChars.test(trimmed)) {
+      // ASCII art banner line
+      html.push(span('hb', line));
+    } else if (/^\$\s/.test(trimmed)) {
+      // Prompt line: $ command args
+      var afterDollar = line.indexOf('$');
+      var prefix = line.substring(0, afterDollar);
+      var rest = line.substring(afterDollar + 1);
+      html.push(prefix + span('hd', '$') + span('hb', rest));
+    } else if (/^(Usage|Available Commands|Flags|Environment variables|Commands|Options|Aliases|Examples|Global Flags)\s*:/.test(trimmed)) {
+      // Section heading
+      html.push(span('hb', line));
+    } else if (/^\s+-\w|^\s+--\w/.test(line)) {
+      // Flag line: "  -x, --flag    description"
+      var flagMatch = line.match(/^(\s+-\S+(?:,\s+--\S+)?(?:\s+\S+)?)\s{2,}(.+)$/);
+      if (flagMatch) {
+        html.push(span('hb', flagMatch[1]) + '  ' + span('hd', flagMatch[2]));
+      } else {
+        html.push(span('hb', line));
+      }
+    } else if (/^\s{2,}\S/.test(line) && /\s{2,}/.test(trimmed)) {
+      // Command listing line: "  name    description" (indented, with gap)
+      var cmdMatch = line.match(/^(\s+\S+)\s{2,}(.+)$/);
+      if (cmdMatch) {
+        var gap = line.substring(cmdMatch[1].length, line.indexOf(cmdMatch[2].trim(), cmdMatch[1].length));
+        html.push(span('hb', cmdMatch[1]) + gap + span('hd', cmdMatch[2]));
+      } else {
+        html.push(span('hd', line));
+      }
+    } else if (/^\s{2,}\S/.test(line)) {
+      // Indented line without gap (usage example, continuation)
+      html.push(span('hb', line));
+    } else {
+      // Regular text (descriptions, etc.)
+      html.push(span('hd', line));
+    }
+  }
+
+  codeEl.innerHTML = html.join('\n');
+}
+
+function span(cls, text) {
+  var escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return '<span class="' + cls + '">' + escaped + '</span>';
+}
+
 // Add copy buttons to code blocks (skip output-only blocks marked as language-text)
 // Command tab switcher: replaces "skycoin" command in bash blocks with selected variant
 (function() {
@@ -19,7 +82,11 @@
       bashBlocks.push({ code: code, original: code.textContent });
     }
 
-    if (isOutput) continue;
+    // Colorize help output blocks to match terminal colors
+    if (isOutput) {
+      colorizeHelpBlock(code);
+      continue;
+    }
 
     var btn = document.createElement('button');
     btn.className = 'copy-btn';
