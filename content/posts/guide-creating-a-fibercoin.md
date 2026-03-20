@@ -10,59 +10,25 @@ A Fibercoin is a blockchain forked from Skycoin — same consensus mechanism, sa
 
 Everything you need is included in the Skywire binary, the standalone Skycoin release binary, or can be run directly from source with `go run`.
 
-### Running Skycoin Commands
+### How are you running Skycoin?
 
-Throughout this guide, `skycoin` refers to any of these interchangeable methods:
+All commands in this guide use `skycoin` as the command. Choose how you're running it and the guide will update automatically:
 
-From within cloned source directory:
-```bash
-go run .
-```
+<div class="cmd-tabs" id="cmd-tabs">
+  <button class="cmd-tab active" data-cmd="skycoin">Release binary</button>
+  <button class="cmd-tab" data-cmd="skywire skycoin">Skywire binary</button>
+  <button class="cmd-tab" data-cmd="go run .">From source</button>
+</div>
 
-From outside source:
-```bash
-go run github.com/skycoin/skycoin@develop
-```
-
-With release binary:
-```bash
-skycoin
-```
-
-From skywire release binary:
-```bash
-skywire skycoin
-```
-
-Using skywire from outside source:
-```bash
-go run github.com/skycoin/skywire@develop skycoin
-```
-
-All methods produce the same result:
-
-```text
-$ skycoin
-
-    ┌─┐┬┌─┬ ┬┌─┐┌─┐┬┌┐┌
-    └─┐├┴┐└┬┘│  │ │││││
-    └─┘┴ ┴ ┴ └─┘└─┘┴┘└┘
-
- Available Commands:
-  cli       skycoin command line interface
-  daemon    skycoin wallet
-  explorer  skycoin blockchain explorer
-  newcoin   newcoin is a helper tool for creating new fiber coins
-  web       skycoin thin client web wallet
-```
+<p class="cmd-tab-note" id="cmd-tab-note-source" style="display:none;"><strong>Note:</strong> <code>go run .</code> must be run from a cloned <code>skycoin</code> source directory. Alternatively, use <code>go run github.com/skycoin/skycoin@develop</code> from anywhere without cloning. Requires Go 1.23+.</p>
 
 ### Prerequisites
 
 | Method | Requires |
 |--------|----------|
 | Release binary | Nothing (pre-compiled) |
-| `go run github.com/skycoin/skycoin@develop` | Go 1.23+ |
-| `go run .` (from source) | Git and Go 1.23+ |
+| Skywire binary | Nothing (pre-compiled) |
+| From source (`go run .`) | Git and Go 1.23+ |
 
 ---
 
