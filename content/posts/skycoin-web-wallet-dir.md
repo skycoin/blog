@@ -18,8 +18,10 @@ The new `--wallet-dir` flag tells the thin client to manage wallets locally on t
 
 ### Usage
 
-```
-skycoin web --node-url http://your-node:6420 --wallet-dir ~/.skycoin/wallets
+```bash
+skycoin web \
+  --node-url http://your-node:6420 \
+  --wallet-dir ~/.skycoin/wallets
 ```
 
 This starts the web wallet UI, connected to the remote node for blockchain data, but using the local `~/.skycoin/wallets` directory for wallet files. The `--enable-seed-api` flag can be added to allow seed retrieval through the UI.

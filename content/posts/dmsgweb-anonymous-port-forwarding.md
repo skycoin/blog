@@ -25,12 +25,12 @@ Because traffic travels through the DMSG overlay network rather than the public 
 ### Getting Started
 
 To host a site over DMSG:
-```
+```bash
 skywire dmsg web srv -p 8086
 ```
 
 To browse DMSG sites:
-```
+```bash
 skywire dmsg web
 ```
 

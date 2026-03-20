@@ -89,7 +89,7 @@ The TPD exposes several endpoints for querying bandwidth and latency data:
 
 **Per-transport metrics:**
 
-```
+```text
 GET /metrics                          All transports
 GET /metrics/{ids}                    Specific transports (comma-separated UUIDs)
 GET /metrics/visor/{pks}              Transports for specific visors (comma-separated PKs)
@@ -97,19 +97,19 @@ GET /metrics/visor/{pks}              Transports for specific visors (comma-sepa
 
 **Per-visor aggregate metrics:**
 
-```
+```text
 GET /metric/visor/{pks}               Aggregated metrics for specific visors
 ```
 
 **Network-wide aggregate:**
 
-```
+```text
 GET /metric                           Network-wide daily + cumulative totals by transport type
 ```
 
 **Legacy bandwidth endpoints:**
 
-```
+```text
 GET /bandwidth/transport/{id}         Daily bandwidth history for a transport
 GET /bandwidth/visor/{pk}             Aggregated bandwidth for all of a visor's transports
 ```

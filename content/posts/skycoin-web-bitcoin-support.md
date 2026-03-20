@@ -21,13 +21,17 @@ Full Bitcoin wallet functionality has been added to the Skycoin web thin client:
 ### Usage
 
 Connect to an Electrum server:
-```
-skycoin web --btc-electrum-url tcp://your-electrum-server:50001 --btc-wallet-dir ~/.skycoin/btc-wallets
+```bash
+skycoin web \
+  --btc-electrum-url tcp://your-electrum-server:50001 \
+  --btc-wallet-dir ~/.skycoin/btc-wallets
 ```
 
 Or connect to a Bitcoin Core node:
-```
-skycoin web --btc-node-url http://localhost:8332 --btc-wallet-dir ~/.skycoin/btc-wallets
+```bash
+skycoin web \
+  --btc-node-url http://localhost:8332 \
+  --btc-wallet-dir ~/.skycoin/btc-wallets
 ```
 
 Bitcoin wallets appear alongside Skycoin and Fibercoin wallets in the UI. The interface adapts for Bitcoin — coin hours are hidden (Bitcoin has no equivalent), and decimal precision is set to 8 places.

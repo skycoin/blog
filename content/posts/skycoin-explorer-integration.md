@@ -8,7 +8,7 @@ title = "Skycoin Blockchain Explorer Now Integrated into Skycoin"
 
 The Skycoin blockchain explorer has been integrated directly into the Skycoin repository and can now be run as a subcommand of the unified Skycoin binary:
 
-```
+```bash
 skycoin explorer
 ```
 
@@ -21,7 +21,7 @@ The explorer provides a web-based interface for browsing the Skycoin blockchain 
 ### Usage
 
 Start the explorer alongside a running Skycoin daemon:
-```
+```bash
 skycoin explorer --node-addr http://127.0.0.1:6420
 ```
 

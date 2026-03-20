@@ -14,7 +14,7 @@ This guide follows the [systemd deployment documentation](https://github.com/sky
 
 ### Architecture Overview
 
-```
+```text
 $ go run github.com/skycoin/skywire@develop svc
 ┌─┐┬┌─┬ ┬┬ ┬┬┬─┐┌─┐   ┌─┐┌─┐┬─┐┬  ┬┬┌─┐┌─┐┌─┐
 └─┐├┴┐└┬┘││││├┬┘├┤ ───└─┐├┤ ├┬┘└┐┌┘││  ├┤ └─┐
@@ -73,15 +73,15 @@ Redis setup is simply installing redis and starting the service (which may now b
 
 All services use the same keypair format. Generate a keypair for each service:
 
-```
-$ skywire cli config gen-keys
+```bash
+skywire cli config gen-keys
 ```
 
 This prints a public key on line 1 and a secret key on line 2. Write to a file for use:
 
-```
-$ skywire cli config gen-keys | tee dmsgd-config.json
-$ skywire dmsg disc --sk $(tail -n1 dmsgd-config.json)
+```bash
+skywire cli config gen-keys | tee dmsgd-config.json
+skywire dmsg disc --sk $(tail -n1 dmsgd-config.json)
 ```
 
 ---
@@ -94,17 +94,20 @@ The DMSG layer provides the encrypted messaging foundation for all Skywire compo
 
 The registry where DMSG clients and servers find each other.
 
-```
-$ skywire cli config gen-keys > dmsgd-config.json
-$ skywire dmsg disc --addr ":9090" --redis "redis://localhost:6379" --sk $(tail -n1 dmsgd-config.json)
+```bash
+skywire cli config gen-keys > dmsgd-config.json
+skywire dmsg disc \
+  --addr ":9090" \
+  --redis "redis://localhost:6379" \
+  --sk $(tail -n1 dmsgd-config.json)
 ```
 
 ### DMSG Server
 
 Relays traffic between DMSG clients. Generate a config first:
 
-```
-$ skywire dmsg server config gen -o dmsg-config.json
+```bash
+skywire dmsg server config gen -o dmsg-config.json
 ```
 
 This produces a config like:
@@ -125,8 +128,8 @@ This produces a config like:
 
 **Important:** Change `discovery` to your DMSG Discovery URL (e.g., `http://127.0.0.1:9090`). Change `public_address` to your server's public IP. The DMSG server port must be accessible from the internet.
 
-```
-$ skywire dmsg server start dmsg-config.json
+```bash
+skywire dmsg server start dmsg-config.json
 ```
 
 ---
@@ -139,36 +142,51 @@ All services should point their `--dmsg-disc` flag at your DMSG Discovery instan
 
 Where VPN servers, proxies, and public visors register themselves.
 
-```
-$ skywire cli config gen-keys > sd-config.json
-$ skywire svc sd --addr ":9098" --redis "redis://localhost:6379" --dmsg-disc "http://127.0.0.1:9090" --sk $(tail -n1 sd-config.json)
+```bash
+skywire cli config gen-keys > sd-config.json
+skywire svc sd \
+  --addr ":9098" \
+  --redis "redis://localhost:6379" \
+  --dmsg-disc "http://127.0.0.1:9090" \
+  --sk $(tail -n1 sd-config.json)
 ```
 
 ### Address Resolver
 
 Resolves visor IP addresses for direct connections (STCPR and SUDPH transports). The UDP port must be on a public IP or port-forwarded.
 
-```
-$ skywire cli config gen-keys > ar-config.json
-$ skywire svc ar --addr ":9093" --redis "redis://localhost:6379" --dmsg-disc "http://127.0.0.1:9090" --sk $(tail -n1 ar-config.json)
+```bash
+skywire cli config gen-keys > ar-config.json
+skywire svc ar \
+  --addr ":9093" \
+  --redis "redis://localhost:6379" \
+  --dmsg-disc "http://127.0.0.1:9090" \
+  --sk $(tail -n1 ar-config.json)
 ```
 
 ### Route Finder
 
 Finds multi-hop routes through the transport graph.
 
-```
-$ skywire cli config gen-keys > rf-config.json
-$ skywire svc rf --addr ":9092" --dmsg-disc "http://127.0.0.1:9090" --sk $(tail -n1 rf-config.json)
+```bash
+skywire cli config gen-keys > rf-config.json
+skywire svc rf \
+  --addr ":9092" \
+  --dmsg-disc "http://127.0.0.1:9090" \
+  --sk $(tail -n1 rf-config.json)
 ```
 
 ### Transport Discovery
 
 Registers and tracks transports between visors.
 
-```
-$ skywire cli config gen-keys | tee tpd-config.json
-$ skywire svc tpd --addr ":9091" --redis "redis://localhost:6379" --dmsg-disc "http://127.0.0.1:9090" --sk $(tail -n1 tpd-config.json)
+```bash
+skywire cli config gen-keys | tee tpd-config.json
+skywire svc tpd \
+  --addr ":9091" \
+  --redis "redis://localhost:6379" \
+  --dmsg-disc "http://127.0.0.1:9090" \
+  --sk $(tail -n1 tpd-config.json)
 ```
 
 ---
@@ -177,20 +195,20 @@ $ skywire svc tpd --addr ":9091" --redis "redis://localhost:6379" --dmsg-disc "h
 
 Establishes routes between visors via DMSG RPC. Requires a JSON config file:
 
-```
-$ skywire cli config gen --sn -o sn-config.json
+```bash
+skywire cli config gen --sn -o sn-config.json
 ```
 
 Edit `sn-config.json` to point at your deployment's DMSG Discovery and Transport Discovery URLs, then run:
 
-```
-$ skywire svc sn sn-config.json
+```bash
+skywire svc sn sn-config.json
 ```
 
 Or pipe directly:
 
-```
-$ skywire cli config gen --sn | skywire svc sn -i
+```bash
+skywire cli config gen --sn | skywire svc sn -i
 ```
 
 ---
@@ -216,13 +234,16 @@ The config bootstrapper serves a JSON file that tells visors where to find all y
 
 Serve it with the config bootstrapper:
 
-```
-$ skywire svc confbs --addr ":9082" --domain yourdomain.com --dmsg-disc "http://127.0.0.1:9090"
+```bash
+skywire svc confbs \
+  --addr ":9082" \
+  --domain yourdomain.com \
+  --dmsg-disc "http://127.0.0.1:9090"
 ```
 
 Or simply serve the JSON file with a web server or Caddy's `respond` directive:
 
-```
+```text
 conf.yourdomain.com {
     header Content-Type application/json
     respond `{"dmsg_discovery":"http://dmsgd.yourdomain.com","transport_discovery":"http://tpd.yourdomain.com",...}`
@@ -235,8 +256,8 @@ conf.yourdomain.com {
 
 Generate a visor config pointed at your deployment. The `-xa` flag specifies the config bootstrap endpoint:
 
-```
-$ skywire cli config gen -xa conf.yourdomain.com -o skywire-config.json
+```bash
+skywire cli config gen -xa conf.yourdomain.com -o skywire-config.json
 ```
 
 This queries your config bootstrap endpoint and populates the visor config with your deployment's service URLs.
@@ -265,11 +286,11 @@ Example output (abbreviated):
 
 Start the visor:
 
-```
-$ skywire visor -c skywire-config.json
+```bash
+skywire visor -c skywire-config.json
 ```
 
-```
+```text
 $ go run github.com/skycoin/skywire@develop visor --help
 ┌─┐┬┌─┬ ┬┬ ┬┬┬─┐┌─┐   ┬  ┬┬┌─┐┌─┐┬─┐
 └─┐├┴┐└┬┘││││├┬┘├┤ ───└┐┌┘│└─┐│ │├┬┘
@@ -291,7 +312,7 @@ Flags:
 
 The `skywire svc se` command can generate configs for different deployment scenarios:
 
-```
+```text
 $ go run github.com/skycoin/skywire@develop svc se --help
 ┌─┐┬ ┬   ┌─┐┌┐┌┬  ┬
 └─┐│││───├┤ │││└┐┌┘
@@ -311,14 +332,14 @@ Flags:
 
 For a local test deployment:
 
-```
-$ skywire svc se --local visor -o visor-config.json
+```bash
+skywire svc se --local visor -o visor-config.json
 ```
 
 For Docker:
 
-```
-$ skywire svc se --docker visor -o visor-config.json
+```bash
+skywire svc se --docker visor -o visor-config.json
 ```
 
 ---
@@ -335,7 +356,7 @@ This is configured automatically with `skywire cli config gen -b` (best protocol
 
 For production deployments, put a reverse proxy in front of the services. Example Caddy configuration:
 
-```
+```text
 dmsgd.yourdomain.com {
     reverse_proxy http://127.0.0.1:9090
 }
@@ -359,12 +380,12 @@ sd.yourdomain.com {
 
 Check service health endpoints:
 
-```
-$ curl http://127.0.0.1:9090/health   # DMSG Discovery
-$ curl http://127.0.0.1:9091/health   # Transport Discovery
-$ curl http://127.0.0.1:9093/health   # Address Resolver
-$ curl http://127.0.0.1:9092/health   # Route Finder
-$ curl http://127.0.0.1:9098/health   # Service Discovery
+```bash
+curl http://127.0.0.1:9090/health   # DMSG Discovery
+curl http://127.0.0.1:9091/health   # Transport Discovery
+curl http://127.0.0.1:9093/health   # Address Resolver
+curl http://127.0.0.1:9092/health   # Route Finder
+curl http://127.0.0.1:9098/health   # Service Discovery
 ```
 
 Once two visors are connected with a transport, you can use all Skywire applications between them: [VPN](/posts/skywire-v1.3.3/), [SOCKS5 proxy](/posts/skywire-v1.3.3/), Skychat, [Skynet port forwarding](/posts/skynet-port-forwarding/), and [DmsgWeb](/posts/dmsgweb-anonymous-port-forwarding/).

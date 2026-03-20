@@ -10,11 +10,11 @@ image_position = "left bottom"
 
 The entire Skywire stack — visor, CLI, network services, DMSG utilities, native applications, bundled tools, and even the Skycoin blockchain — is compiled into a single binary. Install one program, get everything.
 
-```
+```bash
 go run github.com/skycoin/skywire@develop
 ```
 
-```
+```text
 ┌─┐┬┌─┬ ┬┬ ┬┬┬─┐┌─┐
 └─┐├┴┐└┬┘││││├┬┘├┤
 └─┘┴ ┴ ┴ └┴┘┴┴└─└─┘

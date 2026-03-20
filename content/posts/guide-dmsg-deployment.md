@@ -47,9 +47,11 @@ All traffic is encrypted using the **Noise protocol** with secp256k1 keys and Ch
 
 All DMSG tools are included in the [unified Skywire binary](/posts/skywire-unified-binary/):
 
+```bash
+go run github.com/skycoin/skywire@develop dmsg
 ```
-$ go run github.com/skycoin/skywire@develop dmsg
 
+```text
 Available Commands:
   server      DMSG Server
   disc        DMSG Discovery
@@ -70,9 +72,9 @@ DMSG Discovery is the registry. Clients and servers register here so they can fi
 
 **Requirements:** Redis
 
-```
-$ skywire cli config gen-keys > dmsgd-keys.json
-$ skywire dmsg disc \
+```bash
+skywire cli config gen-keys > dmsgd-keys.json
+skywire dmsg disc \
     --addr ":9090" \
     --redis "redis://localhost:6379" \
     --sk $(tail -n1 dmsgd-keys.json)
@@ -129,8 +131,8 @@ DMSG Servers relay streams between clients. You need at least one for a function
 
 #### Generate Config
 
-```
-$ skywire dmsg server config gen -o dmsg-server.json
+```bash
+skywire dmsg server config gen -o dmsg-server.json
 ```
 
 This produces:
@@ -156,8 +158,8 @@ This produces:
 
 #### Start Server
 
-```
-$ skywire dmsg server start dmsg-server.json
+```bash
+skywire dmsg server start dmsg-server.json
 ```
 
 The server will:
@@ -167,8 +169,8 @@ The server will:
 4. Update Discovery when session count changes
 5. Serve health checks on `health_endpoint_address`
 
-```
-$ curl http://127.0.0.1:8082/health
+```bash
+curl http://127.0.0.1:8082/health
 ```
 
 ```json
@@ -202,13 +204,15 @@ The handshake is embedded in the stream request/response. After handshake, each 
 
 Like `curl`, but addresses are DMSG public keys instead of hostnames:
 
-```
-$ skywire dmsg curl dmsg://<pk>:80/index.html
+```bash
+skywire dmsg curl dmsg://<pk>:80/index.html
 ```
 
+```bash
+go run github.com/skycoin/skywire@develop dmsg curl --help
 ```
-$ go run github.com/skycoin/skywire@develop dmsg curl --help
 
+```text
 Flags:
   -s, --sk cipher.SecKey   a]  Secret key
   -l, --loglvl string      Log level (debug|warn|error|fatal|panic|trace|info)
@@ -226,14 +230,16 @@ SSH-like access to remote machines, encrypted over DMSG:
 
 **Host** (the machine you want to access):
 
-```
-$ skywire dmsg pty host --dmsgdisc http://127.0.0.1:9090 --sk <secret_key>
+```bash
+skywire dmsg pty host \
+    --dmsgdisc http://127.0.0.1:9090 \
+    --sk <secret_key>
 ```
 
 **Client** (connect to the host):
 
-```
-$ skywire dmsg pty cli --addr <host_pk>:22
+```bash
+skywire dmsg pty cli --addr <host_pk>:22
 ```
 
 Host configuration:
@@ -253,8 +259,8 @@ The whitelist (`--wl`) restricts which public keys can open a shell. Without it,
 
 Host a web server accessible only via DMSG:
 
-```
-$ skywire dmsg http
+```bash
+skywire dmsg http
 ```
 
 Your site is reachable at `dmsg://<your_pk>:80/` — no IP address, no DNS, no port forwarding needed.
@@ -263,8 +269,8 @@ Your site is reachable at `dmsg://<your_pk>:80/` — no IP address, no DNS, no p
 
 [DmsgWeb](/posts/dmsgweb-anonymous-port-forwarding/) acts as a local proxy that resolves `.dmsg` domains to DMSG addresses:
 
-```
-$ skywire dmsg web -p 8080
+```bash
+skywire dmsg web -p 8080
 ```
 
 Then browse to `http://<pk>.dmsg:8080/` in your browser. DmsgWeb:
@@ -275,13 +281,15 @@ Then browse to `http://<pk>.dmsg:8080/` in your browser. DmsgWeb:
 
 **Direct resolve mode** — map a specific DMSG address to a local port:
 
-```
-$ skywire dmsg web -p 8080 -t dmsg://<pk>:80
+```bash
+skywire dmsg web -p 8080 -t dmsg://<pk>:80
 ```
 
+```bash
+go run github.com/skycoin/skywire@develop dmsg web --help
 ```
-$ go run github.com/skycoin/skywire@develop dmsg web --help
 
+```text
 Flags:
   -p, --port uints          Local HTTP port(s) (default [8080])
   -D, --dmsg-disc string    DMSG discovery URL
@@ -296,8 +304,8 @@ Flags:
 
 **DmsgWeb server mode** — expose a local app over DMSG:
 
-```
-$ skywire dmsg web srv -p 8086 -d 80
+```bash
+skywire dmsg web srv -p 8086 -d 80
 ```
 
 This makes your local port 8086 available at `dmsg://<your_pk>:80/`.
@@ -308,14 +316,20 @@ Run a SOCKS5 proxy that tunnels all traffic over DMSG:
 
 **Server:**
 
-```
-$ skywire dmsg socks server -D http://127.0.0.1:9090 -q 1080
+```bash
+skywire dmsg socks server \
+    -D http://127.0.0.1:9090 \
+    -q 1080
 ```
 
 **Client:**
 
-```
-$ skywire dmsg socks client -D http://127.0.0.1:9090 -k <server_pk> -q 1080 -p 1081
+```bash
+skywire dmsg socks client \
+    -D http://127.0.0.1:9090 \
+    -k <server_pk> \
+    -q 1080 \
+    -p 1081
 ```
 
 Point your browser's SOCKS5 settings to `localhost:1081` and all traffic routes through the DMSG server.
@@ -349,9 +363,9 @@ This allows visors to connect to the entire Skywire infrastructure over the DMSG
 
 Configure a visor to prefer DMSG:
 
-```
-$ skywire cli config gen -d    # DMSG-first for all services
-$ skywire cli config gen -a    # Best protocol based on location
+```bash
+skywire cli config gen -d    # DMSG-first for all services
+skywire cli config gen -a    # Best protocol based on location
 ```
 
 ---
@@ -362,35 +376,38 @@ For a private DMSG deployment (or to understand the production network):
 
 #### 1. Start Redis
 
-```
-$ redis-server
+```bash
+redis-server
 ```
 
 #### 2. Start DMSG Discovery
 
-```
-$ skywire cli config gen-keys > dmsgd-keys.json
-$ skywire dmsg disc --addr ":9090" --redis "redis://localhost:6379" --sk $(tail -n1 dmsgd-keys.json)
+```bash
+skywire cli config gen-keys > dmsgd-keys.json
+skywire dmsg disc \
+    --addr ":9090" \
+    --redis "redis://localhost:6379" \
+    --sk $(tail -n1 dmsgd-keys.json)
 ```
 
 #### 3. Generate and Start DMSG Server
 
-```
-$ skywire dmsg server config gen -o dmsg-server.json
+```bash
+skywire dmsg server config gen -o dmsg-server.json
 ```
 
 Edit `dmsg-server.json`:
 - Set `discovery` to `http://127.0.0.1:9090`
 - Set `public_address` to your server's public IP and port
 
-```
-$ skywire dmsg server start dmsg-server.json
+```bash
+skywire dmsg server start dmsg-server.json
 ```
 
 #### 4. Verify
 
-```
-$ curl http://127.0.0.1:9090/dmsg-discovery/available_servers
+```bash
+curl http://127.0.0.1:9090/dmsg-discovery/available_servers
 ```
 
 Should return your server's entry.
@@ -399,10 +416,10 @@ Should return your server's entry.
 
 Any DMSG utility can now connect using your discovery:
 
-```
-$ skywire dmsg pty host --dmsgdisc http://127.0.0.1:9090
-$ skywire dmsg curl -D http://127.0.0.1:9090 dmsg://<pk>:80/
-$ skywire dmsg web -D http://127.0.0.1:9090
+```bash
+skywire dmsg pty host --dmsgdisc http://127.0.0.1:9090
+skywire dmsg curl -D http://127.0.0.1:9090 dmsg://<pk>:80/
+skywire dmsg web -D http://127.0.0.1:9090
 ```
 
 For a full Skywire deployment on top of DMSG, see the [Skywire deployment guide](/posts/guide-deploying-skywire-network/).
@@ -417,7 +434,7 @@ For a production DMSG network:
 
 **Reverse proxy** (Caddy):
 
-```
+```text
 dmsgd.yourdomain.com {
     reverse_proxy http://127.0.0.1:9090
 }
@@ -427,10 +444,10 @@ The DMSG server port (default 8081) must be directly accessible — it uses raw 
 
 **Monitoring:**
 
-```
-$ curl http://127.0.0.1:9090/health              # Discovery health
-$ curl http://127.0.0.1:8082/health              # Server health
-$ curl http://127.0.0.1:9090/dmsg-discovery/all_servers  # All registered servers
+```bash
+curl http://127.0.0.1:9090/health              # Discovery health
+curl http://127.0.0.1:8082/health              # Server health
+curl http://127.0.0.1:9090/dmsg-discovery/all_servers  # All registered servers
 ```
 
 ---

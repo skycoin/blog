@@ -18,12 +18,12 @@ The Skywallet hardware wallet utilities have been fully integrated into the Skyc
 ### Usage
 
 Run the hardware wallet daemon:
-```
+```bash
 skyhw daemon
 ```
 
 Use the CLI to interact with a connected Skywallet device:
-```
+```bash
 skyhw cli generateAddresses -n 5
 skyhw cli transactionSign --inputHash <hash>
 skyhw cli ping

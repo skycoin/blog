@@ -24,7 +24,7 @@ All Skycoin tools are now compiled into a single binary. What used to be a colle
 
 The same binary runs any Fibercoin blockchain. Set the `FIBER_TOML` environment variable to a custom configuration file and the daemon, CLI, and web wallet all adapt automatically — including help menus, default directories, and network parameters.
 
-```
+```bash
 FIBER_TOML=mycoin.toml skycoin daemon
 ```
 

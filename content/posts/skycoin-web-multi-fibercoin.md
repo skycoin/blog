@@ -19,7 +19,7 @@ The `skycoin web` command now accepts multiple `--node-url` and `--wallet-dir` f
 ### Usage
 
 Connect to a Skycoin node and a Fibercoin node simultaneously:
-```
+```bash
 skycoin web \
   --node-url http://localhost:6420 --wallet-dir ~/.skycoin/wallets \
   --node-url http://localhost:7420 --wallet-dir ~/.mycoin/wallets

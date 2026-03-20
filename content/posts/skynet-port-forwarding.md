@@ -13,13 +13,16 @@ Skywire now includes **Skynet**, a TCP port forwarding utility that lets any vis
 ### How It Works
 
 **Server side** — expose local ports to the Skywire network:
-```
+```bash
 skywire cli skynet srv start --ports 8080,3000
 ```
 
 **Client side** — connect to a remote visor's exposed port and map it locally:
-```
-skywire cli skynet start --pk <remote-pubkey> --remote 8080 --local 9000
+```bash
+skywire cli skynet start \
+  --pk <remote-pubkey> \
+  --remote 8080 \
+  --local 9000
 ```
 
 After connecting, `localhost:9000` reaches the remote visor's port 8080 through an encrypted Skywire route.

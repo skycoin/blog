@@ -35,14 +35,17 @@ If your visor can't receive an external STCPR connection within the registration
 
 ### Step 1: Generate Config
 
-```
-$ skywire cli config gen -o skywire-config.json --all
+```bash
+skywire cli config gen -o skywire-config.json --all
 ```
 
 The `--all` flag shows all available configuration flags:
 
+```bash
+go run github.com/skycoin/skywire@develop cli config gen --help
 ```
-$ go run github.com/skycoin/skywire@develop cli config gen --help
+
+```text
 ┌─┐┌─┐┌┐┌┌─┐┬┌─┐   ┌─┐┌─┐┌┐┌
 │  │ ││││├┤ ││ ┬───│ ┬├┤ │││
 └─┘└─┘┘└┘└  ┴└─┘   └─┘└─┘┘└┘
@@ -98,8 +101,10 @@ Edit `skywire-config.json` and set:
 
 Or generate the config with the `--public` flag directly:
 
-```
-$ skywire cli config gen -o skywire-config.json --public --stcpr 7177
+```bash
+skywire cli config gen \
+  -o skywire-config.json \
+  --public --stcpr 7177
 ```
 
 **Configuration fields:**
@@ -126,8 +131,8 @@ For maximum connectivity, ensure at least your STCPR port is accessible. The def
 
 ### Step 4: Start the Visor
 
-```
-$ skywire visor -c skywire-config.json
+```bash
+skywire visor -c skywire-config.json
 ```
 
 On startup, the visor will:
@@ -137,7 +142,7 @@ On startup, the visor will:
 4. Begin accepting transports from other visors
 
 You can verify registration by checking the logs for:
-```
+```text
 Public visor registered on service discovery
 ```
 
@@ -151,8 +156,10 @@ A public visor can also run services that other users connect to. These register
 
 Enable in config or generate with `--servevpn`:
 
-```
-$ skywire cli config gen -o skywire-config.json --public --servevpn
+```bash
+skywire cli config gen \
+  -o skywire-config.json \
+  --public --servevpn
 ```
 
 Or edit the launcher apps section in `skywire-config.json` and set `auto_start: true` for `vpn-server`:
@@ -203,18 +210,23 @@ The hypervisor UI lets you manage your visor through a web interface — locally
 
 Enable the hypervisor UI:
 
-```
-$ skywire cli config gen -o skywire-config.json --public -i
+```bash
+skywire cli config gen \
+  -o skywire-config.json \
+  --public -i
 ```
 
 Or start the visor with the flag:
 
-```
-$ skywire visor -c skywire-config.json -i
+```bash
+skywire visor -c skywire-config.json -i
 ```
 
+```bash
+go run github.com/skycoin/skywire@develop visor --help
 ```
-$ go run github.com/skycoin/skywire@develop visor --help
+
+```text
 ┌─┐┬┌─┬ ┬┬ ┬┬┬─┐┌─┐   ┬  ┬┬┌─┐┌─┐┬─┐
 └─┐├┴┐└┬┘││││├┬┘├┤ ───└┐┌┘│└─┐│ │├┬┘
 └─┘┴ ┴ ┴ └┴┘┴┴└─└─┘    └┘ ┴└─┘└─┘┴└─
@@ -233,8 +245,10 @@ The hypervisor serves a web UI on the configured HTTP address and is also access
 
 To manage your public visor from another visor, add its public key as a remote hypervisor:
 
-```
-$ skywire cli config gen -o skywire-config.json -j <public-visor-pk>
+```bash
+skywire cli config gen \
+  -o skywire-config.json \
+  -j <public-visor-pk>
 ```
 
 ---
@@ -245,13 +259,15 @@ $ skywire cli config gen -o skywire-config.json -j <public-visor-pk>
 
 List all public visors and filter for yours:
 
-```
-$ skywire cli pv
+```bash
+skywire cli pv
 ```
 
+```bash
+go run github.com/skycoin/skywire@develop cli pv --help
 ```
-$ go run github.com/skycoin/skywire@develop cli pv --help
 
+```text
 Usage:
   skywire cli pv [flags]
 
@@ -272,8 +288,8 @@ Flags:
 
 The `sd` command shows a combined view of all services, transports, and uptime status:
 
-```
-$ skywire cli sd
+```bash
+skywire cli sd
 ```
 
 This displays a table with:
@@ -288,8 +304,8 @@ This displays a table with:
 
 Other visors (or you manually) can add transports to public visors:
 
-```
-$ skywire cli tp pv -n 5
+```bash
+skywire cli tp pv -n 5
 ```
 
 This connects to up to 5 public visors, trying STCPR first, then SUDPH, then DMSG.

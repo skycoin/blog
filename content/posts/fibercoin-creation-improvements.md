@@ -12,7 +12,7 @@ Creating and launching a new Fibercoin blockchain has been dramatically simplifi
 
 Previously, launching a Fibercoin node required either recompiling the binary with a custom config baked in, or passing multiple CLI flags. Now, the daemon reads a `FIBER_TOML` environment variable at startup:
 
-```
+```bash
 FIBER_TOML=/path/to/mycoin.toml skycoin daemon
 ```
 
