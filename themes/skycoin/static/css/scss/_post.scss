@@ -93,10 +93,6 @@ figcaption {
     width: 100%;
     padding: 0 2rem;
 
-    @include desktop {
-      width: 66.6666666%;
-    }
-
     .inline-images {
       display: flex;
       width: 100%;
