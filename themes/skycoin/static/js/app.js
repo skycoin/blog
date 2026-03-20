@@ -10,7 +10,9 @@ function colorizeHelpBlock(codeEl) {
   if (clSpans.length > 0) {
     lines = [];
     for (var s = 0; s < clSpans.length; s++) {
-      lines.push({ el: clSpans[s], text: clSpans[s].textContent });
+      // Chroma adds trailing newline to each .cl span — strip it for matching
+      var t = clSpans[s].textContent.replace(/\n$/, '');
+      lines.push({ el: clSpans[s], text: t });
     }
   } else {
     // Plain code block, split by newlines
@@ -36,11 +38,14 @@ function colorizeHelpBlock(codeEl) {
     var el = lines[i].el;
     var trimmed = line.trim();
 
+    // Chroma .cl spans have trailing \n; we match on stripped text but preserve \n in output
+    var nl = clSpans.length > 0 ? '\n' : '';
+
     if (trimmed === '') {
       continue; // empty line, no coloring
     } else if (headingRe.test(trimmed)) {
       // Section heading — bold bright blue
-      el.innerHTML = span('hb', line);
+      el.innerHTML = span('hb', line) + nl;
     } else if (/^\s+-\w|^\s+--\w/.test(line)) {
       // Flag line: "  -c, --coin string    Description text"
       var flagMatch = line.match(/^(\s+)(-\S+(?:,\s+--\S+)?)(\s+\S+)?\s{2,}(.+)$/);
@@ -51,15 +56,15 @@ function colorizeHelpBlock(codeEl) {
         var beforeDesc = flagMatch[1] + flagMatch[2] + (flagMatch[3] || '');
         var descStart = line.indexOf(flagMatch[4], beforeDesc.length);
         var gap = esc(line.substring(beforeDesc.length, descStart));
-        el.innerHTML = indent + flags + typeKw + gap + span('hd', flagMatch[4]);
+        el.innerHTML = indent + flags + typeKw + gap + span('hd', flagMatch[4]) + nl;
       } else {
-        el.innerHTML = span('hb', line);
+        el.innerHTML = span('hb', line) + nl;
       }
     } else if (/^\s{2,}\S/.test(line) && /\S\s{2,}\S/.test(line)) {
       // Command listing: "  name    description"
       var cmdMatch = line.match(/^(\s+)(\S+)(\s{2,})(.+)$/);
       if (cmdMatch) {
-        el.innerHTML = esc(cmdMatch[1]) + span('hb', cmdMatch[2]) + esc(cmdMatch[3]) + span('hd', cmdMatch[4]);
+        el.innerHTML = esc(cmdMatch[1]) + span('hb', cmdMatch[2]) + esc(cmdMatch[3]) + span('hd', cmdMatch[4]) + nl;
       }
     } else if (/^\s{2,}\S/.test(line)) {
       var prev = findPrevNonEmpty(allTexts, i);
@@ -67,7 +72,7 @@ function colorizeHelpBlock(codeEl) {
         // Usage line right after "Usage:" — bold blue the first word (command), rest plain
         var usageMatch = line.match(/^(\s+)(\S+)(.*)$/);
         if (usageMatch) {
-          el.innerHTML = esc(usageMatch[1]) + span('hb', usageMatch[2]) + esc(usageMatch[3]);
+          el.innerHTML = esc(usageMatch[1]) + span('hb', usageMatch[2]) + esc(usageMatch[3]) + nl;
         }
       }
       // else: plain indented text, no coloring
