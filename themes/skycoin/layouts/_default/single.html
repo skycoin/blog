@@ -6,9 +6,8 @@
   </a>
   <div class="post__container">
     <section class="post__content">
-      {{if .Params.image }}
-        <img  src="{{ .Params.image | relURL }}">
-      {{ end }}
+      {{ $img := .Params.image | default "img/skycoin-banner.png" }}
+      <img src="{{ $img | relURL }}">
       <div class="meta">
         {{ if .Params.date }}
           <span class="meta__date">{{ .Date.Format "Jan 2 2006" }}</span>
