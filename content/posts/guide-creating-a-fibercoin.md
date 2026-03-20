@@ -15,20 +15,25 @@ Everything you need is included in the Skywire binary, the standalone Skycoin re
 All commands in this guide use `skycoin` as the command. Choose how you're running it and the guide will update automatically:
 
 <div class="cmd-tabs" id="cmd-tabs">
-  <button class="cmd-tab active" data-cmd="skycoin">Release binary</button>
-  <button class="cmd-tab" data-cmd="skywire skycoin">Skywire binary</button>
-  <button class="cmd-tab" data-cmd="go run .">From source</button>
+  <button class="cmd-tab active" data-cmd="skycoin">skycoin</button>
+  <button class="cmd-tab" data-cmd="skywire skycoin">skywire skycoin</button>
+  <button class="cmd-tab" data-cmd="go run .">go run .</button>
+  <button class="cmd-tab" data-cmd="go run github.com/skycoin/skycoin@develop">go run ...skycoin@develop</button>
+  <button class="cmd-tab" data-cmd="go run github.com/skycoin/skywire@develop skycoin">go run ...skywire@develop skycoin</button>
 </div>
 
-<p class="cmd-tab-note" id="cmd-tab-note-source" style="display:none;"><strong>Note:</strong> <code>go run .</code> must be run from a cloned <code>skycoin</code> source directory. Alternatively, use <code>go run github.com/skycoin/skycoin@develop</code> from anywhere without cloning. Requires Go 1.23+.</p>
+<p class="cmd-tab-note" id="cmd-tab-note-source" style="display:none;"><strong>Note:</strong> <code>go run .</code> must be run from within a cloned <code>skycoin</code> source directory. Requires Git and Go 1.23+.</p>
+<p class="cmd-tab-note" id="cmd-tab-note-gorun" style="display:none;"><strong>Note:</strong> Requires Go 1.23+. No need to clone the repository.</p>
 
 ### Prerequisites
 
 | Method | Requires |
 |--------|----------|
-| Release binary | Nothing (pre-compiled) |
-| Skywire binary | Nothing (pre-compiled) |
-| From source (`go run .`) | Git and Go 1.23+ |
+| `skycoin` (release binary) | Nothing (pre-compiled) |
+| `skywire skycoin` (Skywire binary) | Nothing (pre-compiled) |
+| `go run .` (from source) | Git and Go 1.23+ |
+| `go run github.com/skycoin/skycoin@develop` | Go 1.23+ |
+| `go run github.com/skycoin/skywire@develop skycoin` | Go 1.23+ |
 
 ---
 

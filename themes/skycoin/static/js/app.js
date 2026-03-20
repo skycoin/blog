@@ -46,6 +46,7 @@
   // Command tab switching
   var tabs = document.querySelectorAll('.cmd-tab');
   var sourceNote = document.getElementById('cmd-tab-note-source');
+  var gorunNote = document.getElementById('cmd-tab-note-gorun');
 
   if (tabs.length > 0) {
     // Regex: match "skycoin" used as a command (followed by subcommand),
@@ -63,10 +64,11 @@
           }
           clickedTab.classList.add('active');
 
-          // Show/hide source note
-          if (sourceNote) {
-            sourceNote.style.display = (cmd === 'go run .') ? '' : 'none';
-          }
+          // Show/hide context notes
+          var isGoRunSource = (cmd === 'go run .');
+          var isGoRunRemote = (cmd.indexOf('github.com/') !== -1);
+          if (sourceNote) sourceNote.style.display = isGoRunSource ? '' : 'none';
+          if (gorunNote) gorunNote.style.display = isGoRunRemote ? '' : 'none';
 
           // Replace commands in all bash blocks
           for (var k = 0; k < bashBlocks.length; k++) {
