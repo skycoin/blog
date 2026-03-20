@@ -324,24 +324,33 @@ Flags:
 
 ---
 
-## Traditional Workflow — Standalone Binary
+## Dedicated Binary with Hardcoded Defaults
 
-For a standalone binary with compiled-in defaults, follow steps 1-3 from the Quick Start, then generate source code:
+The Quick Start workflow above is the recommended approach — you run any fibercoin directly from the existing `skycoin` or `skywire` binary with a `fiber.toml` config file. No compilation required.
+
+However, if you want to compile a **standalone binary for your fibercoin** with all chain parameters, genesis credentials, peer lists, and network defaults hardcoded into the binary itself, you can generate source code and compile it. The main reason to do this is for simpler deployment — you distribute a single binary with no config file dependency.
+
+This requires the cloned skycoin source (it uses template files from `./templates/`):
+
+```bash
+cd $GOPATH/src/github.com/skycoin/skycoin
+```
+
+Follow steps 1-3 from the Quick Start to create `genesis.json`, `mycoin.toml`, and distribution addresses, then generate source code:
 
 ```bash
 skycoin newcoin createcoin --coin mycoin --config-file mycoin.toml
 ```
 
-This creates `cmd/mycoin/` with a standalone executable. Distribution address changes require re-running `createcoin`.
+This creates `cmd/mycoin/` with Go source that can be compiled into a standalone `mycoin` binary. All configuration from `mycoin.toml` is baked into the generated code. Distribution address changes require re-running `createcoin` and recompiling.
 
-
-
-| Feature | Quick Start | Traditional |
+| Feature | Runtime Config (recommended) | Dedicated Binary |
 |---------|-------------|-------------|
-| Distribution addresses | Loaded at runtime from fiber.toml | Compiled into binary |
-| Changes | Edit fiber.toml (no recompile) | Requires recompilation |
+| Distribution addresses | Loaded at runtime from `fiber.toml` | Compiled into binary |
+| Changes | Edit `fiber.toml`, restart | Re-run `createcoin`, recompile |
 | Multiple coins | One binary with different configs | Separate binary per coin |
-| Deployment | Requires fiber.toml | Binary only |
+| Deployment | Binary + `fiber.toml` | Binary only |
+| Requires source | No | Yes (cloned skycoin repo) |
 
 ---
 
