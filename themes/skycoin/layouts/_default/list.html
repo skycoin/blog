@@ -28,8 +28,13 @@
                   	     Forestry uses a leading slash in the front matter image parameter,
                   	     so strip it if present before passing it to absURL */}}
                     {{ with strings.TrimLeft "/" .Params.image }}
+                    {{ $cardImage := replace . ".png" "-card.png" }}
+                    {{ $img := $cardImage }}
+                    {{ if not (fileExists (printf "content/%s" $cardImage)) }}
+                      {{ $img = . }}
+                    {{ end }}
                     <div class="list__item-image">
-                        <div style="background-image: url({{ . | absURL }})" class="list__image"></div>
+                        <div style="background-image: url({{ $img | absURL }})" class="list__image"></div>
                     </div>
                     {{ end }}
                   {{ else }}
