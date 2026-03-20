@@ -1,12 +1,17 @@
-// Add copy buttons to code blocks
+// Add copy buttons to code blocks (skip output-only blocks marked as language-text)
 (function() {
   var pres = document.querySelectorAll('pre');
   for (var i = 0; i < pres.length; i++) {
     var pre = pres[i];
+    var code = pre.querySelector('code');
+    var isOutput = code && code.classList.contains('language-text');
+
     var wrapper = document.createElement('div');
     wrapper.className = 'code-block';
     pre.parentNode.insertBefore(wrapper, pre);
     wrapper.appendChild(pre);
+
+    if (isOutput) continue;
 
     var btn = document.createElement('button');
     btn.className = 'copy-btn';
@@ -16,8 +21,8 @@
 
     btn.addEventListener('click', (function(targetPre, targetBtn) {
       return function() {
-        var code = targetPre.querySelector('code');
-        var text = (code || targetPre).textContent;
+        var c = targetPre.querySelector('code');
+        var text = (c || targetPre).textContent;
         navigator.clipboard.writeText(text).then(function() {
           targetBtn.textContent = 'Copied';
           targetBtn.classList.add('copied');

@@ -14,20 +14,28 @@ Everything you need is included in the Skywire binary, the standalone Skycoin re
 
 Throughout this guide, `skycoin` refers to any of these interchangeable methods:
 
+From within cloned source directory:
 ```bash
-# From within cloned source directory
 go run .
+```
 
-# From outside source
+From outside source:
+```bash
 go run github.com/skycoin/skycoin@develop
+```
 
-# With release binary
+With release binary:
+```bash
 skycoin
+```
 
-# From skywire release binary
+From skywire release binary:
+```bash
 skywire skycoin
+```
 
-# Using skywire from outside source
+Using skywire from outside source:
+```bash
 go run github.com/skycoin/skywire@develop skycoin
 ```
 
