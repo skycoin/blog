@@ -14,26 +14,26 @@ Everything you need is included in the Skywire binary, the standalone Skycoin re
 
 Throughout this guide, `skycoin` refers to any of these interchangeable methods:
 
-```
+```bash
 # From within cloned source directory
-$ go run .
+go run .
 
 # From outside source
-$ go run github.com/skycoin/skycoin@develop
+go run github.com/skycoin/skycoin@develop
 
 # With release binary
-$ skycoin
+skycoin
 
 # From skywire release binary
-$ skywire skycoin
+skywire skycoin
 
 # Using skywire from outside source
-$ go run github.com/skycoin/skywire@develop skycoin
+go run github.com/skycoin/skywire@develop skycoin
 ```
 
 All methods produce the same result:
 
-```
+```text
 $ skycoin
 
     ┌─┐┬┌─┬ ┬┌─┐┌─┐┬┌┐┌
@@ -62,13 +62,13 @@ $ skycoin
 
 ### Step 1: Generate Genesis Wallet
 
-```
-$ skycoin cli addressGen > genesis.json
+```bash
+skycoin cli addressGen > genesis.json
 ```
 
 This creates a deterministic wallet with the genesis address, blockchain public key, and secret key.
 
-```
+```text
 $ skycoin cli addressGen --help
 Usage:
   skywire skycoin cli addressGen [flags]
@@ -88,16 +88,16 @@ Flags:
 
 First, print the embedded default config to see what you're working with:
 
-```
-$ skycoin newcoin config
+```bash
+skycoin newcoin config
 ```
 
 This prints the full default `fiber.toml` — which contains **Skycoin mainnet values** (Skycoin's genesis address, Skycoin's peers, Skycoin's blockchain public key, etc.). You need to override all of these for your own coin.
 
 Redirect it to a file and edit it:
 
-```
-$ skycoin newcoin config > mycoin.toml
+```bash
+skycoin newcoin config > mycoin.toml
 ```
 
 **Important:** Every field you don't explicitly change keeps Skycoin's default value. Commenting a line out does **not** blank it — it falls through to the hardcoded Skycoin default. You must set fields to empty values to clear them.
@@ -143,7 +143,7 @@ version_url = ""
 distribution_addresses = []
 ```
 
-For initial chain creation and localhost testing, the daemon flags `--download-peerlist=false --disable-default-peers` handle the fact that there are no peers yet. Once you have other machines running your coin, come back and update:
+For initial chain creation and localhost testing, the daemon flags `--download-peerlist=false` and `--disable-default-peers` handle the fact that there are no peers yet. Once you have other machines running your coin, come back and update `mycoin.toml`:
 
 ```toml
 # Update these after deploying to other machines:
@@ -153,7 +153,7 @@ explorer_url = "https://explorer.mycoin.com"
 version_url = "https://version.mycoin.com/mycoin/version.txt"
 ```
 
-```
+```text
 $ skycoin newcoin --help
 ┌┐┌┌─┐┬ ┬┌─┐┌─┐┬┌┐┌
 │││├┤ ││││  │ │││││
@@ -170,13 +170,13 @@ Available Commands:
 
 ### Step 3: Generate Distribution Addresses
 
-```
-$ FIBER_TOML=mycoin.toml skycoin cli fiberAddressGen -n 10
+```bash
+FIBER_TOML=mycoin.toml skycoin cli fiberAddressGen -n 10
 ```
 
-This generates 10 distribution addresses and **automatically updates mycoin.toml** with them. It also creates `addresses.txt` and `seeds.csv` — keep `seeds.csv` secure, it contains the wallet seeds for accessing distributed coins.
+This generates 10 distribution addresses and **automatically updates `mycoin.toml`** with them. It also creates `addresses.txt` and `seeds.csv` — keep `seeds.csv` secure, it contains the wallet seeds for accessing distributed coins.
 
-```
+```text
 $ skycoin cli fiberAddressGen --help
 Addresses are written in a format that can be copied into fiber.toml
     for configuring distribution addresses.
@@ -194,17 +194,20 @@ Flags:
 
 ### Step 4: Initialize Blockchain
 
-```
-$ GENESIS=genesis.json FIBER_TOML=mycoin.toml skycoin daemon --block-publisher --download-peerlist=false --disable-default-peers
+```bash
+GENESIS=genesis.json FIBER_TOML=mycoin.toml skycoin daemon \
+  --block-publisher \
+  --download-peerlist=false \
+  --disable-default-peers
 ```
 
 This automatically:
 - Loads credentials from `genesis.json`
 - Loads configuration from `mycoin.toml`
 - Creates the genesis block and signature
-- **Writes the genesis credentials back to mycoin.toml**
+- **Writes the genesis credentials back to `mycoin.toml`**
 
-```
+```text
 $ skycoin daemon --help
 ┌─┐┬┌─┬ ┬┌─┐┌─┐┬┌┐┌
 └─┐├┴┐└┬┘│  │ │││││
@@ -226,13 +229,15 @@ Usage:
 
 In a separate terminal, while the daemon is running:
 
-```
-$ RPC_ADDR="http://127.0.0.1:7420" COIN="mycoin" skycoin cli distributeGenesis $(jq -r '.entries[0].secret_key' genesis.json)
+```bash
+RPC_ADDR="http://127.0.0.1:7420" COIN="mycoin" \
+  skycoin cli distributeGenesis \
+  $(jq -r '.entries[0].secret_key' genesis.json)
 ```
 
 This creates block #1, distributing coins equally to all distribution addresses configured in your `mycoin.toml`.
 
-```
+```text
 $ skycoin cli distributeGenesis --help
 Distributes the genesis block coins into the configured distribution addresses.
 
@@ -256,30 +261,37 @@ Flags:
 
 After the first run, `mycoin.toml` is fully populated with genesis credentials. You no longer need the `GENESIS` environment variable:
 
-```
-$ FIBER_TOML=mycoin.toml skycoin daemon --block-publisher --blockchain-secret-key=$(jq -r '.entries[0].secret_key' genesis.json)
+```bash
+FIBER_TOML=mycoin.toml skycoin daemon \
+  --block-publisher \
+  --blockchain-secret-key=$(jq -r '.entries[0].secret_key' genesis.json)
 ```
 
 Run a peer node on a different port:
 
-```
-$ FIBER_TOML=mycoin.toml skycoin daemon --port=7998 --data-dir=$HOME/.mycoin-peer --web-interface-port=7418
+```bash
+FIBER_TOML=mycoin.toml skycoin daemon \
+  --port=7998 \
+  --data-dir=$HOME/.mycoin-peer \
+  --web-interface-port=7418
 ```
 
 Import distribution wallets using seeds from `seeds.csv`:
 
-```
-$ skycoin cli walletCreate -s "seed phrase from seeds.csv" -l "Distribution 1"
+```bash
+skycoin cli walletCreate -s "seed phrase from seeds.csv" -l "Distribution 1"
 ```
 
 ---
 
 ## Configuration Precedence
 
-1. **CLI flags** (highest priority)
-2. **`GENESIS` environment variable**
-3. **`FIBER_TOML` environment variable**
-4. **Hardcoded defaults** (lowest priority)
+| Priority | Source |
+|----------|--------|
+| 1 (highest) | CLI flags |
+| 2 | `GENESIS` environment variable |
+| 3 | `FIBER_TOML` environment variable |
+| 4 (lowest) | Hardcoded defaults |
 
 ---
 
@@ -287,11 +299,13 @@ $ skycoin cli walletCreate -s "seed phrase from seeds.csv" -l "Distribution 1"
 
 Run the [web wallet](/posts/skycoin-web-wallet-dir/) pointed at your Fibercoin node:
 
-```
-$ FIBER_TOML=mycoin.toml skycoin web --node-url http://localhost:7420 --wallet-dir ~/.mycoin/wallets
+```bash
+FIBER_TOML=mycoin.toml skycoin web \
+  --node-url http://localhost:7420 \
+  --wallet-dir ~/.mycoin/wallets
 ```
 
-```
+```text
 $ skycoin web --help
 ┌─┐┬┌─┬ ┬┌─┐┌─┐┬┌┐┌   ┬ ┬┌─┐┌┐
 └─┐├┴┐└┬┘│  │ │││││───│││├┤ ├┴┐
@@ -312,11 +326,11 @@ The web wallet auto-discovers your coin's name, ticker, and coin hours from the 
 
 Run the [blockchain explorer](/posts/skycoin-explorer-integration/):
 
-```
-$ skycoin explorer --node-addr http://localhost:7420
+```bash
+skycoin explorer --node-addr http://localhost:7420
 ```
 
-```
+```text
 $ skycoin explorer --help
 ┌─┐─┐ ┬┌─┐┬  ┌─┐┬─┐┌─┐┬─┐
 ├┤ ┌┴┬┘├─┘│  │ │├┬┘├┤ ├┬┘
@@ -335,11 +349,13 @@ Flags:
 
 For a standalone binary with compiled-in defaults, follow steps 1-3 from the Quick Start, then generate source code:
 
-```
-$ skycoin newcoin createcoin --coin mycoin --config-file mycoin.toml
+```bash
+skycoin newcoin createcoin --coin mycoin --config-file mycoin.toml
 ```
 
 This creates `cmd/mycoin/` with a standalone executable. Distribution address changes require re-running `createcoin`.
+
+
 
 | Feature | Quick Start | Traditional |
 |---------|-------------|-------------|
@@ -352,9 +368,10 @@ This creates `cmd/mycoin/` with a standalone executable. Distribution address ch
 
 ## Security
 
-**Public** (safe to share): `mycoin.toml` (after genesis credentials populated), compiled binary, `peers.txt`, `addresses.txt`
-
-**Private** (keep secure): `genesis.json` (blockchain secret key), `seeds.csv` (wallet seeds), publisher node private keys
+| Classification | Files |
+|----------------|-------|
+| **Public** (safe to share) | `mycoin.toml` (after genesis credentials populated), compiled binary, `peers.txt`, `addresses.txt` |
+| **Private** (keep secure) | `genesis.json` (blockchain secret key), `seeds.csv` (wallet seeds), publisher node private keys |
 
 The genesis secret key is never written to `mycoin.toml` — it only exists in `genesis.json` and must be provided separately for block publishing.
 
@@ -363,8 +380,9 @@ The genesis secret key is never written to `mycoin.toml` — it only exists in `
 ## Production Deployment
 
 **Public API node** (for mobile wallets):
-```
-$ FIBER_TOML=mycoin.toml skycoin daemon \
+
+```bash
+FIBER_TOML=mycoin.toml skycoin daemon \
   --enable-all-api-sets=true \
   --disable-csrf \
   --host-whitelist node.mycoin.com \
@@ -373,8 +391,9 @@ $ FIBER_TOML=mycoin.toml skycoin daemon \
 ```
 
 **Block publisher** (internal):
-```
-$ FIBER_TOML=mycoin.toml skycoin daemon \
+
+```bash
+FIBER_TOML=mycoin.toml skycoin daemon \
   --block-publisher=true \
   --blockchain-secret-key=$(cat /secure/publisher-key.txt) \
   --port=6001 \
@@ -383,7 +402,8 @@ $ FIBER_TOML=mycoin.toml skycoin daemon \
 ```
 
 **Reverse proxy** (Caddy):
-```
+
+```text
 node.mycoin.com {
     reverse_proxy 127.0.0.1:6419
 }
@@ -394,28 +414,32 @@ explorer.mycoin.com {
 ```
 
 Typical infrastructure:
-- `node.mycoin.com` — public API for wallets
-- `explorer.mycoin.com` — blockchain explorer
-- `downloads.mycoin.com/blockchain/peers.txt` — peer list
-- `version.mycoin.com/mycoin/version.txt` — version check
+
+| Hostname | Purpose |
+|----------|---------|
+| `node.mycoin.com` | Public API for wallets |
+| `explorer.mycoin.com` | Blockchain explorer |
+| `downloads.mycoin.com/blockchain/peers.txt` | Peer list |
+| `version.mycoin.com/mycoin/version.txt` | Version check |
 
 ---
 
 ## Troubleshooting
 
 **Reset blockchain:**
-```
-$ pkill -f "mycoin\|skycoin daemon"
-$ rm -rf ~/.mycoin/data.db ~/.mycoin/history.db ~/.mycoin/*.log
-$ sed -i 's/^genesis_address_str.*/genesis_address_str = ""/' mycoin.toml
-$ sed -i 's/^blockchain_pubkey_str.*/blockchain_pubkey_str = ""/' mycoin.toml
-$ sed -i 's/^genesis_signature_str.*/genesis_signature_str = ""/' mycoin.toml
-$ GENESIS=genesis.json FIBER_TOML=mycoin.toml skycoin daemon --block-publisher
+
+```bash
+pkill -f "mycoin\|skycoin daemon"
+rm -rf ~/.mycoin/data.db ~/.mycoin/history.db ~/.mycoin/*.log
+sed -i 's/^genesis_address_str.*/genesis_address_str = ""/' mycoin.toml
+sed -i 's/^blockchain_pubkey_str.*/blockchain_pubkey_str = ""/' mycoin.toml
+sed -i 's/^genesis_signature_str.*/genesis_signature_str = ""/' mycoin.toml
+GENESIS=genesis.json FIBER_TOML=mycoin.toml skycoin daemon --block-publisher
 ```
 
 **"Could not connect to any trusted peer"** — normal for new coins with no network. Set up peers using `default_connections` in `mycoin.toml`.
 
-**Genesis signature not in fiber.toml after first run** — check logs for "Updated fiber.toml with genesis credentials", verify `mycoin.toml` is writable, and ensure `FIBER_TOML` env is set.
+**Genesis signature not in `fiber.toml` after first run** — check logs for `Updated fiber.toml with genesis credentials`, verify `mycoin.toml` is writable, and ensure `FIBER_TOML` env var is set.
 
 ---
 
