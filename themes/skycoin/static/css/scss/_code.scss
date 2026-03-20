@@ -69,8 +69,23 @@ code {
   margin-bottom: 16px;
 }
 
+// Override Chroma syntax highlighter defaults
+.highlight {
+  margin-bottom: 24px;
+
+  pre {
+    margin-bottom: 0;
+  }
+
+  // Reset Chroma line wrapper styles
+  .chroma {
+    background-color: $dark;
+    color: #d4d4d4;
+  }
+}
+
 // Help output terminal colors (matches ANSI 94/94;1)
-// hb = bold bright blue (headings, command names, flags, ASCII art)
+// hb = bold bright blue (headings, command names, flags)
 // hd = bright blue (descriptions)
 pre code {
   .hb {

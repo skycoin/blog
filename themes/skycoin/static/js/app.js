@@ -1,64 +1,94 @@
 // Colorize help/output text blocks to match terminal ANSI colors
-// Terminal uses: \e[94;1m (bold bright blue) for headings/commands/ASCII art
+// Terminal uses: \e[94;1m (bold bright blue) for section headings, command names, flag names
 //               \e[94m (bright blue) for descriptions
+//               No color for: ASCII art, version lines, prompt lines, plain text, flag types
 function colorizeHelpBlock(codeEl) {
-  var text = codeEl.textContent;
-  var lines = text.split('\n');
-  var html = [];
-  // Box-drawing chars used in ASCII art banners
-  var boxChars = /[┌┐└┘├┤┬┴┼─│╭╮╯╰┊┈┅╌╍┉╎╏┃┇┆┋╵╷╶╴╸╺╻╹┍┎┑┒┕┖┙┚┝┞┟┠┡┢┥┦┧┨┩┪┭┮┯┰┱┲┵┶┷┸┹┺┽┾┿╀╁╂╃╄╅╆╇╈╉╊]/;
-
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i];
-    var trimmed = line.trim();
-
-    if (trimmed === '') {
-      // Empty line
-      html.push('');
-    } else if (boxChars.test(trimmed)) {
-      // ASCII art banner line
-      html.push(span('hb', line));
-    } else if (/^\$\s/.test(trimmed)) {
-      // Prompt line: $ command args
-      var afterDollar = line.indexOf('$');
-      var prefix = line.substring(0, afterDollar);
-      var rest = line.substring(afterDollar + 1);
-      html.push(prefix + span('hd', '$') + span('hb', rest));
-    } else if (/^(Usage|Available Commands|Flags|Environment variables|Commands|Options|Aliases|Examples|Global Flags)\s*:/.test(trimmed)) {
-      // Section heading
-      html.push(span('hb', line));
-    } else if (/^\s+-\w|^\s+--\w/.test(line)) {
-      // Flag line: "  -x, --flag    description"
-      var flagMatch = line.match(/^(\s+-\S+(?:,\s+--\S+)?(?:\s+\S+)?)\s{2,}(.+)$/);
-      if (flagMatch) {
-        html.push(span('hb', flagMatch[1]) + '  ' + span('hd', flagMatch[2]));
-      } else {
-        html.push(span('hb', line));
-      }
-    } else if (/^\s{2,}\S/.test(line) && /\s{2,}/.test(trimmed)) {
-      // Command listing line: "  name    description" (indented, with gap)
-      var cmdMatch = line.match(/^(\s+\S+)\s{2,}(.+)$/);
-      if (cmdMatch) {
-        var gap = line.substring(cmdMatch[1].length, line.indexOf(cmdMatch[2].trim(), cmdMatch[1].length));
-        html.push(span('hb', cmdMatch[1]) + gap + span('hd', cmdMatch[2]));
-      } else {
-        html.push(span('hd', line));
-      }
-    } else if (/^\s{2,}\S/.test(line)) {
-      // Indented line without gap (usage example, continuation)
-      html.push(span('hb', line));
-    } else {
-      // Regular text (descriptions, etc.)
-      html.push(span('hd', line));
+  // Get all line content spans (Chroma wraps each line in <span class="line"><span class="cl">)
+  var clSpans = codeEl.querySelectorAll('.cl');
+  // If no Chroma structure, fall back to operating on the code element directly
+  var lines;
+  if (clSpans.length > 0) {
+    lines = [];
+    for (var s = 0; s < clSpans.length; s++) {
+      lines.push({ el: clSpans[s], text: clSpans[s].textContent });
+    }
+  } else {
+    // Plain code block, split by newlines
+    var allText = codeEl.textContent;
+    var splitLines = allText.split('\n');
+    codeEl.textContent = '';
+    lines = [];
+    for (var s = 0; s < splitLines.length; s++) {
+      var ln = document.createElement('span');
+      ln.textContent = splitLines[s];
+      codeEl.appendChild(ln);
+      if (s < splitLines.length - 1) codeEl.appendChild(document.createTextNode('\n'));
+      lines.push({ el: ln, text: splitLines[s] });
     }
   }
 
-  codeEl.innerHTML = html.join('\n');
+  var headingRe = /^(Usage|Available Commands|Flags|Environment variables|Commands|Options|Aliases|Examples|Global Flags)\s*:/;
+  var allTexts = [];
+  for (var k = 0; k < lines.length; k++) allTexts.push(lines[k].text);
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].text;
+    var el = lines[i].el;
+    var trimmed = line.trim();
+
+    if (trimmed === '') {
+      continue; // empty line, no coloring
+    } else if (headingRe.test(trimmed)) {
+      // Section heading — bold bright blue
+      el.innerHTML = span('hb', line);
+    } else if (/^\s+-\w|^\s+--\w/.test(line)) {
+      // Flag line: "  -c, --coin string    Description text"
+      var flagMatch = line.match(/^(\s+)(-\S+(?:,\s+--\S+)?)(\s+\S+)?\s{2,}(.+)$/);
+      if (flagMatch) {
+        var indent = esc(flagMatch[1]);
+        var flags = span('hb', flagMatch[2]);
+        var typeKw = flagMatch[3] ? esc(flagMatch[3]) : '';
+        var beforeDesc = flagMatch[1] + flagMatch[2] + (flagMatch[3] || '');
+        var descStart = line.indexOf(flagMatch[4], beforeDesc.length);
+        var gap = esc(line.substring(beforeDesc.length, descStart));
+        el.innerHTML = indent + flags + typeKw + gap + span('hd', flagMatch[4]);
+      } else {
+        el.innerHTML = span('hb', line);
+      }
+    } else if (/^\s{2,}\S/.test(line) && /\S\s{2,}\S/.test(line)) {
+      // Command listing: "  name    description"
+      var cmdMatch = line.match(/^(\s+)(\S+)(\s{2,})(.+)$/);
+      if (cmdMatch) {
+        el.innerHTML = esc(cmdMatch[1]) + span('hb', cmdMatch[2]) + esc(cmdMatch[3]) + span('hd', cmdMatch[4]);
+      }
+    } else if (/^\s{2,}\S/.test(line)) {
+      var prev = findPrevNonEmpty(allTexts, i);
+      if (headingRe.test(allTexts[prev].trim())) {
+        // Usage line right after "Usage:" — bold blue the first word (command), rest plain
+        var usageMatch = line.match(/^(\s+)(\S+)(.*)$/);
+        if (usageMatch) {
+          el.innerHTML = esc(usageMatch[1]) + span('hb', usageMatch[2]) + esc(usageMatch[3]);
+        }
+      }
+      // else: plain indented text, no coloring
+    }
+    // Everything else: no coloring (ASCII art, version, prompt, description text stay default)
+  }
+}
+
+function findPrevNonEmpty(lines, idx) {
+  for (var j = idx - 1; j >= 0; j--) {
+    if (lines[j].trim() !== '') return j;
+  }
+  return 0;
+}
+
+function esc(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function span(cls, text) {
-  var escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return '<span class="' + cls + '">' + escaped + '</span>';
+  return '<span class="' + cls + '">' + esc(text) + '</span>';
 }
 
 // Add copy buttons to code blocks (skip output-only blocks marked as language-text)
