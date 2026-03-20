@@ -328,21 +328,21 @@ Flags:
 
 The Quick Start workflow above is the recommended approach — you run any fibercoin directly from the existing `skycoin` or `skywire` binary with a `fiber.toml` config file. No compilation required.
 
-However, if you want to compile a **standalone binary for your fibercoin** with all chain parameters, genesis credentials, peer lists, and network defaults hardcoded into the binary itself, you can generate source code and compile it. The main reason to do this is for simpler deployment — you distribute a single binary with no config file dependency.
+However, if you want to compile a **standalone binary for your fibercoin** with all chain parameters, genesis credentials, peer lists, and network defaults hardcoded into the binary itself, you can generate Go source code and compile it. The reason to do this is for simpler deployment — you distribute a single binary with no config file dependency. Users of your coin just run `./mycoin daemon` instead of needing to know about `FIBER_TOML` or carry a config file.
 
-This requires the cloned skycoin source (it uses template files from `./templates/`):
-
-```bash
-cd $GOPATH/src/github.com/skycoin/skycoin
-```
-
-Follow steps 1-3 from the Quick Start to create `genesis.json`, `mycoin.toml`, and distribution addresses, then generate source code:
+The code generation templates are embedded in the binary, so this works from any directory. Follow steps 1-3 from the Quick Start to create `genesis.json`, `mycoin.toml`, and distribution addresses, then generate source code:
 
 ```bash
 skycoin newcoin createcoin --coin mycoin --config-file mycoin.toml
 ```
 
-This creates `cmd/mycoin/` with Go source that can be compiled into a standalone `mycoin` binary. All configuration from `mycoin.toml` is baked into the generated code. Distribution address changes require re-running `createcoin` and recompiling.
+This creates `cmd/mycoin/` with Go source that can be compiled into a standalone `mycoin` binary. All configuration from `mycoin.toml` is baked into the generated code — genesis credentials, peer list, ports, branding, distribution addresses. Changes require re-running `createcoin` and recompiling.
+
+To compile:
+
+```bash
+cd cmd/mycoin && go build -o mycoin .
+```
 
 | Feature | Runtime Config (recommended) | Dedicated Binary |
 |---------|-------------|-------------|
@@ -350,7 +350,7 @@ This creates `cmd/mycoin/` with Go source that can be compiled into a standalone
 | Changes | Edit `fiber.toml`, restart | Re-run `createcoin`, recompile |
 | Multiple coins | One binary with different configs | Separate binary per coin |
 | Deployment | Binary + `fiber.toml` | Binary only |
-| Requires source | No | Yes (cloned skycoin repo) |
+| Requires Go | Only if using `go run` | Yes (to compile) |
 
 ---
 
