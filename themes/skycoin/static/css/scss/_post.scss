@@ -146,6 +146,32 @@ figcaption {
       display: none;
     }
 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+      font-size: 13px;
+
+      th, td {
+        border: 1px solid $light-gray;
+        padding: 10px 14px;
+        text-align: left;
+      }
+
+      th {
+        background-color: $pale-grey;
+        font-weight: bold;
+      }
+
+      tr:nth-child(even) {
+        background-color: rgba($pale-grey, 0.5);
+      }
+
+      code {
+        font-size: 12px;
+      }
+    }
+
     blockquote {
       border-left: 5px solid $light-gray;
       padding: 3px 1rem 3px;
