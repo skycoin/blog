@@ -1,0 +1,64 @@
+// Code blocks
+pre {
+  font-family: 'Mononoki', monospace;
+  font-size: 13px;
+  line-height: 1.2;
+  background-color: $dark;
+  color: #d4d4d4;
+  padding: 16px 20px;
+  border-radius: $border-radius-base;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  position: relative;
+
+  code {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    background: none;
+    padding: 0;
+    color: inherit;
+  }
+}
+
+// Inline code
+code {
+  font-family: 'Mononoki', monospace;
+  font-size: 12px;
+  background-color: $pale-grey;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: $dark-gray;
+}
+
+// Code block wrapper with copy button
+.code-block {
+  position: relative;
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Mononoki', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    z-index: 1;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    &.copied {
+      background: rgba(0, 180, 80, 0.3);
+      color: #6fdf8f;
+      border-color: rgba(0, 180, 80, 0.4);
+    }
+  }
+}
