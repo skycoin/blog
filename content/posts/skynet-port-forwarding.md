@@ -39,4 +39,24 @@ After connecting, `localhost:9000` reaches the remote visor's port 8080 through 
 
 Port forwarding has been part of Skywire since early 2023 via the `fwd` and `rev` CLI commands. With this release, those commands have been consolidated under the `skynet` subcommand with a cleaner interface, dual-network support, and the ability to forward raw TCP traffic in addition to HTTP.
 
+```text
+$ skywire cli skynet --help
+Skynet provides port forwarding over the Skywire network.
+
+Client commands connect to remote skynet servers and forward traffic to localhost.
+Multiple client instances can run simultaneously with different configurations.
+Each instance gets a unique name (e.g., skynet-client-8080, skynet-client-3435).
+
+Server commands (srv) expose local ports over the network.
+
+Usage:
+  skywire cli skynet
+
+Available Commands:
+  start     Start skynet client to connect to a remote server
+  stop      Stop a skynet client instance
+  status    Show skynet client status
+  srv       Skynet port forwarding server
+```
+
 Skynet port forwarding is available starting with [Skywire v1.3.34](https://github.com/skycoin/skywire/releases/tag/v1.3.34).

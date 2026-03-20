@@ -35,4 +35,23 @@ Key flags:
 
 The frontend assets are embedded in the binary using Go's `embed` package, so no external files are needed.
 
+```text
+$ skycoin explorer --help
+┌─┐─┐ ┬┌─┐┬  ┌─┐┬─┐┌─┐┬─┐
+├┤ ┌┴┬┘├─┘│  │ │├┬┘├┤ ├┬┘
+└─┘┴ └─┴  ┴─┘└─┘┴└─└─┘┴└─
+
+Usage:
+  skywire skycoin explorer
+
+Flags:
+  -a, --api-only              Only run the API, don't serve static content
+  -f, --files-folder string   Path for the folder with the precompiled front-end files
+  -n, --node-addr string      The skycoin node's address
+                               (default "http://127.0.0.1:6420")
+  -s, --server-host string    The addr:port to bind the explorer web server to
+                               (default "127.0.0.1:8001")
+  -v, --verify                Run init() checks and quit
+```
+
 The integrated explorer is included starting with [Skycoin v0.28.2](https://github.com/skycoin/skycoin/releases/tag/v0.28.2).

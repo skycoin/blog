@@ -17,8 +17,15 @@ All Skycoin tools are now compiled into a single binary. What used to be a colle
 | `skycoin web` | Thin client web wallet with multi-Fibercoin and Bitcoin support |
 | `skycoin explorer` | Blockchain explorer with embedded Angular frontend |
 | `skycoin newcoin` | Fibercoin creation tool with embedded templates |
+
+The release binary (compiled from `cmd/release`) also includes the Skywallet hardware wallet utilities, accessible as `skyhw`:
+
+| Command | Description |
+|---------|-------------|
 | `skyhw daemon` | Hardware wallet daemon (HTTP API for Skywallet devices) |
 | `skyhw cli` | Hardware wallet CLI (address generation, transaction signing, device management) |
+
+Note: `skyhw` is included in the release binary but is not shown in `skycoin --help` — it's invoked as `skyhw` rather than `skycoin skyhw`. Building from the repository root (`go build .`) compiles only the core `skycoin` subcommands; the release binary with `skyhw` is built from `cmd/release`.
 
 ### One Binary, Any Coin
 
