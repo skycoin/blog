@@ -1,99 +1,73 @@
 ![skycoin blog logo](https://user-images.githubusercontent.com/26845312/32426756-27c29fd4-c282-11e7-8c9b-b0aa179a03ab.png)
 
-Skycoin Blog
-============
+# Skycoin Blog
 
-[![Build Status](https://travis-ci.com/watercompany/blog.svg?token=oe1ksgrumVbUFzJdwRzy&branch=master)](https://travis-ci.com/watercompany/blog)
+https://skycoin.github.io/blog/
 
-https://www.skycoin.com/blog/
+This blog uses [Hugo](https://gohugo.io/) to generate a static website from markdown files.
 
-This blog uses [hugo](https://gohugo.io/) to generate a static website from markdown files.
-
-Refer to hugo documentation for full detail.
-
-Translation Bounty Program
-==========================
-
-The translation bounty program was ended March 19, 2019.
-
-Content: Create or Amend Posts
-==============================
-
-Look in the `content/` folder.  Posts are written in markdown.
-
-Locally, the blog can be previewed with:
+## Preview Locally
 
 ```sh
 hugo serve
 ```
 
-Make sure that your posts compile without error. Check the formatting.
+## Writing Posts
 
-Then, commit the changes and push.
+Posts are markdown files in `content/posts/`. Each post has TOML front matter:
 
-If there are no problems, then https://www.skycoin.com/blog/ will automatically update in a few minutes.
-
-Front Matter Config
-===================
-
-If you change a post's URL, add the old URLs to the `aliases` front matter to preserve links.
-
-If you want a post to redirect to a different URL, instead of showing the post, use the `redirectURL` parameter.
-This is only intended for special cases, in general you want to use `aliases`.
-
-Specify an `image` in the front matter to control the thumbnail that appears on the
-index pages.
-
-Translations
-============
-
-https://gohugo.io/content-management/multilingual/
-
-If the language is not currently supported by the blog,
-add a language config statement to config.toml (see the file for an example).
-
-The blog posts are in a subdirectory in `content/`.
-To add a translation of an existing post, change the extension from `.md` to `.$LANG.md`.
-
-For example, to add a German translation of `content/statement/Skycoin Distribution.md`,
-name the file `content/statement/Skycoin Distribution.de.md`.
-
-Themes: Layout and Styling
-==========================
-
-Skycoin Blog uses a custom hugo theme with styling produced using SCSS, when editing any styles you **must** edit the `.scss` files only. If any changes are made to the SCSS partials within `static/css/scss/`, you must re-compile with the following commands.
-
-Move into the theme directory
-```sh
-  cd themes/skycoin/
+```toml
++++
+date = "2026-03-21"
+tags = ["Guides", "Skycoin"]
+title = "Your Post Title"
+image = "img/skycoin-banner.png"
++++
 ```
 
-Install the dependencies such as `node-sass`
+- `image` controls the thumbnail on listing pages. Posts without an `image` default to the Skycoin banner. If a `-card.png` variant exists alongside the image, it is used for listing cards and social sharing previews.
+- `aliases` — add old URLs here if you change a post's URL, to preserve links.
+- `redirectURL` — redirect to a different URL instead of showing the post (special cases only).
+
+### Code Blocks
+
+Use fenced code blocks with language hints for syntax highlighting, copy buttons, and proper formatting:
+
+- `` ```bash `` — shell commands users should copy (gets a copy button)
+- `` ```toml `` / `` ```json `` — configuration files (gets a copy button)
+- `` ```text `` — command output, help menus, ASCII art (no copy button)
+
+The blog uses the [Mononoki](https://madmalik.github.io/mononoki/) font for code blocks.
+
+## Translations
+
+See [Hugo multilingual docs](https://gohugo.io/content-management/multilingual/).
+
+To add a translation, change the file extension from `.md` to `.$LANG.md` (e.g., `.de.md` for German). Add new languages to `config.toml` if not already configured.
+
+## Theme and Styling
+
+The theme is in `themes/skycoin/`. Styles use SCSS — edit only the `.scss` files in `themes/skycoin/static/css/scss/`.
+
+To recompile CSS after making changes:
+
 ```sh
-  yarn
-  # or
-  npm install
+cd themes/skycoin
+npx sass static/css/scss/main.scss static/css/main.css --style=compressed
 ```
 
-Compile and build the SCSS
-```sh
-  yarn build:css
-```
+The compiled `main.css` must be committed — it is not built during deployment.
 
-**Note:** The compiled CSS files must be committed to the repository. They are not built during the deployment.
-
-Shortcodes
-==========================
-
-Shortcodes are simple snippets inside your content files calling built-in or custom templates.
+## Shortcodes
 
 ### inline-images
-A shortcode to make images placed side-by-side. There's no limit on how many images can be inside this shortcode since the images will resize.
-```sh
-  {{< inline-images >}}
-    {{< img src="url-1" alt="" >}}
-    {{< img src="url-2" alt="" >}}
-    {{< img src="url-3" alt="" >}}
-  {{< /inline-images >}}
+
+Place images side-by-side (responsive, no limit on count):
+
+```
+{{< inline-images >}}
+  {{< img src="url-1" alt="" >}}
+  {{< img src="url-2" alt="" >}}
+{{< /inline-images >}}
 ```
 
