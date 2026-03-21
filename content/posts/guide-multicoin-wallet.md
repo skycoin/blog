@@ -33,7 +33,13 @@ port = 8220
 web_interface_port = 8320
 display_name = "AIX"
 ticker = "AIX"
+coin_hours_display_name = "Coin Hours"
+coin_hours_display_name_singular = "Coin Hour"
+coin_hours_ticker = "ACH"
+qr_uri_prefix = "aix"
+explorer_url = ""
 version_url = ""
+peer_list_url = ""
 price_ticker_id = "aixexchange"
 price_ticker_source = "coingecko"
 
@@ -55,27 +61,41 @@ AIX uses port `8220` for peer connections and `8320` for the API — different f
 ## Running an AIX Node
 
 ```bash
-FIBER_TOML=aix.toml skycoin daemon
+FIBER_TOML=aix.toml skycoin daemon --legacy-peer-compat
 ```
 
-The daemon connects to the AIX peer network, syncs the blockchain, and serves the API on port `8320`. The data directory automatically adapts — AIX data is stored in `~/.aix/` by default. The daemon help menu reflects the configured coin:
+The `--legacy-peer-compat` flag is needed because AIX's deployed nodes run an older version that doesn't send a blockchain public key during the peer handshake. Without this flag, connections to AIX peers will be rejected.
+
+The daemon connects to the AIX peer network, syncs the blockchain, and serves the API on port `8320`. The data directory automatically adapts — AIX data is stored in `~/.aix/` by default. All help menus reflect the configured coin:
 
 ```text
-$ FIBER_TOML=aix.toml skycoin daemon --help
+$ FIBER_TOML=aix.toml skycoin
 ┌─┐┬─┐ ┬
 ├─┤│┌┴┬┘
 ┴ ┴┴┴ └─
- aix wallet
+v0.28.4
 
-Environment variables:
-  FIBER_TOML             Path to a fiber.toml file to load custom fibercoin configuration.
-  GENESIS                Path to a genesis wallet JSON file (address, pubkey, seckey).
-  USER_BURN_FACTOR       Coinhour burn factor for user-created transactions.
-  USER_MAX_TXN_SIZE      Maximum transaction size in bytes for user-created transactions.
-  USER_MAX_DECIMALS      Maximum decimal places for droplet precision (max 6).
+ Available Commands:
+  cli                     aix command line interface
+  daemon                  aix wallet
+  explorer                blockchain explorer
+  newcoin                 create a new fibercoin
+  web                     aix thin client web wallet
+```
 
-Usage:
-  skycoin daemon [flags]
+The CLI also adapts — note the default `RPC_ADDR` and `COIN` are set to AIX values:
+
+```text
+$ FIBER_TOML=aix.toml skycoin cli --help
+┌─┐┬─┐ ┬   ┌─┐┬  ┬
+├─┤│┌┴┬┘───│  │  │
+┴ ┴┴┴ └─   └─┘┴─┘┴
+aix command line interface
+
+ENVIRONMENT VARIABLES:
+  RPC_ADDR: Address of RPC node. Must be in scheme://host format. Default "http://127.0.0.1:8320"
+  COIN: Name of the coin. Default "aix"
+  DATA_DIR: Directory where everything is stored. Default "$HOME/.$COIN/"
 ```
 
 ---
@@ -144,11 +164,16 @@ skycoin explorer \
 
 ## AIX Command Line Interface
 
-The `skycoin cli` works with AIX by setting the `RPC_ADDR` environment variable to your AIX node and `COIN` to `aix`:
+With `FIBER_TOML` set, the CLI automatically defaults to AIX's RPC port and coin name:
 
 ```bash
-export RPC_ADDR="http://127.0.0.1:8320"
-export COIN="aix"
+export FIBER_TOML=aix.toml
+```
+
+Or set them explicitly per-command:
+
+```bash
+RPC_ADDR="http://127.0.0.1:8320" COIN="aix" skycoin cli <command>
 ```
 
 ### Check Node Status
@@ -159,12 +184,11 @@ skycoin cli status
 
 ```text
 "fiber": {
-    "name": "skycoin",
     "display_name": "AIX",
     "ticker": "AIX",
     "coin_hours_display_name": "Coin Hours",
-    "coin_hours_display_name_singular": "Coin Hour",
-    "coin_hours_ticker": "SCH",
+    "coin_hours_ticker": "ACH",
+    "qr_uri_prefix": "aix",
     "bip44_coin": 8000,
     "price_ticker_id": "aixexchange",
     "price_ticker_source": "coingecko"
@@ -232,7 +256,7 @@ Every `skycoin cli` subcommand works with AIX — wallet creation, address gener
 
 | Tool | AIX Command |
 |------|-------------|
-| Full node | `FIBER_TOML=aix.toml skycoin daemon` |
+| Full node | `FIBER_TOML=aix.toml skycoin daemon --legacy-peer-compat` |
 | Web wallet | `skycoin web --node-url http://127.0.0.1:8320 --wallet-dir ~/.aix/wallets` |
 | Explorer | `skycoin explorer --node-addr http://127.0.0.1:8320` |
 | CLI | `RPC_ADDR=http://127.0.0.1:8320 COIN=aix skycoin cli <command>` |
