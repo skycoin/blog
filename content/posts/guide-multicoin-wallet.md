@@ -1,12 +1,12 @@
 +++
 date = "2026-03-21"
 tags = ["Guides", "Skycoin"]
-title = "Skycoin Supports AIX"
+title = "Skycoin v0.28.4 Supports AIX"
 +++
 
 ### Every Skycoin Tool Works with AIX
 
-AIX is a Fibercoin — a coin and blockchain built on the Skycoin platform. That means every tool in the Skycoin ecosystem works with AIX out of the box: the full node daemon, the web wallet, the blockchain explorer, and the command line interface. All you need is AIX's `fiber.toml` configuration file and the `skycoin` binary.
+Starting with [Skycoin v0.28.4](https://github.com/skycoin/skycoin/releases), AIX is fully supported. AIX is a Fibercoin — a coin and blockchain built on the Skycoin platform. That means every tool in the Skycoin ecosystem works with AIX out of the box: the full node daemon, the web wallet, the blockchain explorer, and the command line interface. All you need is AIX's `fiber.toml` configuration file and the Skycoin v0.28.4 binary.
 
 This guide walks through running an AIX node, managing AIX wallets, exploring the AIX blockchain, and querying it from the command line — all using the same Skycoin binary you'd use for Skycoin itself.
 
