@@ -1,30 +1,20 @@
 +++
-date = "2026-03-13"
+date = "2026-03-21"
 tags = ["Guides", "Skycoin"]
-title = "Guide: Using the Skycoin Web Wallet as a Multi-Coin Wallet"
+title = "Skycoin Supports AIX"
 +++
 
-### Managing Multiple Coins from One Wallet
+### Every Skycoin Tool Works with AIX
 
-The `skycoin web` thin client can connect to multiple blockchain nodes at once, letting you manage Skycoin, AIX, and any other Fibercoin from a single browser interface. This guide walks through setting it up — first with local full nodes, then with remote public nodes.
+AIX is a Fibercoin — a coin and blockchain built on the Skycoin platform. That means every tool in the Skycoin ecosystem works with AIX out of the box: the full node daemon, the web wallet, the blockchain explorer, and the command line interface. All you need is AIX's `fiber.toml` configuration file and the `skycoin` binary.
+
+This guide walks through running an AIX node, managing AIX wallets, exploring the AIX blockchain, and querying it from the command line — all using the same Skycoin binary you'd use for Skycoin itself.
 
 ---
 
-## Method 1: Running Local Full Nodes (Recommended)
+## AIX Configuration
 
-Running your own nodes gives you full control and privacy. You run a daemon for each coin, then point the web wallet at all of them.
-
-### Step 1: Start a Skycoin Node
-
-```bash
-skycoin daemon
-```
-
-This starts the Skycoin daemon on its default ports — peer connections on `6000`, API on `6420`.
-
-### Step 2: Start an AIX Node
-
-Create an AIX configuration file `aix.toml`:
+Every Skycoin tool reads a `fiber.toml` to know which coin it's operating on. Save the following as `aix.toml`:
 
 ```toml
 [node]
@@ -58,17 +48,53 @@ distribution_addresses = [
 ]
 ```
 
-Start the AIX daemon:
+AIX uses port `8220` for peer connections and `8320` for the API — different from Skycoin's defaults (`6000`/`6420`), so both can run on the same machine simultaneously.
+
+---
+
+## Running an AIX Node
 
 ```bash
 FIBER_TOML=aix.toml skycoin daemon
 ```
 
-AIX runs on port `8220` for peer connections and `8320` for the API — different from Skycoin's ports, so both can run simultaneously.
+The daemon connects to the AIX peer network, syncs the blockchain, and serves the API on port `8320`. The data directory automatically adapts — AIX data is stored in `~/.aix/` by default. The daemon help menu reflects the configured coin:
 
-### Step 3: Start the Multi-Coin Web Wallet
+```text
+$ FIBER_TOML=aix.toml skycoin daemon --help
+┌─┐┬─┐ ┬
+├─┤│┌┴┬┘
+┴ ┴┴┴ └─
+ aix wallet
 
-Once both daemons are running and synced, start the web wallet pointing at both:
+Environment variables:
+  FIBER_TOML             Path to a fiber.toml file to load custom fibercoin configuration.
+  GENESIS                Path to a genesis wallet JSON file (address, pubkey, seckey).
+  USER_BURN_FACTOR       Coinhour burn factor for user-created transactions.
+  USER_MAX_TXN_SIZE      Maximum transaction size in bytes for user-created transactions.
+  USER_MAX_DECIMALS      Maximum decimal places for droplet precision (max 6).
+
+Usage:
+  skycoin daemon [flags]
+```
+
+---
+
+## AIX Web Wallet
+
+Once the node is synced, start the web wallet pointed at it:
+
+```bash
+skycoin web \
+  --node-url http://127.0.0.1:8320 \
+  --wallet-dir ~/.aix/wallets
+```
+
+Open `http://127.0.0.1:8001` in your browser. The wallet auto-discovers the coin name, ticker, and coin hours denomination from the node's health endpoint — it will show "AIX" throughout the interface.
+
+### Multi-Coin Wallet: AIX + Skycoin
+
+Run both a Skycoin and AIX daemon, then point the web wallet at both:
 
 ```bash
 skycoin web \
@@ -78,80 +104,139 @@ skycoin web \
   --wallet-dir ~/.aix/wallets
 ```
 
-Open `http://127.0.0.1:8001` in your browser. The wallet auto-discovers each coin's name, ticker, and coin hours denomination from the node's health endpoint. You'll see both Skycoin and AIX available, with separate wallet lists for each.
+Both coins appear in the same wallet interface with independent wallet lists, balances, and transaction history. You can add any number of Fibercoins this way.
 
-### Adding More Coins
+### Using a Remote Skycoin Node
 
-Add any Fibercoin the same way — create a `fiber.toml` for it, start a daemon, and add another pair of `--node-url` and `--wallet-dir` flags to the `skycoin web` command. See the [Fibercoin creation guide](/posts/guide-creating-a-fibercoin/) for how to create your own.
-
----
-
-## Method 2: Connecting to Remote Public Nodes
-
-If you don't want to run full nodes locally, you can connect to public API nodes operated by the coin's team. This is how the mobile wallets work — they're thin clients that connect to hosted nodes.
-
-### Skycoin Public Node
-
-Skycoin provides a public node at `https://node.skycoin.com`:
-
-```bash
-skycoin web \
-  --node-url https://node.skycoin.com \
-  --wallet-dir ~/.skycoin/wallets
-```
-
-### Multi-Coin with Public Nodes
-
-If a Fibercoin operates a public API node, you can add it alongside Skycoin:
+If you don't want to run a local Skycoin node, you can use the public node alongside your local AIX node:
 
 ```bash
 skycoin web \
   --node-url https://node.skycoin.com \
   --wallet-dir ~/.skycoin/wallets \
-  --node-url https://node.somecoin.com \
-  --wallet-dir ~/.somecoin/wallets
+  --node-url http://127.0.0.1:8320 \
+  --wallet-dir ~/.aix/wallets
 ```
 
-**Note:** AIX does not currently have a public API node for thin client access. To use AIX with the web wallet, run a local AIX node as described in Method 1.
+Private keys stay local regardless of whether the node is local or remote — the web wallet signs transactions locally and only broadcasts the signed result.
 
-### Security Considerations
-
-With remote public nodes, your **private keys still stay local** — the web wallet manages keys in `--wallet-dir` on your machine and signs transactions locally. Only signed transactions are broadcast to the remote node. However, the remote node can see your addresses and transaction history, so running your own node is recommended for maximum privacy.
+**Note:** AIX does not currently have a public API node for thin client access. To use AIX with the web wallet, run a local AIX node.
 
 ---
 
-## Mixing Local and Remote Nodes
+## AIX Blockchain Explorer
 
-You can mix both methods — run a local node for one coin and use a remote node for another:
+Run the blockchain explorer against your AIX node:
 
 ```bash
-skycoin web \
-  --node-url http://127.0.0.1:8320 \
-  --wallet-dir ~/.aix/wallets \
-  --node-url https://node.skycoin.com \
-  --wallet-dir ~/.skycoin/wallets
+skycoin explorer --node-addr http://127.0.0.1:8320
+```
+
+Open `http://127.0.0.1:8001` to browse AIX blocks, transactions, and addresses. To run the explorer on a different port (e.g., if the web wallet is already on `8001`):
+
+```bash
+skycoin explorer \
+  --node-addr http://127.0.0.1:8320 \
+  --server-host 127.0.0.1:8002
 ```
 
 ---
 
-```text
-$ skycoin web --help
-┌─┐┬┌─┬ ┬┌─┐┌─┐┬┌┐┌   ┬ ┬┌─┐┌┐
-└─┐├┴┐└┬┘│  │ │││││───│││├┤ ├┴┐
-└─┘┴ ┴ ┴ └─┘└─┘┴┘└┘   └┴┘└─┘└─┘
-Thin client web wallet for Skycoin and fibercoins.
+## AIX Command Line Interface
 
-Usage:
-  skywire skycoin web [flags]
+The `skycoin cli` works with AIX by setting the `RPC_ADDR` environment variable to your AIX node and `COIN` to `aix`:
 
-Flags:
-      --btc-electrum-url string   Electrum server URL (e.g. ssl://electrum.blockstream.info:50002)
-      --btc-node-url string       Bitcoin Core RPC URL (e.g. http://user:pass@127.0.0.1:8332)
-      --enable-seed-api           Enable the wallet seed API (requires --wallet-dir)
-  -H, --host string               Host to bind to (default "127.0.0.1")
-  -n, --node-url stringArray      Node URL (can be specified multiple times) (default [https://node.skycoin.com])
-  -p, --port int                  Port to serve on (default 8001)
-  -w, --wallet-dir stringArray    Local wallet directory (e.g. ~/.skycoin/wallets)
+```bash
+export RPC_ADDR="http://127.0.0.1:8320"
+export COIN="aix"
 ```
 
-See also: [Multi-Fibercoin Support](/posts/skycoin-web-multi-fibercoin/) | [Bitcoin Support](/posts/skycoin-web-bitcoin-support/) | [Creating Your Own Fibercoin](/posts/guide-creating-a-fibercoin/)
+### Check Node Status
+
+```bash
+skycoin cli status
+```
+
+```text
+"fiber": {
+    "name": "skycoin",
+    "display_name": "AIX",
+    "ticker": "AIX",
+    "coin_hours_display_name": "Coin Hours",
+    "coin_hours_display_name_singular": "Coin Hour",
+    "coin_hours_ticker": "SCH",
+    "bip44_coin": 8000,
+    "price_ticker_id": "aixexchange",
+    "price_ticker_source": "coingecko"
+}
+```
+
+### View the AIX Rich List
+
+```bash
+skycoin cli richlist
+```
+
+```text
+{
+    "richlist": [
+        {
+            "address": "dcAsh3qce8BL7VuaMN2t4z3jtcs96RKxhR",
+            "coins": "98497380000.000000",
+            "locked": false
+        },
+        {
+            "address": "2fhK5GkWTwwM8kQoV2zMkbuBaAYnPszjygi",
+            "coins": "1080872926.996000",
+            "locked": false
+        },
+        {
+            "address": "2JycUseKtW31jKfuHuXm16uRbfGhRuNtTz7",
+            "coins": "149990000.000000",
+            "locked": false
+        },
+        ...
+    ]
+}
+```
+
+### Check an Address Balance
+
+```bash
+skycoin cli addressBalance <address>
+```
+
+### Create a Wallet
+
+```bash
+skycoin cli walletCreate -l "My AIX Wallet"
+```
+
+### Send AIX
+
+```bash
+skycoin cli send -a <recipient-address> -c <amount> -f ~/.aix/wallets/<wallet-file>
+```
+
+### View Transaction History
+
+```bash
+skycoin cli walletHistory -f ~/.aix/wallets/<wallet-file>
+```
+
+Every `skycoin cli` subcommand works with AIX — wallet creation, address generation, transaction signing, blockchain queries, and more. Run `skycoin cli --help` for the full list.
+
+---
+
+## Summary
+
+| Tool | AIX Command |
+|------|-------------|
+| Full node | `FIBER_TOML=aix.toml skycoin daemon` |
+| Web wallet | `skycoin web --node-url http://127.0.0.1:8320 --wallet-dir ~/.aix/wallets` |
+| Explorer | `skycoin explorer --node-addr http://127.0.0.1:8320` |
+| CLI | `RPC_ADDR=http://127.0.0.1:8320 COIN=aix skycoin cli <command>` |
+
+One binary. One config file. The full Skycoin toolchain, running AIX.
+
+See also: [Multi-Fibercoin Wallet Support](/posts/skycoin-web-multi-fibercoin/) | [Creating Your Own Fibercoin](/posts/guide-creating-a-fibercoin/) | [Skycoin: One Binary, Every Tool](/posts/skycoin-unified-binary/)
