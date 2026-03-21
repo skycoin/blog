@@ -81,7 +81,11 @@ FIBER_TOML=aix.toml skycoin daemon --legacy-peer-compat
 
 The `--legacy-peer-compat` flag is needed because AIX's deployed nodes run an older version that doesn't send a blockchain public key during the peer handshake. Without this flag, connections to AIX peers will be rejected.
 
-The daemon connects to the AIX peer network, syncs the blockchain, and serves the API on port `8320`. The data directory automatically adapts — AIX data is stored in `~/.aix/` by default. All help menus reflect the configured coin:
+The daemon connects to the AIX peer network, syncs the blockchain, and serves the API on port `8320`. The data directory automatically adapts — AIX data is stored in `~/.aix/` by default.
+
+**Troubleshooting:** If the node fails to connect to AIX peers, check `~/.aix/peers.json`. If it contains stale or incorrect peers (e.g., Skycoin peers from a previous misconfigured run), delete it and restart the daemon — it will repopulate from the `default_connections` in the fiber.toml.
+
+All help menus reflect the configured coin:
 
 ```text
 $ FIBER_TOML=aix.toml skycoin
@@ -204,6 +208,8 @@ skycoin cli status
     "coin_hours_display_name": "Coin Hours",
     "coin_hours_ticker": "ACH",
     "qr_uri_prefix": "aix",
+    "explorer_url": "",
+    "version_url": "",
     "bip44_coin": 8000,
     "price_ticker_id": "aixexchange",
     "price_ticker_source": "coingecko"
@@ -216,22 +222,24 @@ skycoin cli status
 skycoin cli richlist
 ```
 
+Distribution addresses are excluded by default:
+
 ```text
 {
     "richlist": [
         {
-            "address": "dcAsh3qce8BL7VuaMN2t4z3jtcs96RKxhR",
-            "coins": "98497380000.000000",
+            "address": "WC4dEA4wwkZ526WZKh2krsQ4dmE6N6tTwg",
+            "coins": "1640054.926000",
             "locked": false
         },
         {
-            "address": "2fhK5GkWTwwM8kQoV2zMkbuBaAYnPszjygi",
-            "coins": "1080872926.996000",
+            "address": "2iNNt6fm9LszSWe51693BeyNUKX34pPaLx8",
+            "coins": "1556161.284000",
             "locked": false
         },
         {
-            "address": "2JycUseKtW31jKfuHuXm16uRbfGhRuNtTz7",
-            "coins": "149990000.000000",
+            "address": "2TytdMLwhSGWiAR9NVLj28s9TatKpF8a1oh",
+            "coins": "908801.960000",
             "locked": false
         },
         ...
