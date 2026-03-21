@@ -26,7 +26,7 @@ The early architecture was designed around a clean separation between transport 
 
 **October 2019** — Skynet appeared in the codebase for the first time, with Sir Darkrengarius implementing the initial port forwarding structs and wiring them into the visor startup sequence.
 
-**2019 by the numbers:** 2,762 commits. The foundation year.
+**2019 by the numbers:** 2,762 commits. The foundation year. No stable releases yet — the software was pre-release.
 
 ---
 
@@ -39,6 +39,8 @@ The VPN, along with the SOCKS5 proxy (Skysocks) and Skychat messaging, establish
 This model was conceptually clean — apps were isolated, could crash without taking down the visor, and could be developed independently. But it had operational costs: process spawning was slow, managing multiple binaries was complex, and the IPC overhead added latency.
 
 **May 2020** — Moses Narrow's first commit: adding Makefile package directives and systemd services. This marked the beginning of a long focus on deployment, packaging, and making Skywire installable as a system service — work that would continue for years.
+
+**Releases:** v0.1.0 (March 2020), v0.2.0 through v0.2.3 (April), v0.3.0 (October) — the first public releases.
 
 **2020 by the numbers:** 3,298 commits — the peak development year.
 
@@ -66,6 +68,8 @@ Development shifted toward the infrastructure needed to run Skywire as a product
 
 The reward system's mainnet rules were established and iterated, with Asgaror maintaining the rules documentation. The economics of running Skywire nodes — how operators get compensated for providing network infrastructure — became a first-class concern.
 
+**Releases:** v0.4.0 (March 2021), v0.4.1, v0.4.3 (September), v0.5.0 (October), v0.5.1 — rapid iteration toward the v1.0 milestone.
+
 **2021 by the numbers:** 2,951 commits.
 
 ---
@@ -79,6 +83,8 @@ By 2022, the Skywire ecosystem had fragmented across a sprawl of separate reposi
 On the transport layer, STCPR (TCP with port reuse) and SUDPH (UDP hole punching) matured as direct peer-to-peer transport types, complementing the relay-based DMSG transport. The visor ping mechanism was refined, autoconnect logic improved, and the Address Resolver handling became more robust.
 
 **DmsgWeb** emerged during this period — a resolving SOCKS5 proxy that lets web browsers access sites hosted entirely within the DMSG overlay network. Inspired by I2P, DmsgWeb maps `.dmsg` domains to public keys and routes traffic through the encrypted overlay.
+
+**Releases:** v0.6.0 (February 2022), **v1.0.0** (July 2022 — the first stable release, after 7 release candidates), v1.0.1, v1.1.0, v1.1.1, v1.2.0, v1.2.1, v1.3.0 through v1.3.16 (December 2023) — 27 releases in two years, the most active release period.
 
 **2022–2023 by the numbers:** 2,797 commits combined.
 
@@ -103,6 +109,8 @@ A pivotal architectural decision drove this consolidation: **merge everything in
 
 But the apps were still **launched as external processes** internally. The unified binary used `os.Args[0]` detection and symlinks to determine which "app" was being invoked, then ran the appropriate code path. The process manager still spawned child processes — they just happened to be the same binary with different arguments.
 
+**Releases:** v1.3.17 through v1.3.28 (February 2024–September 2024), v1.3.29 (July 2025 — after 11 release candidates spanning 9 months), v1.3.30, v1.3.31 (October 2025).
+
 ---
 
 ### 2025: From Processes to Function Calls
@@ -126,6 +134,8 @@ The transition was careful: the internal launcher and external launcher coexist,
 **CXO integration** — the Content-Addressable Object System, a distributed data storage layer, was integrated into the Skywire binary.
 
 **Transport Discovery overhaul** — the TPD migrated from PostgreSQL to Redis, added per-transport and per-visor bandwidth metrics, and enabled the transition to [bandwidth-based rewards](/posts/skywire-bandwidth-rewards-transition/).
+
+**Releases:** v1.3.32 (January 2026), v1.3.33, v1.3.34 (February — native .pkg and .msi installers), v1.3.36 (March — TPD overhaul, network globe), [v1.3.37](/posts/skywire-v1.3.37/) (March — route multiplexing, CXO, embedded Skycoin v0.28.4).
 
 ---
 

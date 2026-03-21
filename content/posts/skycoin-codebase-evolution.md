@@ -20,7 +20,7 @@ The web interface appeared immediately — TNN added GUI static file loading on 
 
 **Contributors:** AKS (project founder), TNN (daemon architecture, GUI framework), asmercrof (wallet UI)
 
-**2013–2014 by the numbers:** 790 commits.
+**2013–2014 by the numbers:** 790 commits. No tagged releases yet — the software was pre-release.
 
 ---
 
@@ -32,7 +32,9 @@ The cipher package matured. Bitcoin address format support was added (February 2
 
 The CLI began its migration from `urfave/cli` to a more structured command system. Sean Purser-Haskell implemented `ForkExec` in the node to support a single binary architecture — an early hint of the unified binary that would come years later.
 
-**2015–2016 by the numbers:** 1,311 commits.
+**March 17, 2015** — the **Skycoin genesis block** was created (timestamp `1426562704`). The blockchain was born — 11 years ago as of this writing.
+
+**2015–2016 by the numbers:** 1,311 commits. No tagged releases yet — the blockchain was live but the software was still being refined toward its first public release.
 
 ---
 
@@ -41,6 +43,8 @@ The CLI began its migration from `urfave/cli` to a more structured command syste
 **June 2017** — gz-c joined and immediately began reshaping the codebase. His first commits restructured the explorer, moving `skycoin-web` to `cmd/explorer` and adding configurable host/port settings. Over the next two years, gz-c would contribute 2,332 commits — the second highest in the project's history — focusing on API design, wallet architecture, and the cryptographic primitives that would enable HD wallets and Fibercoin support.
 
 The explorer APIs were overhauled by iketheadore: address transactions, coin supply endpoints, and the UTXO model that remains today. The web wallet frontend went through multiple iterations.
+
+**Releases:** v0.19.0 (July 2017), v0.19.1, v0.20.0 through v0.20.4, v0.21.0, v0.21.1 (December 2017) — seven releases in six months, the first public release cycle.
 
 **2017 by the numbers:** 1,437 commits.
 
@@ -60,7 +64,9 @@ The explorer APIs were overhauled by iketheadore: address transactions, coin sup
 
 **Contributors joining in 2018:** therealssj (fiber.toml, cobra migration), Senyoret1 (hardware wallet, web wallet), Olemis Lang (CI, testing, C bindings), Maykel Arias Torres (testing)
 
-**2018 by the numbers:** 4,011 commits — the peak year.
+**Releases:** v0.22.0 (March 2018), v0.23.0 (April), v0.24.0 (July), v0.24.1 (August), v0.25.0 (December) — five releases, the most active release year.
+
+**2018 by the numbers:** 4,011 commits — the peak year. The Skycoin blockchain turned 3.
 
 ---
 
@@ -78,7 +84,9 @@ The Skycoin project spans three GitHub organizations: `github.com/skycoin` (106 
 
 **Also in 2019:** Moses Narrow's first contribution — updating the Arch Linux installation documentation. This would be the beginning of a long focus on packaging, deployment, and making Skycoin accessible to end users.
 
-**2019 by the numbers:** 1,147 commits.
+**Releases:** v0.25.1 (February 2019), v0.26.0 (May) — the last releases before the long gap.
+
+**2019 by the numbers:** 1,147 commits. The blockchain turned 4.
 
 ---
 
@@ -90,7 +98,9 @@ iketheadore continued contributing through August 2021, with his final commits r
 
 Meanwhile, the broader Skycoin ecosystem had fragmented across many repositories. The blockchain explorer was in `skycoin-explorer` (created July 2017). The web wallet was in `skycoin-web` (created November 2017). The hardware wallet library was in `hardware-wallet-go`, the hardware wallet daemon in `hardware-wallet-daemon`. The C bindings were in `libskycoin`. The mobile wallet was in `skycoin-mobilewallet`. Each had its own CI, its own dependencies, and its own release cycle.
 
-**2020–2021 by the numbers:** 738 commits.
+**Releases:** v0.27.1 (November 2020) — the only release in two years.
+
+**2020–2021 by the numbers:** 738 commits. The blockchain turned 5, then 6.
 
 ---
 
@@ -99,6 +109,8 @@ Meanwhile, the broader Skycoin ecosystem had fragmented across many repositories
 Commit activity dropped to near zero in 2022–2023, with only 4 commits in those two years combined. The project appeared dormant.
 
 **August 2023** — Moses Narrow returned with Fibercoin documentation updates, the first commits in over a year.
+
+**August 2023** — v0.28.0 was tagged, the first release in nearly three years. No v0.28.1 was released.
 
 **October 2024** — A major effort began: reimplementing all Skycoin commands with Cobra, making each command importable as a Go package. This was the prerequisite for embedding Skycoin into the Skywire binary. Moses Narrow re-implemented the daemon flags, CLI commands, and help menus with Cobra, a project that continued through late 2025.
 
@@ -121,6 +133,8 @@ What had been half a dozen separate repositories with their own CI pipelines, de
 
 **Static cross-compilation** with musl toolchains enabled builds for Linux (amd64, arm64, armhf, arm, 386, riscv64), macOS (amd64, arm64 with .pkg installer), and Windows (amd64 with .msi installer) — all from a single CI pipeline.
 
+**Releases:** v0.28.2 (December 2025), v0.28.3 (February 2026) — the unified binary releases. The blockchain turned 10 on March 17, 2025.
+
 **2025 by the numbers:** 241 commits — the revival.
 
 ---
@@ -139,7 +153,29 @@ What had been half a dozen separate repositories with their own CI pipelines, de
 
 The Fibercoin ecosystem was verified with real third-party coins: [AIX](/posts/guide-multicoin-wallet/) and [Privateness (NESS)](/posts/guide-multicoin-wallet-2/).
 
+**Release:** [v0.28.4](/posts/skycoin-v0.28.4/) (March 2026) — dynamic Fibercoin branding, AIX and Privateness support verified. The blockchain turns 11 on March 17, 2026.
+
 **2026 by the numbers:** 145 commits and counting.
+
+---
+
+### The Blockchain: 11 Years of Blocks
+
+The Skycoin blockchain has been running continuously since March 17, 2015. Here's a snapshot at the time of writing:
+
+| Metric | Value |
+|--------|-------|
+| Genesis block | March 17, 2015 |
+| Current block height | 194,634 |
+| Unspent outputs | 188,983 |
+| Current supply | 23,827,698 SKY |
+| Total unlocked supply | 25,000,000 SKY |
+| Maximum supply | 100,000,000 SKY |
+| Unlocked distribution addresses | 25 of 100 |
+| Locked distribution addresses | 75 of 100 |
+| Age | 11 years |
+
+The blockchain has never been reset, hard-forked, or rolled back. The same genesis block from 2015 anchors the chain today.
 
 ---
 
