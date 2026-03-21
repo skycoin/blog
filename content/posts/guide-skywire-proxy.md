@@ -128,21 +128,23 @@ skywire cli proxy start -k <server-public-key> -a :9050
 
 Once the proxy client is running, configure applications to use it:
 
-**Browser (Firefox):** Settings > Network Settings > Manual proxy configuration > SOCKS Host: `127.0.0.1`, Port: `1080`, SOCKS v5
+**Browser (Firefox):** Settings > Network Settings > Manual proxy configuration > SOCKS Host: `127.0.0.1`, Port: `1080`, SOCKS v5. Check **"Proxy DNS when using SOCKS v5"** to route DNS queries through the proxy as well.
 
 **curl:**
 
 ```bash
-curl --socks5 127.0.0.1:1080 http://ip.skycoin.com
+curl --socks5-hostname 127.0.0.1:1080 http://ip.skycoin.com
 ```
 
-This should return the remote visor's IP address, not yours.
+This should return the remote visor's IP address, not yours. The `--socks5-hostname` flag (instead of `--socks5`) sends DNS resolution through the proxy too, preventing DNS leaks. With plain `--socks5`, DNS queries go through your normal resolver and reveal which sites you're visiting.
 
 **Environment variable (for CLI tools):**
 
 ```bash
-export ALL_PROXY=socks5://127.0.0.1:1080
+export ALL_PROXY=socks5h://127.0.0.1:1080
 ```
+
+The `socks5h://` scheme (note the `h`) tells applications to resolve DNS through the proxy. Plain `socks5://` only proxies the connection, not DNS.
 
 #### HTTP Proxy Mode
 
