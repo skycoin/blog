@@ -10,7 +10,7 @@ The `skycoin web` thin client wallet now supports connecting to multiple Fiber b
 
 ### What Are Fibercoins?
 
-A Fibercoin is any blockchain forked from Skycoin using the `skycoin newcoin` tool. Each Fibercoin has its own genesis block, peer list, coin name, ticker symbol, and coin hours denomination, defined in a `fiber.toml` configuration file. The Fiber architecture allows anyone to launch a new blockchain with Skycoin's consensus mechanism.
+A Fibercoin is a coin and blockchain built on the Skycoin platform — using the same consensus mechanism, wallet tooling, and node software. Each Fibercoin has its own genesis block, peer list, coin name, ticker symbol, and coin hours denomination, defined in a `fiber.toml` configuration file. Anyone can create a new Fibercoin using the `skycoin newcoin` tool.
 
 ### How It Works
 
