@@ -174,6 +174,93 @@ The reward calculation then computes each visor's share: `visor_bandwidth / tota
 
 ---
 
+### Querying Metrics from the CLI
+
+You don't need to call the TPD API directly — the Skywire CLI provides commands to query bandwidth metrics, check your transports, and inspect reward eligibility.
+
+#### View Your Transport Bandwidth
+
+The `tp` command shows your local transports, with optional bandwidth data:
+
+```bash
+skywire cli tp -b 7
+```
+
+The `-b 7` flag shows bandwidth usage for the last 7 days. Add `--stats` for a summary of transport counts by type:
+
+```bash
+skywire cli tp --stats
+```
+
+#### Query Network-Wide Bandwidth Metrics
+
+The `tp metrics` subcommand queries the Transport Discovery for verified bandwidth — the amount both transport edges agree on:
+
+```bash
+skywire cli tp metrics
+```
+
+```text
+$ skywire cli tp metrics --help
+Query transport discovery for bandwidth metrics.
+
+Shows verified bandwidth — the amount both transport edges agree on.
+Default: aggregate bandwidth per visor (public key).
+With --by-transport: show bandwidth per transport ID.
+With --tree: tree view with visors and their transports.
+
+Flags:
+  -d, --days int        number of days of metrics (0 = all, max 35) (default 1)
+  -p, --pk string       filter by public key
+  -n, --top int         show only top N results by bandwidth (0 = all)
+  -t, --by-transport    show bandwidth per transport ID instead of per visor
+      --tree            tree view: visors with their transports as children
+```
+
+Show the top 10 visors by bandwidth over the last 7 days:
+
+```bash
+skywire cli tp metrics -d 7 -n 10
+```
+
+Check your own visor's bandwidth:
+
+```bash
+skywire cli tp metrics -p <your-public-key>
+```
+
+View bandwidth broken down by individual transport:
+
+```bash
+skywire cli tp metrics --by-transport -p <your-public-key>
+```
+
+#### Bandwidth Collection for Rewards
+
+The reward system uses `bw-collect` to fetch and process bandwidth data:
+
+```bash
+skywire cli rewards bw-collect
+```
+
+This fetches all transport metrics from the TPD, excludes same-LAN traffic using hardware survey data, aggregates per-visor bandwidth, and writes daily results to `hist/YYYY-MM-DD_bandwidth.json`. It's designed to run hourly as part of the reward service.
+
+#### Check Reward Eligibility
+
+Check if a specific public key qualifies for rewards:
+
+```bash
+skywire cli rewards -k <public-key>
+```
+
+View the current mainnet reward rules:
+
+```bash
+skywire cli reward rules
+```
+
+---
+
 ### What This Means for Node Operators
 
 - **Keep doing what you're doing** — Pool 1 (uptime) works exactly like current rewards
