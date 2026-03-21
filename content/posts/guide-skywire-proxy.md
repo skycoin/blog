@@ -133,7 +133,7 @@ Once the proxy client is running, configure applications to use it:
 **curl:**
 
 ```bash
-curl --socks5 127.0.0.1:1080 https://ifconfig.me
+curl --socks5 127.0.0.1:1080 http://ip.skycoin.com
 ```
 
 This should return the remote visor's IP address, not yours.
