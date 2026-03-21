@@ -164,7 +164,7 @@ One binary. Runs Skycoin, runs any Fibercoin, supports Bitcoin. Static compilati
 
 ### Contributors
 
-101 people have contributed to the Skycoin codebase. The top contributors:
+~80 unique contributors have worked on the Skycoin codebase (101 git author names, consolidated by identity):
 
 | Contributor | Commits | Period | Focus |
 |-------------|---------|--------|-------|
@@ -174,43 +174,82 @@ One binary. Runs Skycoin, runs any Fibercoin, supports Bitcoin. Static compilati
 | Olemis Lang | 561 | 2018–2019 | CI, testing, C library bindings, release validation |
 | Senyoret1 | 460 | 2018–2021 | Hardware wallet, web wallet frontend |
 | Moses Narrow (0pcom) | 401 | 2019–present | Cobra rewrite, Fibercoin support, unified binary, packaging |
-| skycoin (bot/org commits) | 392 | 2014–2019 | Merge commits, CI |
+| skycoin (bot/org) | 392 | 2014–2019 | Merge commits, CI |
+| mahansky (Marek Mahansky) | 281 | 2017–2018 | Testing, wallet |
 | TNN | 255 | 2014 | Daemon architecture, GUI framework, early infrastructure |
 | Maykel Arias Torres | 254 | 2018–2019 | Testing |
-| mahansky (Marek Mahansky) | 281 | 2017–2018 | Testing, wallet |
 | stdevEclipse | 210 | 2018 | C library bindings, testing |
 | therealssj | 185 | 2018–2019 | fiber.toml, newcoin tool, Cobra migration |
 | VavilenTatarskiy | 181 | 2017–2018 | Testing |
 | Carlos Gutierrez Ramirez | 106 | 2018 | Testing |
-| Sean Purser-Haskell | 101 | 2016 | Network proxy, single binary architecture |
+| Sean Purser-Haskell (spurserh) | 101 | 2016 | Network proxy, single binary architecture |
 | Mauricio López-Quintana Conesa | 93 | 2018–2019 | Testing |
 | Samuel Visscher (visscherio) | 86 | 2017–2018 | Wallet, API |
 | Eduardo Sánchez | 64 | 2018 | Testing |
-| Norge Fajardo Vega | 56 | 2018 | Testing |
-| Chen Houwu | 52 | 2017 | Networking |
 | nakulpandey (Nakul Pandey) | 58 | 2017 | Explorer API |
+| Norge Fajardo Vega (stdevNorge) | 56 | 2018 | Testing |
+| Chen Houwu | 52 | 2017 | Networking |
+| Nikita Kryuchkov (nkryuchkov) | 50 | 2019 | Networking |
 | asmercrof | 42 | 2014 | Original wallet UI, Angular frontend |
 | Vyacheslav Zgordan | 41 | 2017 | Networking |
-| Nikita Kryuchkov | 50 | 2019 | Networking |
 | montycrypto | 35 | 2017 | Documentation |
 | bztk | 32 | 2018 | Testing |
-| stdevYuniers | 30 | 2018 | C library bindings |
+| stdevYuniers (Yunier J. Sosa Vázquez) | 34 | 2018 | C library bindings |
 | Li Xing | 28 | 2018 | Networking |
 | BigOokie | 27 | 2017–2019 | Documentation, newcoin docs |
 | zhiyuan2007 | 23 | 2017 | Networking |
 | Jose Luis Sanchez | 23 | 2018 | Testing |
 | stgleb | 21 | 2017 | Networking |
 | Pavel Milanes (CO7WT) | 19 | 2018 | Builds |
-| Dmitry Kiselev | 19 | 2017 | Networking |
+| Dmitry Kiselev (dmitrybugrov) | 23 | 2017 | Networking |
 | mihis | 17 | 2018 | Testing |
+| Leonardo Javier Esparis Meza | 11 | 2018 | Testing |
 | Nyah Check | 11 | 2018 | Wallet |
 | pravin | 10 | 2017 | Fixes |
 | polarislee1984 | 10 | 2017 | Fixes |
-| Leonardo Javier Esparis Meza | 11 | 2018 | Testing |
-| Christian Kakesa | 2 | 2019 | fiber.toml fixes |
+| skycoin-main | 9 | 2016–2017 | Merge commits |
+| Karlo Batrla (KarloB) | 6 | 2018 | Fixes |
+| ZSM5J | 6 | 2018 | Fixes |
+| samos | 5 | 2016 | Fixes |
+| Nitin Surani | 5 | 2018 | Fixes |
+| Morphium Hidrochloricum | 5 | 2018 | Fixes |
+| johnstuartmill | 5 | 2014 | Fixes |
+| ben | 5 | 2017 | Fixes |
+| ratmil | 4 | 2018 | Testing |
+| Michael (Zhiyi Weng) | 4 | 2017 | Fixes |
+| Konstantin Ivanov | 4 | 2018 | Testing |
+| Florian Zysset | 4 | 2017 | Fixes |
+| edoardocoen | 4 | 2018 | Fixes |
+| Carlos Ramos (Carlos R. Dev) | 6 | 2018 | Testing |
+| Roman Tronenko | 3 | 2018 | Fixes |
+| Masthead | 3 | 2014 | Fixes |
+| Xa No | 2 | 2018 | Fixes |
+| kaztriumph | 2 | 2017 | Fixes |
 | Erich Kästner | 2 | 2019–present | Integration |
-
-And others including Carlos Ramos, Florian Zysset, Konstantin Ivanov, Roman Tronenko, Xa No, Xavier Ruiz, Davor Kapsa, Dawa Lama, and more — 101 contributors in total.
+| cryptrol | 2 | 2017 | Fixes |
+| cmdallas | 2 | 2017 | Fixes |
+| Christian Kakesa | 2 | 2019 | fiber.toml fixes |
+| asxtree | 2 | 2017 | Fixes |
+| Xavier Ruiz | 1 | 2018 | Fixes |
+| Waziri | 1 | 2018 | Fixes |
+| up4k | 1 | 2018 | Fixes |
+| threecs | 1 | 2017 | Fixes |
+| skytofuture | 1 | 2017 | Fixes |
+| SkycoinSynth | 1 | 2014 | Fixes |
+| parkour86 | 1 | 2018 | Fixes |
+| Oleg Mikhalev | 1 | 2018 | Fixes |
+| nova | 1 | 2017 | Fixes |
+| nnao45 | 1 | 2017 | Fixes |
+| Mehul | 1 | 2018 | Fixes |
+| Mauricio Perdomo | 1 | 2018 | Fixes |
+| liuguirong | 1 | 2018 | Fixes |
+| jimhsu | 1 | 2014 | Fixes |
+| Etienne Tremel | 1 | 2017 | Fixes |
+| Dawa Lama | 1 | 2018 | Fixes |
+| Davor Kapsa | 1 | 2018 | Fixes |
+| cell4711 | 1 | 2017 | Fixes |
+| Aylin | 1 | 2018 | Fixes |
+| Alex Sugak | 1 | 2018 | Fixes |
 
 ---
 

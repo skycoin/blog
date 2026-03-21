@@ -155,7 +155,7 @@ The evolution from "collection of separate programs communicating over IPC" to "
 
 ### Contributors
 
-45 people have contributed to the Skywire codebase. Contributors by commit count (aliases consolidated):
+29 unique contributors have worked on the Skywire codebase (45 git author names, consolidated by identity):
 
 | Contributor | Commits | Period | Focus |
 |-------------|---------|--------|-------|
