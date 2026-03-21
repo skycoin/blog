@@ -151,9 +151,18 @@ function span(cls, text) {
   var gorunNote = document.getElementById('cmd-tab-note-gorun');
 
   if (tabs.length > 0) {
-    // Regex: match "skycoin" used as a command (followed by subcommand),
-    // but not inside URLs like github.com/skycoin/...
-    var cmdPattern = /(^|[ \t])skycoin(?= +(cli|daemon|newcoin|web|explorer)\b)/gm;
+    // Determine which base command to replace from the tabs container
+    var tabsContainer = document.getElementById('cmd-tabs');
+    var baseCmd = tabsContainer ? (tabsContainer.getAttribute('data-base') || 'skycoin') : 'skycoin';
+
+    // Build regex for the base command followed by its subcommands
+    var subcommands;
+    if (baseCmd === 'skywire') {
+      subcommands = 'cli|dmsg|visor|svc|app|util|skycoin';
+    } else {
+      subcommands = 'cli|daemon|newcoin|web|explorer';
+    }
+    var cmdPattern = new RegExp('(^|[ \\t])' + baseCmd + '(?= +(' + subcommands + ')\\b)', 'gm');
 
     for (var t = 0; t < tabs.length; t++) {
       tabs[t].addEventListener('click', (function(clickedTab) {

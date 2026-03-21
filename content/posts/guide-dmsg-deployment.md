@@ -12,6 +12,21 @@ DMSG is the encrypted overlay network that underpins all of Skywire. Every visor
 
 DMSG is also usable on its own, independent of Skywire. You can host websites, forward ports, run SSH sessions, and proxy traffic — all over an encrypted overlay that never exposes your IP.
 
+### How are you running Skywire?
+
+All commands in this guide use `skywire` as the command. Choose how you're running it and the guide will update automatically:
+
+<div class="cmd-tabs" id="cmd-tabs" data-base="skywire">
+  <button class="cmd-tab active" data-cmd="skywire">skywire</button>
+  <button class="cmd-tab" data-cmd="go run .">go run .</button>
+  <button class="cmd-tab" data-cmd="go run github.com/skycoin/skywire@develop">go run ...skywire@develop</button>
+</div>
+
+DMSG tools can also be run directly from the DMSG repository with `go run github.com/skycoin/dmsg@develop` (e.g., `go run github.com/skycoin/dmsg@develop server`), but this guide uses the Skywire binary which includes DMSG alongside all other Skywire tools.
+
+<p class="cmd-tab-note" id="cmd-tab-note-source" style="display:none;"><strong>Note:</strong> <code>go run .</code> must be run from within a cloned <code>skywire</code> source directory. Requires Git and Go 1.23+.</p>
+<p class="cmd-tab-note" id="cmd-tab-note-gorun" style="display:none;"><strong>Note:</strong> Requires Go 1.23+. No need to clone the repository.</p>
+
 ---
 
 ### Architecture
@@ -48,7 +63,7 @@ All traffic is encrypted using the **Noise protocol** with secp256k1 keys and Ch
 All DMSG tools are included in the [unified Skywire binary](/posts/skywire-unified-binary/):
 
 ```bash
-go run github.com/skycoin/skywire@develop dmsg
+skywire dmsg
 ```
 
 ```text
@@ -217,7 +232,7 @@ skywire dmsg curl dmsg://<pk>:80/index.html
 ```
 
 ```bash
-go run github.com/skycoin/skywire@develop dmsg curl --help
+skywire dmsg curl --help
 ```
 
 ```text
@@ -294,7 +309,7 @@ skywire dmsg web -p 8080 -t dmsg://<pk>:80
 ```
 
 ```bash
-go run github.com/skycoin/skywire@develop dmsg web --help
+skywire dmsg web --help
 ```
 
 ```text
