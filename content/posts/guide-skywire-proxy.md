@@ -16,37 +16,17 @@ This makes it lighter than a full VPN and useful when you want to route specific
 
 ### Prerequisites
 
-Both the proxy server and client require a running Skywire visor:
-
-```bash
-skywire cli config gen -o skywire-config.json
-skywire visor -c skywire-config.json
-```
+Both the proxy server and client require a running Skywire visor.
 
 ---
 
 ### Running a SOCKS5 Proxy Server
 
-The proxy server (Skysocks) starts automatically by default when running a visor.
+The proxy server (Skysocks) starts automatically by default when running a visor. No additional configuration is needed.
 
-#### Disable/Enable in Config
+#### Start/Stop at Runtime
 
-To generate a config with the proxy server disabled:
-
-```bash
-skywire cli config gen -o skywire-config.json --noproxyserver
-```
-
-To restrict access to specific public keys:
-
-```bash
-skywire cli config gen -o skywire-config.json \
-  --proxywl <allowed-pk-1>,<allowed-pk-2>
-```
-
-#### Start/Stop via CLI
-
-If the visor is already running:
+You can start, stop, and check the proxy server while the visor is running:
 
 ```bash
 skywire cli proxy server start
@@ -56,28 +36,15 @@ skywire cli proxy server start
 skywire cli proxy server stop
 ```
 
-Check server status:
-
 ```bash
 skywire cli proxy server status
 ```
 
-#### Server Flags
-
-```text
-$ skywire cli proxy server start --help
-Start the skysocks server
-
-Flags:
-  -w, --whitelist string   comma-separated list of public keys allowed to connect (empty = allow all)
-```
-
-#### Make Your Server Discoverable
-
-To list your proxy server in the Skywire service discovery:
+To restrict access to specific public keys:
 
 ```bash
-skywire cli config gen -o skywire-config.json --public
+skywire cli proxy server start \
+  --whitelist <allowed-pk-1>,<allowed-pk-2>
 ```
 
 ---

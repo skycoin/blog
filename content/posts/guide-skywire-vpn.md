@@ -16,37 +16,17 @@ Any Skywire visor can act as a VPN server, and any visor can connect as a client
 
 ### Prerequisites
 
-Both the VPN server and client require a running Skywire visor. Generate a config and start the visor if you haven't already:
-
-```bash
-skywire cli config gen -o skywire-config.json
-skywire visor -c skywire-config.json
-```
+Both the VPN server and client require a running Skywire visor.
 
 ---
 
 ### Running a VPN Server
 
-The VPN server is **Linux only** — it creates a TUN interface to route client traffic.
+The VPN server is **Linux only** — it creates a TUN interface to route client traffic. It starts automatically by default when running a visor.
 
-#### Enable in Config
+#### Start/Stop at Runtime
 
-VPN server autostart is enabled by default when generating a config. To explicitly generate a config with VPN server enabled:
-
-```bash
-skywire cli config gen -o skywire-config.json --servevpn
-```
-
-To restrict access to specific public keys:
-
-```bash
-skywire cli config gen -o skywire-config.json \
-  --vpnwl <allowed-pk-1>,<allowed-pk-2>
-```
-
-#### Start/Stop via CLI
-
-If the visor is already running, you can start and stop the VPN server without restarting:
+You can start, stop, and check the VPN server while the visor is running:
 
 ```bash
 skywire cli vpn server start
@@ -56,10 +36,15 @@ skywire cli vpn server start
 skywire cli vpn server stop
 ```
 
-Check server status:
-
 ```bash
 skywire cli vpn server status
+```
+
+To restrict access to specific public keys:
+
+```bash
+skywire cli vpn server start \
+  --whitelist <allowed-pk-1>,<allowed-pk-2>
 ```
 
 #### Server Flags
@@ -75,16 +60,6 @@ Flags:
 ```
 
 The `--secure` flag (on by default) prevents VPN clients from accessing the server's local network — they can only route through it to the internet.
-
-#### Make Your Server Discoverable
-
-To list your VPN server in the Skywire service discovery so other users can find it:
-
-```bash
-skywire cli config gen -o skywire-config.json --public --servevpn
-```
-
-The `--public` flag registers your visor with the service discovery.
 
 ---
 
@@ -171,7 +146,7 @@ All traffic between client and server is encrypted by the Skywire transport laye
 - **The VPN server operator can see your traffic** (same as any VPN exit node). Use HTTPS for sensitive sites.
 - **Your IP is hidden from destination servers** — they see the VPN server's IP instead.
 - **The `--secure` flag** (on by default) prevents clients from accessing the server's LAN. Don't disable this unless you know what you're doing.
-- **Whitelist support** — restrict which public keys can connect to your VPN server with `--whitelist` or `--vpnwl` in config gen.
+- **Whitelist support** — restrict which public keys can connect to your VPN server with `--whitelist`.
 
 ---
 
