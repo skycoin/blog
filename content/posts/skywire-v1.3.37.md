@@ -12,7 +12,8 @@ Skywire v1.3.37 has been released and is available from [GitHub](https://github.
 
 This release includes significant transport layer stability improvements, CXO integration, and updates the embedded Skycoin to v0.28.4:
 
-- **Transport layer overhaul** — refactored the mux layer for improved stability, fixed accept loop crash on stale routes with missing transports, added 10-second timeout for ping route handshakes to limit goroutine lifetime, and handle ping/latency routes directly in IntroduceRules to bypass the accept queue.
+- **[Route multiplexing](/posts/skywire-route-multiplexing/)** — connections can now spread traffic across multiple transports simultaneously, with latency-weighted transport selection, packet reordering, and SACK-based retransmission. This is the first phase of multi-transport routing in Skywire.
+- **Transport layer stability** — fixed accept loop crash on stale routes with missing transports, added 10-second timeout for ping route handshakes to limit goroutine lifetime, and handle ping/latency routes directly in IntroduceRules to bypass the accept queue.
 - **SUDPH improvements** — fixed SUDPH in end-to-end tests by adding `--udp-addr` to Address Resolver so UDP and HTTP share the same port, added STUN servers to visor configs for proper SUDPH detection, added diagnostics for SUDPH transport failures.
 - **Transport Discovery** — batch TPD deletions, STCP transport support, transport statistics, STCPR retry improvements, deferred transport registration to batch re-registration loop, fixed AR bind retry and TPD rate limiting.
 - **CXO integration** — the Content-Addressable Object System (CXO) has been integrated into the Skywire binary, providing a distributed, content-addressable data storage layer over the Skywire network.
