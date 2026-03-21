@@ -1,0 +1,179 @@
++++
+date = "2026-03-21"
+tags = ["Skycoin"]
+title = "The Evolution of the Skycoin Codebase"
++++
+
+### Twelve Years, 10,000 Commits, 101 Contributors
+
+The Skycoin codebase dates back to December 2013. From the first `init` commit to today's unified multi-coin binary, it has been through multiple complete rewrites of the wallet, CLI, web frontend, and build system. This article traces that evolution through the code and the people who wrote it.
+
+---
+
+### 2013–2014: Genesis
+
+**December 24, 2013** — AKS pushed the first commit. Two weeks later, TNN renamed `coind` to `daemon` and checked in the initial code structure. By mid-January 2014, the foundational pieces were in place: the cipher package (secp256k1 cryptography), the visor (blockchain state management), the daemon (peer-to-peer networking), and the first wallet implementation.
+
+**January 14, 2014** — AKS committed "first transaction executed." The blockchain worked.
+
+The web interface appeared immediately — TNN added GUI static file loading on January 8, and asmercrof built the first Angular controller by January 27. From the very beginning, Skycoin had a web-based wallet, not just a CLI.
+
+**Contributors:** AKS (project founder), TNN (daemon architecture, GUI framework), asmercrof (wallet UI)
+
+**2013–2014 by the numbers:** 790 commits.
+
+---
+
+### 2015–2016: Cryptographic Foundations
+
+The cipher package matured. Bitcoin address format support was added (February 2015), allowing Skycoin's secp256k1 implementation to generate both Skycoin and Bitcoin addresses from the same keys.
+
+**2016** saw iketheadore's first commits — thread-safe entropy pools and hash reuse optimization. He would go on to become the project's most prolific contributor with 2,429 commits over the next five years, touching nearly every part of the codebase: the daemon, CLI, API, wallet, explorer, and testing infrastructure.
+
+The CLI began its migration from `urfave/cli` to a more structured command system. Sean Purser-Haskell implemented `ForkExec` in the node to support a single binary architecture — an early hint of the unified binary that would come years later.
+
+**2015–2016 by the numbers:** 1,311 commits.
+
+---
+
+### 2017: The Explorer and gz-c
+
+**June 2017** — gz-c joined and immediately began reshaping the codebase. His first commits restructured the explorer, moving `skycoin-web` to `cmd/explorer` and adding configurable host/port settings. Over the next two years, gz-c would contribute 2,332 commits — the second highest in the project's history — focusing on API design, wallet architecture, and the cryptographic primitives that would enable HD wallets and Fibercoin support.
+
+The explorer APIs were overhauled by iketheadore: address transactions, coin supply endpoints, and the UTXO model that remains today. The web wallet frontend went through multiple iterations.
+
+**2017 by the numbers:** 1,437 commits.
+
+---
+
+### 2018: Peak Development
+
+2018 was the most active year in Skycoin's history — **4,011 commits**, accounting for 40% of all commits ever.
+
+**May 2018** — therealssj added the first `fiber.toml` configuration file and the `newcoin` creator tool. This was the birth of the Fibercoin framework — the ability to create new blockchains from Skycoin's codebase with a configuration file instead of a code fork.
+
+**October 2018** — therealssj also led the migration from `urfave/cli` to `spf13/cobra` for the CLI framework, a transition that would take years to fully complete.
+
+**October–November 2018** — Senyoret1 integrated hardware wallet support. Over six weeks of focused development, he added device communication, transaction signing, address scanning, and wallet list integration for what would become the Skywallet.
+
+**The testing infrastructure** expanded dramatically. Olemis Lang contributed 561 commits focused on CI, release validation, test coverage, and the C library (`libc`) bindings that enabled Skycoin's cryptographic functions to be called from other languages.
+
+**Contributors joining in 2018:** therealssj (fiber.toml, cobra migration), Senyoret1 (hardware wallet, web wallet), Olemis Lang (CI, testing, C bindings), Maykel Arias Torres (testing)
+
+**2018 by the numbers:** 4,011 commits — the peak year.
+
+---
+
+### 2019: HD Wallets, BIP44, and Maturation
+
+gz-c's most architecturally significant contributions came in 2019: the **BIP32 and BIP44** implementations. Starting in March with the initial BIP32 implementation, he built out hierarchical deterministic wallet support over several months — BIP32 key derivation paths, the BIP44 package, and wallet creation with BIP44 account structure. This gave Skycoin wallets the same HD capabilities as Bitcoin wallets: multiple accounts, deterministic address generation from a single seed, and xpub key export.
+
+**July 2019** — gz-c added the `distributeGenesis` CLI command, completing the Fibercoin initialization workflow. Combined with `addressGen` and `fiberAddressGen`, this meant a new blockchain could be created and initialized entirely from the CLI.
+
+**Also in 2019:** Moses Narrow's first contribution — updating the Arch Linux installation documentation. This would be the beginning of a long focus on packaging, deployment, and making Skycoin accessible to end users.
+
+**2019 by the numbers:** 1,147 commits.
+
+---
+
+### 2020–2021: Stabilization
+
+Development velocity slowed as the codebase entered a maintenance phase. The API surface was stable, the wallet worked, the explorer worked, and Fibercoins could be created. The focus shifted to bug fixes, dependency updates, and incremental improvements.
+
+iketheadore continued contributing through August 2021, with his final commits refining the infrastructure he had built over five years.
+
+**2020–2021 by the numbers:** 738 commits.
+
+---
+
+### 2022–2024: The Quiet Years and the Cobra Rewrite
+
+Commit activity dropped to near zero in 2022–2023, with only 4 commits in those two years combined. The project appeared dormant.
+
+**August 2023** — Moses Narrow returned with Fibercoin documentation updates, the first commits in over a year.
+
+**October 2024** — A major effort began: reimplementing all Skycoin commands with Cobra, making each command importable as a Go package. This was the prerequisite for embedding Skycoin into the Skywire binary. Moses Narrow re-implemented the daemon flags, CLI commands, and help menus with Cobra, a project that continued through late 2025.
+
+**2022–2024 by the numbers:** 18 commits — but the Cobra rewrite laid critical groundwork.
+
+---
+
+### 2025: The Unified Binary
+
+The Cobra rewrite merged in August–September 2025, and the results were transformative. Every Skycoin tool — daemon, CLI, web wallet, explorer, newcoin, and hardware wallet utilities — became a subcommand of a single `skycoin` binary.
+
+**Key integrations:**
+- **Blockchain explorer** — the separate explorer project was merged into the Skycoin repo, with its Angular frontend embedded in the binary using `go:embed`
+- **Web wallet** — the thin client web wallet was embedded similarly, serving its UI from memory
+- **Hardware wallet** — `skyhw daemon` and `skyhw cli` were integrated into the release binary (compiled from `cmd/release`)
+- **Newcoin templates** — code generation templates embedded via `go:embed`, no external files needed
+
+**Static cross-compilation** with musl toolchains enabled builds for Linux (amd64, arm64, armhf, arm, 386, riscv64), macOS (amd64, arm64 with .pkg installer), and Windows (amd64 with .msi installer) — all from a single CI pipeline.
+
+**2025 by the numbers:** 241 commits — the revival.
+
+---
+
+### 2026: Fibercoins, Bitcoin, and Dynamic Branding
+
+**Fibercoin runtime configuration** — the `FIBER_TOML` environment variable was finalized and hardened. Empty string overrides now work correctly (a coin can disable the default peer list or explorer URL), the `--legacy-peer-compat` flag enables connecting to older Fibercoin nodes, and the CLI automatically adapts its defaults (`RPC_ADDR`, `COIN`, `DATA_DIR`) to the configured coin.
+
+**Dynamic ASCII art branding** — all help menus display the configured coin's name in ASCII art. `FIBER_TOML=aix.toml skycoin` shows the AIX banner; `FIBER_TOML=ness.toml skycoin` shows the Privateness banner.
+
+**Bitcoin support** — the web wallet gained full Bitcoin wallet functionality: send, receive, native segwit (BIP84/bech32), BIP44 account structure, and UTXO management. Two backend options: Electrum server (TCP/TLS) or Bitcoin Core (HTTP RPC). All using Skycoin's existing secp256k1 library for transaction signing.
+
+**`newcoin templates`** — print the embedded code generation templates to stdout so users can customize them without cloning the repo.
+
+**`cli halt`** — gracefully shut down a running daemon via the CLI.
+
+The Fibercoin ecosystem was verified with real third-party coins: [AIX](/posts/guide-multicoin-wallet/) and [Privateness (NESS)](/posts/guide-multicoin-wallet-2/).
+
+**2026 by the numbers:** 145 commits and counting.
+
+---
+
+### The Architecture Today
+
+```text
+skycoin
+├── daemon    — full node (adapts to any Fibercoin via FIBER_TOML)
+├── cli       — 40+ subcommands for wallets, transactions, blockchain queries
+├── web       — multi-coin thin client wallet (Skycoin, Fibercoins, Bitcoin)
+├── explorer  — blockchain explorer with embedded Angular UI
+└── newcoin   — Fibercoin creation with embedded templates
+
+skyhw (in release binary)
+├── daemon    — hardware wallet HTTP API server
+└── cli       — device management, signing, firmware updates
+```
+
+One binary. Runs Skycoin, runs any Fibercoin, supports Bitcoin. Static compilation, no runtime dependencies, embedded frontends. The result of twelve years of iteration.
+
+---
+
+### Contributors
+
+101 people have contributed to the Skycoin codebase. The top contributors:
+
+| Contributor | Commits | Period | Focus |
+|-------------|---------|--------|-------|
+| iketheadore | 2,429 | 2016–2021 | Daemon, CLI, API, explorer, testing — touched everything |
+| gz-c | 2,332 | 2017–2019 | API design, BIP32/BIP44, wallet architecture, explorer |
+| aks | 622 | 2013–2015 | Project founder, cipher, visor, first transaction |
+| Olemis Lang | 561 | 2018–2019 | CI, testing, C library bindings, release validation |
+| Senyoret1 | 460 | 2018–2021 | Hardware wallet, web wallet frontend |
+| Moses Narrow | 401 | 2019–present | Cobra rewrite, Fibercoin support, unified binary, packaging |
+| TNN | 255 | 2014 | Daemon architecture, GUI framework, early infrastructure |
+| Maykel Arias Torres | 254 | 2018–2019 | Testing |
+| therealssj | 185 | 2018–2019 | fiber.toml, newcoin tool, Cobra migration |
+| Sean Purser-Haskell | 101 | 2016 | Network proxy, single binary architecture |
+
+And 91 more who contributed features, fixes, documentation, translations, and testing.
+
+---
+
+### What's Next
+
+Active development continues on Fibercoin tooling, the multi-coin web wallet, and cross-platform packaging. The codebase is also embedded in [Skywire](/posts/skywire-codebase-evolution/), where it serves as the blockchain layer for the mesh network's coin economy.
+
+See also: [The Evolution of the Skywire Codebase](/posts/skywire-codebase-evolution/) | [Skycoin: One Binary, Every Tool](/posts/skycoin-unified-binary/) | [Creating Your Own Fibercoin](/posts/guide-creating-a-fibercoin/)
