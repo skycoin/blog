@@ -10,6 +10,21 @@ AIX is a Fibercoin — a coin and blockchain built on the Skycoin platform. That
 
 This guide walks through running an AIX node, managing AIX wallets, exploring the AIX blockchain, and querying it from the command line — all using the same Skycoin binary you'd use for Skycoin itself.
 
+### How are you running Skycoin?
+
+All commands in this guide use `skycoin` as the command. Choose how you're running it and the guide will update automatically:
+
+<div class="cmd-tabs" id="cmd-tabs">
+  <button class="cmd-tab active" data-cmd="skycoin">skycoin</button>
+  <button class="cmd-tab" data-cmd="skywire skycoin">skywire skycoin</button>
+  <button class="cmd-tab" data-cmd="go run .">go run .</button>
+  <button class="cmd-tab" data-cmd="go run github.com/skycoin/skycoin@develop">go run ...skycoin@develop</button>
+  <button class="cmd-tab" data-cmd="go run github.com/skycoin/skywire@develop skycoin">go run ...skywire@develop skycoin</button>
+</div>
+
+<p class="cmd-tab-note" id="cmd-tab-note-source" style="display:none;"><strong>Note:</strong> <code>go run .</code> must be run from within a cloned <code>skycoin</code> source directory. Requires Git and Go 1.23+.</p>
+<p class="cmd-tab-note" id="cmd-tab-note-gorun" style="display:none;"><strong>Note:</strong> Requires Go 1.23+. No need to clone the repository.</p>
+
 ---
 
 ## AIX Configuration
