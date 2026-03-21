@@ -155,19 +155,39 @@ The evolution from "collection of separate programs communicating over IPC" to "
 
 ### Contributors
 
-45 people have contributed to the Skywire codebase. The top contributors by commit count:
+45 people have contributed to the Skywire codebase. Contributors by commit count (aliases consolidated):
 
 | Contributor | Commits | Period | Focus |
 |-------------|---------|--------|-------|
-| Sir Darkrengarius | 1,067 | 2019–2021 | Core architecture, routing, transports |
-| Nikita Kryuchkov | 667 | 2019–2020 | Networking, DMSG, protocol |
-| Moses Narrow | 645 | 2020–present | Deployment, packaging, CLI, reward system, Fibercoin support |
-| ersonp | 640 | 2021–present | CLI, service infrastructure, testing |
-| Erich Kästner | 603 | 2019–present | Integration, merges, project management |
-| 志宇 (Evan Lin) | ~500 | 2019–2020 | Original implementation, DMSG, noise protocol |
-| ivcosla | ~200 | 2019 | Early CLI, manager UI |
-
-And many more who contributed features, fixes, documentation, and testing.
+| Sir Darkrengarius (Darkren) | 1,079 | 2019–2021 | Core architecture, routing, transports, skynet |
+| MohammadReza Palide (mrpalide) | 1,122 | 2021–present | Services, deployment, systray, E2E testing, infrastructure |
+| Nikita Kryuchkov (nkryuchkov) | 686 | 2019–2020 | Networking, DMSG, protocol |
+| Erson Pereira (ersonp) | 686 | 2021–present | CLI, service infrastructure, utilities, testing |
+| Moses Narrow (0pcom) | 646 | 2020–present | Deployment, packaging, CLI, reward system, Fibercoin support, Cobra rewrite, unified binary |
+| Erich Kästner (Erich Kaestner) | 649 | 2019–present | Integration, merges, project management |
+| 志宇 / 林志宇 (Evan Lin) | 469 | 2019–2020 | Original implementation, DMSG, noise protocol |
+| Alexander Adhyatma | 332 | 2020–2021 | VPN, applications |
+| Never M | 242 | 2020–2021 | Manager UI, frontend |
+| Senyoret1 | 230 | 2019–2021 | Web wallet, hardware wallet frontend |
+| Iván Costa (ivcosla) | 155 | 2019 | Early CLI, manager, SkycoinProject migration |
+| Alex Yu | 128 | 2019–2020 | Networking |
+| jdknives | 51 | 2022–2023 | Maintenance |
+| Kifen | 55 | 2019–2020 | Transport layer |
+| Taras Nepyipyvo | 38 | 2020 | Testing |
+| Yuryshev | 31 | 2019 | App framework |
+| Asgaror | 18 | 2020–2021 | Mainnet rules, reward documentation |
+| nvm | 12 | 2020 | Fixes |
+| dharmendra kariya | 10 | 2019 | Testing |
+| 4rchim3d3s | 9 | 2020 | Fixes |
+| Nickson | 8 | 2020 | Fixes |
+| specter25 | 6 | 2019 | Fixes |
+| Fray | 4 | 2020 | Fixes |
+| gz-c | 3 | 2019 | Cross-repo collaboration |
+| arc1999 | 3 | 2020 | Fixes |
+| ppcamp / Pedro Filipe | 4 | 2021 | Fixes |
+| atang152 | 2 | 2019 | Fixes |
+| Piko Monde | 1 | 2020 | Fixes |
+| BigOokie | 1 | 2019 | Documentation |
 
 ---
 
