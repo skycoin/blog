@@ -75,6 +75,15 @@ AIX uses port `8220` for peer connections and `8320` for the API — different f
 
 ## Running an AIX Node
 
+If you selected **go run .** above, you'll need to clone the Skycoin repository first:
+
+```bash
+git clone https://github.com/skycoin/skycoin.git
+cd skycoin
+```
+
+Then run from within the cloned directory. The other methods (release binary, `skywire skycoin`, or the remote `go run` variants) work from anywhere.
+
 ```bash
 FIBER_TOML=aix.toml skycoin daemon --legacy-peer-compat
 ```
