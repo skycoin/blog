@@ -6,7 +6,7 @@ image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-### Seven Years, 12,000+ Commits, 45 Contributors
+### Seven Years, 12,000+ Commits, 45 Contributors, Three GitHub Organizations
 
 The Skywire codebase has been through multiple complete architectural redesigns since its first commit in March 2019. What started as a mainnet implementation for a mesh networking protocol has evolved into a unified platform encompassing an encrypted overlay network, a VPN, a port forwarding system, a reward economy, and — most recently — a multi-coin blockchain toolchain. This article traces that evolution.
 
@@ -44,6 +44,20 @@ This model was conceptually clean — apps were isolated, could crash without ta
 
 ---
 
+### 2019: The GitHub Organization Split
+
+**September 2019** — A crisis outside the codebase disrupted the project. Due to a dispute involving individuals who had gained control of the `skycoin.net` domain and the `github.com/skycoin` GitHub organization, the development team migrated to a new organization: **`github.com/SkycoinProject`**.
+
+On September 17, ivcosla committed "moved to SkycoinProject." Over the following days, imports were rewritten, remotes were updated, and development continued under the new organization. The Skywire mainnet repo became `SkycoinProject/skywire-mainnet`, DMSG moved to `SkycoinProject/dmsg`, and dozens of related repos were forked or recreated.
+
+This was a disruptive period. Import paths changed throughout the codebase, CI configurations needed updating, and the community had to be redirected to the new organization. But development never stopped — within days of the migration, Darkrengarius and Evan Lin were merging PRs under the new organization.
+
+Eventually, control of the original `github.com/skycoin` organization was recovered, and the repos migrated back. But the scars of the split lingered in the codebase for years — `skycoinproject` import paths persisted in various files and were still being cleaned up as late as December 2024 (PR #1912).
+
+Beyond the public codebase, the Skywire project spans three GitHub organizations: `github.com/skycoin` (106 repos — the public codebase), `github.com/SkycoinProject` (22 repos — remnants of the 2019 migration), and `github.com/skycoinpro` (41 repos — private operational infrastructure including the mobile wallets, deployment configs, whitelisting services, reward system, DevOps, and monitoring bots). At peak, the ecosystem had over 150 repositories across these organizations.
+
+---
+
 ### 2021: Infrastructure at Scale
 
 Development shifted toward the infrastructure needed to run Skywire as a production network. The Transport Discovery, Service Discovery, Uptime Tracker, Route Finder, and Address Resolver were all refined and hardened.
@@ -56,11 +70,13 @@ The reward system's mainnet rules were established and iterated, with Asgaror ma
 
 ---
 
-### 2022–2023: Stabilization and Transport Improvements
+### 2022–2023: Fragmentation, Stabilization, and the Repo Sprawl
 
-Development velocity slowed as the focus shifted from new features to stability, with the transport layer receiving particular attention. STCPR (TCP with port reuse) and SUDPH (UDP hole punching) matured as direct peer-to-peer transport types, complementing the relay-based DMSG transport.
+By 2022, the Skywire ecosystem had fragmented across a sprawl of separate repositories. The network services lived in `skywire-services`. Shared utilities lived in `skywire-utilities`. The manager UI was in `skywire-manager`. The DMSG library was in `dmsg`. The updater was in `skywire-updater`. Service discovery, uptime tracker, and deployment configs each had their own repos. At one point, there were over a dozen `skywire-*` repositories under the `skycoin` organization.
 
-The visor ping mechanism was refined, autoconnect logic improved, and the Address Resolver handling became more robust. These were the years of making the network reliable enough for daily use.
+**March 2022** — ersonp began pulling `skywire-utilities` packages into the main Skywire repo — `netutil`, `cipher`, `buildinfo`, `httputil`. This was the first step toward consolidating everything back into a single repository.
+
+On the transport layer, STCPR (TCP with port reuse) and SUDPH (UDP hole punching) matured as direct peer-to-peer transport types, complementing the relay-based DMSG transport. The visor ping mechanism was refined, autoconnect logic improved, and the Address Resolver handling became more robust.
 
 **DmsgWeb** emerged during this period — a resolving SOCKS5 proxy that lets web browsers access sites hosted entirely within the DMSG overlay network. Inspired by I2P, DmsgWeb maps `.dmsg` domains to public keys and routes traffic through the encrypted overlay.
 
@@ -68,9 +84,18 @@ The visor ping mechanism was refined, autoconnect logic improved, and the Addres
 
 ---
 
-### 2024: The Unified Binary
+### 2024–2025: The Great Consolidation
 
-A pivotal architectural decision: **merge everything into one binary**.
+The separate repos were systematically merged into the main Skywire repository:
+
+- **February 2024** — Apps integrated into the unified binary (PR #1704)
+- **March 2024** — Move to merged binary complete (PR #1776)
+- **November 2024** — Joint compilation with Skycoin (PR #1901)
+- **December 2024** — `skywire-utilities` imports replaced with internal packages (PR #1912)
+- **March 2025** — `skywire-services` migrated into the main repo (PR #1937)
+- **March 2026** — `skywire-manager` dependencies migrated and UI rebuilt
+
+A pivotal architectural decision drove this consolidation: **merge everything into one binary**.
 
 **February 2024** — PR #1704 implemented Cobra CLI integration for all apps and merged them into a single compilation unit. The individual app binaries (`vpn-server`, `vpn-client`, `skysocks`, `skysocks-client`, `skychat`) became subcommands of the main `skywire` binary.
 

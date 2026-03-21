@@ -4,7 +4,7 @@ tags = ["Skycoin"]
 title = "The Evolution of the Skycoin Codebase"
 +++
 
-### Twelve Years, 10,000 Commits, 101 Contributors
+### Twelve Years, 10,000 Commits, 101 Contributors, 169 Repositories
 
 The Skycoin codebase dates back to December 2013. From the first `init` commit to today's unified multi-coin binary, it has been through multiple complete rewrites of the wallet, CLI, web frontend, and build system. This article traces that evolution through the code and the people who wrote it.
 
@@ -64,11 +64,17 @@ The explorer APIs were overhauled by iketheadore: address transactions, coin sup
 
 ---
 
-### 2019: HD Wallets, BIP44, and Maturation
+### 2019: HD Wallets, BIP44, and the Organization Split
 
 gz-c's most architecturally significant contributions came in 2019: the **BIP32 and BIP44** implementations. Starting in March with the initial BIP32 implementation, he built out hierarchical deterministic wallet support over several months — BIP32 key derivation paths, the BIP44 package, and wallet creation with BIP44 account structure. This gave Skycoin wallets the same HD capabilities as Bitcoin wallets: multiple accounts, deterministic address generation from a single seed, and xpub key export.
 
 **July 2019** — gz-c added the `distributeGenesis` CLI command, completing the Fibercoin initialization workflow. Combined with `addressGen` and `fiberAddressGen`, this meant a new blockchain could be created and initialized entirely from the CLI.
+
+**September 2019** — A dispute outside the codebase disrupted the project. Individuals who had gained control of the `skycoin.net` domain and the `github.com/skycoin` GitHub organization effectively held the project's infrastructure hostage. The development team responded by migrating to a new organization: **`github.com/SkycoinProject`**. Repos were forked, import paths were rewritten, and development continued.
+
+The split created ongoing maintenance burden — import paths referencing `SkycoinProject` would persist in codebases across the ecosystem for years. Eventually, control of the original `github.com/skycoin` organization was recovered and repos migrated back, but the episode was a stark reminder that control of infrastructure matters as much as control of code.
+
+The Skycoin project spans three GitHub organizations: `github.com/skycoin` (106 public repos), `github.com/SkycoinProject` (22 repos from the 2019 migration), and `github.com/skycoinpro` (41 private repos including the website, mobile wallets for Android and iOS, deployment infrastructure, whitelisting services, reward system tooling, and monitoring bots). At peak, the ecosystem had over 169 repositories across these organizations — a sprawl that the 2025 consolidation effort would work to resolve.
 
 **Also in 2019:** Moses Narrow's first contribution — updating the Arch Linux installation documentation. This would be the beginning of a long focus on packaging, deployment, and making Skycoin accessible to end users.
 
@@ -76,11 +82,13 @@ gz-c's most architecturally significant contributions came in 2019: the **BIP32 
 
 ---
 
-### 2020–2021: Stabilization
+### 2020–2021: Stabilization and the Ecosystem Sprawl
 
 Development velocity slowed as the codebase entered a maintenance phase. The API surface was stable, the wallet worked, the explorer worked, and Fibercoins could be created. The focus shifted to bug fixes, dependency updates, and incremental improvements.
 
 iketheadore continued contributing through August 2021, with his final commits refining the infrastructure he had built over five years.
+
+Meanwhile, the broader Skycoin ecosystem had fragmented across many repositories. The blockchain explorer was in `skycoin-explorer` (created July 2017). The web wallet was in `skycoin-web` (created November 2017). The hardware wallet library was in `hardware-wallet-go`, the hardware wallet daemon in `hardware-wallet-daemon`. The C bindings were in `libskycoin`. The mobile wallet was in `skycoin-mobilewallet`. Each had its own CI, its own dependencies, and its own release cycle.
 
 **2020–2021 by the numbers:** 738 commits.
 
@@ -98,15 +106,18 @@ Commit activity dropped to near zero in 2022–2023, with only 4 commits in thos
 
 ---
 
-### 2025: The Unified Binary
+### 2025: The Unified Binary and the Great Consolidation
 
 The Cobra rewrite merged in August–September 2025, and the results were transformative. Every Skycoin tool — daemon, CLI, web wallet, explorer, newcoin, and hardware wallet utilities — became a subcommand of a single `skycoin` binary.
 
-**Key integrations:**
-- **Blockchain explorer** — the separate explorer project was merged into the Skycoin repo, with its Angular frontend embedded in the binary using `go:embed`
-- **Web wallet** — the thin client web wallet was embedded similarly, serving its UI from memory
-- **Hardware wallet** — `skyhw daemon` and `skyhw cli` were integrated into the release binary (compiled from `cmd/release`)
+The years of repository fragmentation ended as separate projects were absorbed into the main Skycoin repo:
+
+- **`skycoin-explorer`** (created July 2017, 7 years as a separate project) — merged into `src/explorer/`, Angular frontend embedded via `go:embed`
+- **`skycoin-web`** (created November 2017, 8 years separate) — merged into `src/skycoin-web/`, served from memory
+- **`hardware-wallet-go`** and **`hardware-wallet-daemon`** — merged into `src/hardware-wallet/` and `src/hardware-wallet-daemon/`, compiled into the release binary from `cmd/release`
 - **Newcoin templates** — code generation templates embedded via `go:embed`, no external files needed
+
+What had been half a dozen separate repositories with their own CI pipelines, dependency management, and release schedules became a single codebase with a single version number.
 
 **Static cross-compilation** with musl toolchains enabled builds for Linux (amd64, arm64, armhf, arm, 386, riscv64), macOS (amd64, arm64 with .pkg installer), and Windows (amd64 with .msi installer) — all from a single CI pipeline.
 
