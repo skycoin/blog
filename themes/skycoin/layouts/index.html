@@ -16,7 +16,7 @@
     </div>
     <div class="list__container">
       <section class="list__posts">
-        {{ $paginator := .Paginate (where .Site.RegularPages "Section" "!=" "") 6 }}
+        {{ $paginator := .Paginate (where .Site.RegularPages "Section" "!=" "") 12 }}
         <ul class="list__list">
           {{ range $paginator.Pages }}
             <li class="list__item">

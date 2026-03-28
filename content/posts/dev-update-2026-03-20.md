@@ -30,6 +30,10 @@ The route multiplexing work landed today — one of the most significant archite
 
 **Ping route bypass** — latency probe routes were flooding the accept queue, blocking application routes for up to 30 seconds. They now bypass the accept queue entirely and are handled in dedicated goroutines with a 10-second timeout (#2233, #2234).
 
+**Embedded route setup timeout** — `CreateRouteGroup` in the embedded transport setup had no context timeout, causing proxy connections to hang indefinitely when the remote visor was unreachable. A 30-second timeout was added. Route keepalive and setup timeouts were also increased for high-load visors: keepalive to 2 minutes, GC interval to 10 seconds, handshake timeout to 30 seconds (#2227).
+
+**TPD bandwidth storage fix** — the Transport Discovery was storing bandwidth as a single total instead of tracking sent/recv separately per edge. Fixed to track both directions independently, which is needed for accurate bandwidth-based reward calculations (#2227).
+
 **Reward system UI** — the reward system interface was updated with new navigation and layout (#2227).
 
 ### DMSG: Server Fallback and 32 Bug Fixes

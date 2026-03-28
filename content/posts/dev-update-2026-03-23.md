@@ -20,7 +20,7 @@ Two stability-critical bugs were found and fixed:
 
 **KCP session goroutine leak in Address Resolver** — the SUDPH handler was creating KCP sessions for hole-punching but not cleaning them up when the transport negotiation failed or timed out. Each leaked session held a goroutine and a UDP port. Over time this exhausted resources on busy Address Resolvers (#2242).
 
-**Refactoring** — general code cleanup and simplification across the Skywire codebase (#2241).
+**Route group close deadlock and goroutine leak** — a critical bug was found where the `rulesGC` goroutine would deadlock permanently, preventing all route cleanup. The `broadcastClosePackets` function called `context.Background()` while holding the route group mutex, creating a deadlock when the context was canceled. The same pattern was found in `sendHandshake`. Without this fix, a public visor was accumulating **~7,000 leaked goroutines per day** in `waitForCloseRouteGroup`, and the GC goroutine would deadlock within minutes of the first stale route (#2241).
 
 **Windows release** — the Skywire Windows build was updated to compile from the repo root to avoid pulling in libhidapi/libusb DLL dependencies that aren't needed for Skywire (#2245).
 

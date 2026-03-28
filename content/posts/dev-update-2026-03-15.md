@@ -18,4 +18,10 @@ Today's work focused on fixing the Skywire Docker build and deployment pipeline 
 
 **End-to-end test improvements** — the E2E Docker build for pull request CI was fixed and Skywire service startup was optimized (#2218).
 
+**TPD optimization** — the Transport Discovery's rate limiter was fixed, N+1 database queries were eliminated, a latency measurement bug was corrected, and scan operations were consolidated (#2218).
+
+**Spurious transport delete errors** — the transport manager was logging "Error deleting transport: 404 Not Found" on every failed dial attempt during autoconnect, because it was trying to deregister transports that were never registered. Fixed to use `closeWithoutDeregister` on dial failure (#2219).
+
+**Security fixes** — `flatted` 3.3.4 to 3.4.1 (recursion DoS), Angular build dependency chain updated to fix undici vulnerability (#2214).
+
 These changes collectively unblock the release pipeline for v1.3.37.
