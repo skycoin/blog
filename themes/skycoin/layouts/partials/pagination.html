@@ -7,8 +7,8 @@
     {{ $.Scratch.Set "__paginator.ellipsed" false }}
     {{ range $pag.Pagers }}
       {{ $right := sub .TotalPages .PageNumber }}
-      {{ $showNumber := or (le .PageNumber 3) (eq $right 0) }}
-      {{ $showNumber := or $showNumber (and (gt .PageNumber (sub $pag.PageNumber 2)) (lt .PageNumber (add $pag.PageNumber 2)))  }}
+      {{ $showNumber := or (le .PageNumber 3) (le $right 2) }}
+      {{ $showNumber := or $showNumber (and (gt .PageNumber (sub $pag.PageNumber 3)) (lt .PageNumber (add $pag.PageNumber 3)))  }}
       {{ if $showNumber }}
           {{ $.Scratch.Set "__paginator.ellipsed" false }}
           {{ $.Scratch.Set "__paginator.shouldEllipse" false }}
