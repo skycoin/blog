@@ -1,18 +1,20 @@
 +++
 date = "2026-04-09"
 tags = ["Skywire", "DMSG"]
-title = "DMSG Server Mesh and the End of the Standalone Setup-Node"
+title = "DMSG Server Mesh and DMSG Server-Hosted Route Setup"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
 ### Two Architectural Changes That Belong Together
 
-Over the past two weeks, two changes landed in the DMSG layer that together represent the most significant topological simplification of Skywire in its history: **DMSG servers can now peer with each other** to form a mesh, and **route setup can run directly inside a DMSG server** instead of as a standalone service.
+Over the past two weeks, two changes landed in the DMSG layer that together offer significant flexibility in how Skywire deployments can be structured: **DMSG servers can now peer with each other** to form a mesh, and **a DMSG server can optionally run a route setup-node as an integrated service** on one of its DMSG ports.
 
-The first change is deployed and in active use. The second is deployed in the DMSG server binary but visors are not currently configured to use DMSG servers as their route setup nodes — the standalone setup-node continues to serve production traffic. The capability exists and works; the rollout is just a matter of updating visor deployment configs.
+The first change is deployed and in active use. The second is deployed in the DMSG server binary behind an `enable_route_setup` config flag, but visors on the public Skywire network are not currently configured to use DMSG servers as their route setup nodes. The existing standalone setup-node continues to serve public network traffic, and it has been doing so reliably — at the time of writing, the production setup-node has been online for 53,080 seconds (about 14.7 hours) without restarts or ephemeral port exhaustion, following the cumulative effect of the port leak fixes from [the great DMSG bug hunt](/posts/the-great-dmsg-bug-hunt/).
 
-This article walks through both changes and why they matter.
+In other words, the integrated route setup-node is not a mandatory replacement for anything. It's an optional configuration available for custom deployments — private Skywire networks, test environments, single-server setups, or deployments that want to reduce their operational footprint by one service. The public Skywire deployment may adopt it in the future, or may not; the standalone setup-node works, and "works" is a strong argument against changing things.
+
+This article walks through both changes, what they enable, and why the server-to-server mesh is the more consequential of the two.
 
 ---
 
@@ -77,64 +79,72 @@ The setup-node:
 3. Exchanges route setup messages with the destination
 4. Returns a route handle to the requesting visor
 
-Historically, the setup-node was a standalone binary (`skywire-setup-node`) that operators had to deploy and maintain separately. It needed its own DMSG client to reach visors, which meant it held its own ephemeral ports, its own sessions, and its own goroutines.
+The setup-node is a standalone binary (`skywire-setup-node`) that operators deploy and maintain separately. It needs its own DMSG client to reach visors, which means it holds its own ephemeral ports, its own sessions, and its own goroutines. The public Skywire deployment has always run a standalone setup-node and continues to do so today — after the port leak fixes from the recent [DMSG bug hunt](/posts/the-great-dmsg-bug-hunt/), the production setup-node has been running stably without ephemeral port exhaustion issues.
 
-This setup had friction:
+That said, the standalone architecture does have some theoretical inefficiencies for certain deployment patterns:
 
-- **Another service to deploy.** Anyone running a Skywire deployment needed to stand up at least one setup-node in addition to the TPD, Address Resolver, Route Finder, Service Discovery, Uptime Tracker, and all the other infrastructure services.
-- **Separate DMSG client.** The setup-node's DMSG client competed with visor DMSG clients for ephemeral ports on the same hosts, leading to [port exhaustion issues](/posts/dev-update-2026-04-07/) that the recent fixes had to work around.
-- **Forwarding overhead.** A visor on Server A wanting to set up a route to a visor on Server B had to go through a setup-node that might itself be on Server C. The setup messages went Visor(A) → Setup-Node(C) → Visor(B), with all three parties needing DMSG sessions to each other. If A and C didn't share a server, setup failed.
+- **Another service to deploy.** Anyone running a Skywire deployment needs to stand up at least one setup-node in addition to the TPD, Address Resolver, Route Finder, Service Discovery, Uptime Tracker, and all the other infrastructure services. For small private deployments this is operational overhead that may not be worth it.
+- **Separate DMSG client.** The setup-node's DMSG client is a distinct process from the DMSG server's internal client, holding its own sessions and ports. This is fine on hosts with plenty of resources but adds up for minimal deployments.
+- **Extra indirection.** A visor on Server A wanting to set up a route to a visor on Server B goes through a setup-node that might itself be connected via Server C. This extra hop is usually invisible to users but represents unnecessary work if the setup-node could have been co-located with one of the endpoints.
+
+None of these are blockers for the public deployment. They're the kind of friction you'd want to avoid if you were designing a small custom Skywire network from scratch.
 
 ---
 
-### Route Setup Inside the DMSG Server
+### Optional: Route Setup Inside the DMSG Server
 
-The change: **the DMSG server now serves three endpoints on its own direct client**:
+The new capability: **a DMSG server can optionally serve three endpoints on its own direct client**:
 
 - `/health` on DMSG port 80 (HTTP) — service health + build info
 - `/debug/pprof` on DMSG port 81 (debug) — profiling, unchanged from before
 - **Route setup-node on DMSG port 36 (RPC) — route setup for visors**
 
-The setup-node runs inside the DMSG server process, using the server's own DMSG client which connects through the server itself. The architectural implications are significant.
+When the `enable_route_setup` config flag is set, the setup-node runs inside the DMSG server process, using the server's own DMSG client which connects through the server itself. Visors that are configured to use this DMSG server as their route setup node can then request route setup on port 36, and the server handles the request internally.
 
-**For visors on the same DMSG server:** route setup is local. The visor's request for route setup arrives at the server as a stream to DMSG port 36. The server's internal setup-node handles the request using its own DMSG client, which finds the destination visor in the server's local session map (because it's on the same server). The entire exchange happens without any forwarding — just local frame copies between streams.
+**For visors on the same DMSG server:** route setup is local. The visor's request arrives as a stream to DMSG port 36. The server's internal setup-node handles the request using its own DMSG client, which finds the destination visor in the server's local session map. The entire exchange happens without any forwarding — just local frame copies between streams.
 
 **For visors on different DMSG servers:** the server-to-server mesh handles forwarding transparently. The setup-node's DMSG client on Server A opens a stream to the destination visor on Server B. The mesh relays the stream through the peering relationship. As far as the setup-node code is concerned, it's just dialing a stream — the mesh is invisible to it.
 
-This means:
+The potential upsides of enabling this:
 
-- **No standalone setup-node needed.** Operators running a DMSG server get route setup for free.
-- **No separate DMSG client.** The server's existing client serves all three endpoints (health, pprof, setup), sharing ports and sessions efficiently.
-- **Ephemeral port exhaustion goes away** for the setup path. The setup-node was previously one of the worst offenders for port leaks during dial failures; integrating it into the DMSG server means it shares the server's own session pool.
-- **Route setup becomes trivially distributed.** Every DMSG server in the mesh can handle route setup for its local clients. There's no longer a single point of failure (the standalone setup-node) or a bottleneck (the visor's one configured setup-node).
+- **Fewer services to deploy.** A private Skywire deployment can run a single DMSG server that provides DMSG relay, health checks, pprof, and route setup all from one binary.
+- **No separate DMSG client.** The server's existing client serves all three endpoints, sharing ports and sessions efficiently.
+- **Simpler topology.** Every DMSG server in a mesh can handle route setup for its local clients, so there's no single-service dependency for route establishment.
 
 ### Current Deployment Status
 
-The capability is in the DMSG server binary. An `enable_route_setup` config flag controls whether a given server advertises its route setup service. `/health` tests and E2E integration were added in PR #788415546.
+The capability is present in the DMSG server binary. An `enable_route_setup` config flag controls whether a given server advertises its route setup service. `/health` tests and E2E integration were added in PR #788415546.
 
-**However, production visors are not currently configured to use DMSG servers as their route setup nodes.** The existing standalone setup-node continues to handle route setup for the public Skywire deployment. The visor configs still point to the traditional setup-node addresses.
+**The public Skywire deployment does not currently use this.** The standalone setup-node continues to handle route setup for public network traffic, and as of today is running stably without the resource exhaustion issues that had previously made DMSG-integrated route setup look urgent. The cumulative effect of the recent port leak fixes has addressed the concerns that motivated the integration work in the first place.
 
-This is a deliberate rollout strategy. The new architecture works in E2E tests, but the switch from "route setup via standalone service" to "route setup via DMSG server port 36" is a change that touches every visor in the network, and the operational characteristics under real production load haven't been fully characterized yet. A gradual rollout — test deployment first, then a subset of production visors, then the full network — is the safer path.
+So the integrated route setup-node should be thought of as an **optional deployment mode** rather than a replacement for the standalone setup-node. It's available for:
 
-What you can do today: if you're running a private Skywire deployment, you can enable `enable_route_setup` on your DMSG server and configure your visors to point at that server for route setup. The public deployment will migrate when the operators are ready.
+- **Private Skywire deployments** that want to minimize the number of services to deploy
+- **Test environments** where running a separate setup-node is operational overhead
+- **Single-server setups** where having the setup-node co-located with the DMSG server is simpler
+- **Experimental rollouts** where operators want to validate the new architecture before considering wider adoption
+
+If you're running a private deployment, you can enable `enable_route_setup` on your DMSG server and point your visors at that server for route setup. If you're on the public Skywire network, nothing changes — the existing setup-node continues to serve you.
 
 ---
 
-### The Bigger Picture: Collapsing Service Categories
+### The Bigger Picture: The Mesh Is the Real Story
 
-These two changes together represent something Skywire has been working toward for a long time: **collapsing service categories into the services you already have**.
+Of the two changes, **the server-to-server mesh is the significantly more consequential one**. It addresses a fundamental scaling limitation that had been present in DMSG since the beginning, and it's in active use on the public network right now. Every client that connects to a mesh-peered server benefits, whether they know the mesh exists or not.
 
-Skywire's original architecture had many separate services: DMSG servers, DMSG discovery, transport discovery, service discovery, route finder, address resolver, setup-node, uptime tracker, and more. Each service ran as its own binary, with its own config, its own deployment, and its own failure modes.
+The integrated route setup-node is a more modest addition. It enables a deployment pattern — "run fewer services" — that's useful for certain scenarios but isn't a replacement for the existing production architecture. The standalone setup-node works, is well-understood, and after the recent reliability fixes is running without the port exhaustion issues that had previously made integration look urgent.
 
-Over the past year, this has been gradually consolidating:
+That said, the integrated route setup-node does hint at a broader pattern that Skywire has been working toward: **services composed together inside the processes you already have**, rather than proliferating as standalone binaries.
+
+Over the past year, this has been gradually taking shape:
 
 - **Skywire unified binary** (March 2024) — all services compile into a single `skywire` binary invoked via subcommands
 - **DMSG merged into Skywire** (April 2026) — DMSG is no longer a separate Go module
-- **Route setup integrated into DMSG server** (April 2026) — the setup-node becomes a feature of an existing service rather than a standalone service
-- **Server-to-server mesh** (March 2026) — DMSG servers peer with each other, reducing the need for every client to connect to every server
+- **Server-to-server mesh** (March 2026) — DMSG servers peer with each other, so clients don't need to connect to every server to maintain full reach
+- **Route setup optionally integrated into DMSG server** (April 2026) — the setup-node becomes an optional feature of an existing service, available for deployments that want it
 
-The direction of travel: fewer independent services, more features composed together inside a smaller number of processes. The more that can be collapsed into the DMSG server (which every deployment needs anyway), the less operational overhead there is to running Skywire infrastructure.
+The direction of travel is toward fewer independent services and more features composable together, but this is a gradual and optional evolution, not a forced migration. The public deployment continues to use the services that work, while the new capabilities exist for operators who want to experiment with different architectures.
 
-The route setup-node integration is a proof of concept for this pattern. If it works in production, there's no reason the address resolver couldn't be similarly integrated, or the transport discovery, or several other infrastructure components. The DMSG server becomes the nucleus of a regional Skywire deployment, with everything else either running inside it or running as a thin wrapper around its DMSG client.
+If the integrated setup-node proves useful in custom deployments over time, it may eventually be adopted more broadly. Until then, it's a nice option to have — one more way to configure Skywire for your specific needs.
 
 See also: [Guide: DMSG — The Encrypted Overlay Network](/posts/guide-dmsg-deployment/) | [The Evolution of the Skywire Codebase](/posts/skywire-codebase-evolution/) | [Skywire v1.3.37 Released](/posts/skywire-v1.3.37/)
