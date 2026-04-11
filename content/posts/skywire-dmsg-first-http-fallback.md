@@ -18,10 +18,11 @@ This article describes what changed, why it matters, and why it took as much eng
 
 ### The Old Architecture
 
-The Skywire visor needs to talk to six infrastructure services on startup and periodically afterward:
+The Skywire visor needs to talk to seven infrastructure services on startup and periodically afterward:
 
 | Service | Purpose |
 |---------|---------|
+| **DMSG Discovery (DMSGD)** | Looks up DMSG clients by public key to find their delegated servers |
 | **Transport Discovery (TPD)** | Registers visor transports, serves transport metrics |
 | **Service Discovery (SD)** | Lists available VPN servers, SOCKS5 proxies, public visors |
 | **Address Resolver (AR)** | Resolves STCPR/SUDPH peer addresses for hole-punching |
@@ -78,15 +79,15 @@ The `conf_dmsg` field is particularly important: it means the config bootstrappe
 
 With dual endpoints available, the visor's service initialization changed. On startup:
 
-1. **Load embedded deployment config.** The visor starts with the full HTTP+DMSG service addresses from its embedded `services-config.json` or from `SKYDEPLOY` (for custom deployments). No network needed for this step.
+1. **Load embedded deployment config.** The visor starts with the full HTTP+DMSG service addresses from its embedded `services-config.json` or from `SKYDEPLOY` (for custom deployments). No network needed for this step — the embedded config includes the `dmsg_servers` list with public keys and TCP addresses.
 
-2. **Start DMSG client.** The visor connects to DMSG servers from the embedded list. This is the prerequisite for all DMSG-based service communication.
+2. **Start a DMSG direct client.** Using the embedded `dmsg_servers` list, the visor establishes DMSG sessions with production DMSG servers. No DMSG Discovery lookup is needed because the direct client knows exactly which servers to connect to from the static config.
 
-3. **`initDmsgHTTP`** — sets up the DMSG-HTTP transport. Once this completes, any HTTP request can be routed over DMSG instead of TCP.
+3. **`initDmsgHTTP`** — wraps the direct client in an HTTP transport to produce a DMSG-HTTP client. Once this completes, any HTTP-semantics request (discovery lookup, service API call, config fetch) can be routed over DMSG sessions instead of plain TCP+TLS. The standard dmsg.Client used for peer-to-peer communication is also instantiated with this DMSG-HTTP client for its Discovery interactions — so even DMSG Discovery lookups go over DMSG.
 
-4. **Initialize services.** For each of the six infrastructure services, the visor resolves the URL via `getHTTPClient`. If the URL is a `dmsg://` address and the DMSG-HTTP client is ready, the request goes over DMSG. If the URL is HTTPS or the DMSG-HTTP client isn't ready, the request goes over plain HTTP as a fallback.
+4. **Initialize services.** For each of the infrastructure services, the visor resolves the URL via `getHTTPClient`. If the URL is a `dmsg://` address (which it is by default for every service), the request goes through the DMSG-HTTP client over DMSG sessions. If the URL is HTTPS or the DMSG-HTTP client isn't ready yet, the request goes over plain HTTP as a fallback.
 
-The key piece is step 4 — the visor prefers the DMSG URL, and only falls back to HTTP if DMSG isn't available. For a visor with a working DMSG connection (which is every visor on a properly-configured network), this means **every service request goes over DMSG**.
+The key piece is step 4 — the visor prefers the DMSG URL, and only falls back to HTTP if the DMSG-HTTP client isn't available. For a visor with a working DMSG connection (which is every visor on a properly-configured network), this means **every infrastructure request goes over DMSG**, including the DMSG Discovery queries that are needed to find other visors for peer-to-peer communication.
 
 ### Config Bootstrapper: DMSG First
 
@@ -147,16 +148,31 @@ For operators running private Skywire deployments, the benefit is more concrete:
 
 ---
 
+### Three Kinds of DMSG Client
+
+To understand how the visor can talk to every service — including the DMSG discovery itself — without making plain HTTP requests, it helps to distinguish between three different DMSG client types that appear in the codebase. They sound similar but play different roles.
+
+**1. DMSG direct client** (`direct.NewClient`) — does not use the DMSG Discovery at all. It's configured with a static list of DMSG server entries (public key + TCP address) and establishes sessions directly with those servers. Because there's no discovery lookup, a direct client can only reach other clients that it already knows about — either passed in at construction time or added via a local API. Skywire **services** use direct clients exclusively: they know each other's public keys from the deployment config, so they don't need a discovery service to find each other. Services never make discovery requests.
+
+**2. DMSG client** (`dmsg.NewClient`) — the standard peer-to-peer DMSG client. It uses the DMSG Discovery to look up other clients by public key. By default, the HTTP client it uses for Discovery lookups is a plain `http.Client`, so **discovery requests go over plain HTTP**. In a traditional Skywire deployment, this is where HTTP traffic to `dmsgd.skywire.skycoin.com` came from — every time a visor needed to find another visor's delegated server list, it made an HTTPS request to the Discovery.
+
+**3. DMSG-HTTP client** — a standard DMSG client configured with a custom `http.Client` whose transport is backed by a **DMSG direct client**. The chain is: visor → dmsg.Client → (http.Client → dmsgHTTPTransport → direct.Client) → DMSG Discovery's DMSG address. Discovery lookups from a DMSG-HTTP client travel over DMSG sessions to the DMSG Discovery server's DMSG endpoint (the discovery server listens on DMSG as well as HTTP). There are **zero plain HTTP requests** in this path — the "HTTP" in DMSG-HTTP refers to the HTTP semantics of the discovery API, not the transport layer.
+
+The direct client needs a static DMSG server list to bootstrap. The dmsg_servers list in the embedded `services-config.json` provides exactly this: every Skywire binary ships with the addresses and public keys of several production DMSG servers, so a fresh install can establish DMSG sessions immediately without asking any discovery service where the servers are. From those sessions, the direct client can reach the DMSG Discovery's DMSG endpoint and look up other clients. From there, the regular DMSG client takes over.
+
+The visor now uses a DMSG-HTTP client by default for its DMSG Discovery interactions. **Discovery requests are DMSG traffic, not HTTPS traffic.** Your ISP doesn't see `dmsgd.skywire.skycoin.com` in your traffic — it sees encrypted DMSG traffic to one of the DMSG servers, and that traffic happens to be carrying HTTP-semantics discovery queries to the Discovery server's DMSG listener.
+
+Fetching fresh deployment configs from `conf.skywire.skycoin.com` follows the same pattern. The config bootstrapper has a DMSG address listed as `conf_dmsg` in the embedded config. A visor running `skywire cli config gen` uses a DMSG-HTTP client (bootstrapped from the embedded direct client's DMSG server list) to reach the config bootstrapper over DMSG, fetches a fresh deployment config, and never issues an HTTPS request to `conf.skywire.skycoin.com` unless DMSG fails entirely.
+
 ### What's Still HTTP
 
-A few things still go over HTTP by design:
+Given that DMSG-HTTP clients eliminate HTTP requests to DMSG Discovery and every infrastructure service, what's left that actually uses plain HTTP?
 
-- **Initial DMSG discovery** — the DMSG discovery server still primarily uses HTTP (though it also has a `dmsg_discovery_dmsg` entry). A visor needs some way to find DMSG servers to connect to in the first place, which requires either HTTP or a pre-known DMSG server list in the embedded config.
-- **External data sources** — GeoIP lookups, external STUN servers, hardware survey IP detection, version checks. These go to external services that don't have DMSG endpoints, so they necessarily use HTTP.
-- **The hypervisor UI** — your browser still talks to the hypervisor over HTTP (or HTTPS). That's a local connection, not a request to a public service, so it doesn't have the same exposure concerns.
-- **Fallback paths** — when DMSG isn't available yet (during startup) or has failed, services fall back to HTTP. This is rare in practice but keeps the visor functional when DMSG has problems.
+- **External data sources** — GeoIP lookups, public STUN servers, hardware survey IP detection, version checks. These go to third-party services (not Skywire infrastructure) that don't have DMSG endpoints, so they necessarily use HTTP. This is a small amount of traffic at startup and periodically afterward.
+- **The hypervisor UI** — your browser talks to the local hypervisor over HTTP (or HTTPS). That's a local connection, not a request to a public service, so it doesn't have the same exposure concerns.
+- **Fallback paths** — when DMSG isn't available (e.g., every DMSG server in the bootstrap list is unreachable due to a network partition), services fall back to HTTP. This is genuinely rare in practice, but the fallback keeps the visor functional when DMSG has problems.
 
-The goal isn't zero HTTP — it's "HTTP only when necessary, DMSG by default."
+The goal isn't zero HTTP — it's "HTTP only for third-party services or when DMSG is completely unavailable."
 
 ---
 
