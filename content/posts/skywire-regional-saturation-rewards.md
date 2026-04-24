@@ -1,36 +1,30 @@
 +++
 date = "2026-04-09"
 tags = ["Skywire"]
-title = "Regional Saturation Scaling: Fighting Reward Farming with Square Roots"
+title = "Regional Saturation Scaling: Incentivizing Geographic Diversity with Square Roots"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-### The Problem with Equal Reward Distribution
+### The Goal: A Globally Distributed Network
 
 Skywire's reward system pays operators for running visors on the network. The system has two pools — a **presence pool** (fixed share per eligible visor, rewarding uptime and minimum transport counts) and a **bandwidth pool** (proportional share based on measured bandwidth). Both have been discussed at length in the [bandwidth rewards transition article](/posts/skywire-bandwidth-rewards-transition/).
 
-Here's the presence pool problem in its simplest form:
+The Skywire network becomes more valuable as it becomes more geographically diverse. A mesh network with nodes on every continent, in every country, reaching into underserved regions — that's the network worth building. The reward system should reflect this: **operators who bring Skywire to places it doesn't yet exist should earn more than operators adding capacity where the network is already dense.**
 
-> **If the presence pool gives 1 share per eligible visor, and the cheapest way to operate an eligible visor is $3/month on a cloud VPS, then any time the pool share exceeds $3/month, it's profitable to spin up more VPS visors.**
+With a flat pay-per-visor model, the economic incentive is neutral about geography. A visor in a country with 10,000 existing nodes earns the same as a visor in a country with none. There's no reason for an operator to seek out underserved regions. The network grows wherever it's cheapest to operate, which tends to be the same handful of cloud regions.
 
-The market equilibrium is "keep adding VPS visors until the per-visor share equals the operating cost." This is textbook economics — inefficient rent gets arbitraged away by new entrants. The problem is that for Skywire, this equilibrium is the wrong outcome. The reward system was designed to compensate operators for providing **distributed, geographically-diverse network infrastructure**, not to subsidize data-center colocations.
+The question is: how do you make the reward function care about where nodes are, so the economics naturally pull the network toward global coverage?
 
-If the economic gradient points toward "a single operator runs 10,000 VPS visors in the same cloud region," the reward system has failed to create the network it wanted. The network becomes centralized in a handful of cloud providers, concentrated in a handful of geographic regions, and vulnerable to the same failure modes the peer-to-peer overlay was supposed to avoid.
+### Why Flat Rewards Don't Incentivize Expansion
 
-### Why "Just Pay Less Per Visor" Doesn't Work
+With equal per-visor rewards, operators have no economic reason to deploy in new regions. Running a visor in a well-connected data center in Frankfurt earns the same as running one on a home connection in Bolivia. The path of least resistance is to add nodes where infrastructure is cheapest and most reliable — which concentrates the network rather than expanding it.
 
-The obvious response is: lower the per-visor reward. If the pool pays $1/visor/month and VPS costs $3/month, there's no profit in running more VPS visors.
-
-But this breaks the incentive for legitimate operators. If you're running a Raspberry Pi at home, or a visor on hardware you already own, the marginal cost to you is near zero (maybe a few cents of electricity). Lowering the per-visor reward pushes the break-even point higher for home operators too. At some point, only the industrial operators remain — the thing you were trying to prevent.
-
-Similarly, raising the eligibility bar doesn't work. Higher minimum uptime, more required transports, longer required history — none of these distinguish a home operator from a cloud operator. The cloud operator can easily meet any uptime requirement (cloud SLAs are excellent) and easily configure many transports. Each additional barrier has the same cost for both.
-
-The fundamental issue is that **a pay-per-visor system treats every visor identically, regardless of what that visor is actually contributing to the distributed nature of the network**. A thousand visors in a single Hetzner data center contribute no distribution benefit over one visor there. The reward function needs to account for this.
+Raising the per-visor reward helps all operators equally. Lowering it hurts all operators equally. Neither creates a geographic gradient. What's needed is a reward function where **the first node in an underserved region earns substantially more than the thousandth node in an already-covered region.**
 
 ### The Regional Saturation Idea
 
-The fix landed on April 4 (#2278): **apply diminishing returns to the presence pool based on unique IP addresses per country**.
+The solution landed on April 4 (#2278): **apply diminishing returns to the presence pool based on unique IP addresses per country**, so that operators in underserved regions earn proportionally more.
 
 The basic shape:
 
@@ -53,13 +47,13 @@ A country with 100 unique IPs gets 10× the total weight of a country with 1 IP,
 
 The economic implications:
 
-1. **Geographic diversity is rewarded**. Operators looking for the highest return per visor are incentivized to deploy in countries with few existing Skywire visors, because their visor there earns `1 / sqrt(few)` weight instead of `1 / sqrt(many)`.
+1. **Expanding to new regions is rewarded**. Operators looking for the highest return per visor are incentivized to deploy in countries with few existing Skywire visors, because their visor there earns `1 / sqrt(few)` weight instead of `1 / sqrt(many)`. The first visor in a new country earns the maximum possible weight.
 
-2. **The industrial cloud strategy breaks down**. Spinning up 1,000 visors in AWS us-east-1 doesn't produce 1,000 shares. It produces `sqrt(1,000) ≈ 31.6` effective shares, divided among the 1,000 visors, for an average of `0.032` per visor — roughly 3% of what a single visor in a country with 4 IPs would earn. The arbitrage opportunity disappears.
+2. **The incentive gradient points toward underserved regions**. A single visor in a country with 4 total IPs earns roughly 30x more than a visor in a country with 1,000 IPs. This creates a strong economic pull toward places where the network doesn't yet exist — exactly the behavior that builds a globally distributed mesh.
 
-3. **Home operators benefit from their inherent diversity**. A home visor in Belarus, Bolivia, or Bangladesh earns substantially more than a home visor in a country already saturated with Skywire nodes. This makes it economically viable for operators in underrepresented regions to participate even if their electricity or bandwidth costs are higher.
+3. **Operators in underrepresented regions benefit most**. A home visor in Belarus, Bolivia, or Bangladesh earns substantially more than a home visor in a country already well-served by Skywire nodes. This makes it economically viable for operators in these regions to participate even if their electricity or bandwidth costs are higher. The network pays a premium for geographic reach.
 
-4. **There's still a benefit to running more visors, just not linearly**. If you already have 1 visor in a country with 4 IPs total, adding a second visor there increases your share (you now control 2 of 4 IPs, taking 2/4 of the country's 2.0 total weight = 1.0, up from 0.5 before). But adding a 5th, 6th, 7th visor in the same country produces ever-diminishing returns.
+4. **There's still a benefit to running more visors, just not linearly**. If you already have 1 visor in a country with 4 IPs total, adding a second visor there increases your share (you now control 2 of 4 IPs, taking 2/4 of the country's 2.0 total weight = 1.0, up from 0.5 before). But adding a 5th, 6th, 7th visor in the same country produces ever-diminishing returns — the economics encourage looking for new territory instead.
 
 ### Why Square Root Specifically
 
@@ -111,22 +105,16 @@ A full reward calculation run that previously took minutes now completes in seco
 
 **Regional cap is implicit, not explicit**. There's no maximum share any single country can earn. A country with 100% of the visors would get 100% of the pool. But because of the concave weighting, the effective maximum is much lower than the pool size — a country with 10,000 times more visors than the smallest represented country gets only 100× the weight, not 10,000×. In practice, this means the largest country gets a substantially smaller share than proportional visor count would suggest.
 
-### What This Doesn't Fix
+### The Bigger Picture
 
-Regional saturation scaling is one piece of the reward system's anti-gaming defenses, not all of it. It addresses geographic concentration but not:
+Regional saturation scaling is one piece of the reward system's incentive structure. The presence pool creates a floor — a minimum reward for any operator meeting the basic eligibility criteria — while the bandwidth pool drives the bulk of the incentive toward actively-used visors. Regional saturation makes the presence pool reward expansion into new territory rather than concentration in existing territory.
 
-- **Sybil attacks at the visor level** — running many visors on the same IP is already handled (they count as one IP), but running many visors on many cheap IPs within the same data center is only partially addressed by the country-level aggregation.
-- **Bandwidth gaming** — the bandwidth pool is a separate mechanism with its own anti-gaming rules (same-LAN traffic excluded, both edges must agree on the count).
-- **Uptime gaming** — eligibility is gated on minimum uptime, but a cloud operator can easily meet any uptime requirement. The presence pool still depends on visor count within a country's weight share.
-
-The presence pool's role in the system is to create a floor — a minimum reward for any operator meeting the basic eligibility criteria — while the bandwidth pool drives the bulk of the incentive toward actually-useful visors. Regional saturation scaling prevents the presence pool from being exploited while preserving the floor for legitimate operators in underrepresented regions.
-
-The broader goal — a Skywire network that's geographically diverse, globally distributed, and economically viable for operators outside the major cloud regions — is served by the sum of these mechanisms, not any single one. Regional saturation is the piece that makes the presence pool incentive-compatible with that goal.
+The broader goal — a Skywire network that's geographically diverse, globally distributed, and economically viable for operators in every region — is served by the sum of these mechanisms, not any single one. Regional saturation is the piece that makes the economic gradient point outward: toward the edges of the map, toward the countries and regions where Skywire doesn't yet have a presence, toward the kind of global coverage that makes a mesh network genuinely useful.
 
 ### Where Things Stand
 
 Regional saturation scaling is active in the reward calculator. The default exponent is 0.5 (square root). The flag `--sat-exp` allows operators to tune the value if needed. The computational speedup from replacing `jq` with native Go parsing is a side benefit — the full reward run now completes in seconds instead of minutes, which matters when the reward server runs this calculation hourly.
 
-In terms of outcomes, it's too early to say definitively how this affects the network. The transition to bandwidth-based rewards is happening in parallel, and it'll take several weeks to see how the combined presence + bandwidth rewards shift operator behavior. The expectation is that operators in underrepresented regions will see their rewards increase substantially, while operators with many visors in already-saturated regions will see their rewards decrease — which is the point.
+In terms of outcomes, it's too early to say definitively how this affects the network. The transition to bandwidth-based rewards is happening in parallel, and it'll take several weeks to see how the combined presence + bandwidth rewards shift operator behavior. The expectation is that operators in underrepresented regions will see their rewards increase substantially, creating a real economic incentive to bring Skywire to places it hasn't reached yet.
 
 See also: [Transitioning to Bandwidth-Based Rewards](/posts/skywire-bandwidth-rewards-transition/) | [Running a Public Visor](/posts/running-a-public-visor/) | [Blockchain Wallet Authentication: The Skywire Reward Login System](/posts/skywire-reward-login-blockchain-auth/)
