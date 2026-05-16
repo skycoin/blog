@@ -43,8 +43,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 [[menu.main]]
     name = "Skywire Uptime"
     identifier = "skywire-uptime"
-    # URL to be supplied by Beta — uptime kurma on the deployment server.
-    url = "//uptime.skywire.dev"
+    url = "//monitor.skywire.dev/status/skywire-services"
     weight = -2
 [[menu.main]]
     name = "Skywire Docs"
