@@ -36,15 +36,26 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 	german = "/posts/:contentbasename/"
 
 [[menu.main]]
+    name = "Skywire Network"
+    identifier = "skywire-network"
+    url = "//theskywirenetwork.net"
+    weight = -3
+[[menu.main]]
+    name = "Skywire Uptime"
+    identifier = "skywire-uptime"
+    # URL to be supplied by Beta — uptime kurma on the deployment server.
+    url = "//uptime.skywire.dev"
+    weight = -2
+[[menu.main]]
+    name = "Skywire Docs"
+    identifier = "skywire-docs"
+    url = "//skycoin.github.io/skywire/"
+    weight = -1
+[[menu.main]]
     name = "Explorer"
     identifier = "explorer"
     url = "//explorer.skycoin.com"
     weight = 1
-[[menu.main]]
-    name = "Explorer API"
-    identifier = "explorer-api"
-    url = "//explorer.skycoin.com/api.html"
-    weight = 2
 
 [params]
   author = "Skycoin"
@@ -56,12 +67,20 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   github = "skycoin"
 
 [[params.social]]
-  name = "Github"
+  name = "Github (Skycoin)"
   url = "https://github.com/skycoin/skycoin"
   image = "images/github.svg"
 [[params.social]]
-  name = "Telegram"
+  name = "Github (Skywire)"
+  url = "https://github.com/skycoin/skywire"
+  image = "images/github.svg"
+[[params.social]]
+  name = "Telegram (Skycoin)"
   url = "https://t.me/Skycoin"
+  image = "images/telegram.svg"
+[[params.social]]
+  name = "Telegram (Skywire)"
+  url = "https://t.me/skywire"
   image = "images/telegram.svg"
 
 [Languages]
