@@ -6,13 +6,15 @@ image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-A day about *not depending on plain HTTP*. With the overlay's reliability and egress now in good shape, the default generated config drops the plain-HTTP service-discovery fallback — services are reached over dmsg (and, by design, over skynet transports), with HTTP available only when you ask for it. Getting there safely meant draining "ghost" transports at the source, cutting the transport-discovery's egress with gzip + caching, and bounding a runaway CXO goroutine spawn. Plus the Windows installer is fixed and v1.3.64 is prepared.
+A day about taking plain HTTP off the critical path. With the overlay's reliability and egress now in good shape, the default generated config drops the plain-HTTP service-discovery fallback — services are reached over the peer-to-peer overlay (dmsg today, skynet transports by design). Plain HTTP now survives only as a compatibility shim for custom deployments; on the public network it's headed for the door entirely. Getting there safely meant draining "ghost" transports at the source, cutting the transport-discovery's egress with gzip + caching, and bounding a runaway CXO goroutine spawn. Plus the Windows installer is fixed and v1.3.64 is prepared.
 
 ### Skywire: Drop the Plain-HTTP Fallback by Default
 
 Skywire's services — service discovery, transport discovery, the address resolver — have always been reachable two ways: over plain HTTP, and over the overlay. The default config carried both, with HTTP as a fallback. That fallback made sense when the overlay path was less proven; it makes less sense now that it is.
 
 **`2983` feat(cli/config): generate dmsg-only config by default; add --dual flag** — `config gen` now generates a config *without the plain-HTTP fallback* by default: services are reached over the overlay (dmsg today, and skynet transports by design), with `--dual` to restore the http+overlay fallback config and `--http` to generate an http-only config for environments that need it. This is a pivot *away from depending on plain HTTP* — not a narrowing of the transport story. Everything reachable over dmsg is meant to be reachable over skywire's own p2p transports too; the change is about which path the default trusts.
+
+Where this is headed is worth stating plainly. The plain-HTTP path now survives only as a **compatibility shim for custom and self-hosted deployments** — not as a direction. On the public skywire network the intent is to retire it outright: the plain-HTTP *write* path — services registering and updating their records over HTTP — is slated to be dropped by the end of June, and the *read* path after that. Once both are gone, skywire's deployment services are reachable **only over the encrypted, key-addressed overlay** — invisible to a plain HTTP client. The infrastructure itself moves off the clearnet. There's a fair way to characterize that as the network becoming more of a *darknet* — not in the sense of what it carries, but in the structural sense that you have to be *on* the network, speaking its transport, to even see that its services exist.
 
 Making that default safe required hardening the no-HTTP-fallback path:
 
