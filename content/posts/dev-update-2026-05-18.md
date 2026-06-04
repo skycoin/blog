@@ -6,7 +6,7 @@ image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-Two foundational threads today. The big one is **IPv6 dual-stack** — issue #1525 lands across the schema, the address resolver, the dmsg-server advertisement, and a Happy-Eyeballs dialer, in a tidy phased rollout. The other is the **standalone skychat** path: a noise-TCP direct transport (encrypted, public-key-addressed) plus a `--standalone` mode that runs the chat app with no visor process behind it — just the encrypted transport and a pubkey identity. Plus the usual CXO/pairing reconnect hardening and the start of a CI mux-route probe.
+Two foundational threads today. The big one is **IPv6 dual-stack** — issue #1525 lands across the schema, the address resolver, the dmsg-server advertisement, and a Happy-Eyeballs dialer, in a tidy phased rollout. The other is the **standalone skychat** path: a noise-TCP direct connection (encrypted, public-key-addressed) plus a `--standalone` mode that runs the chat app with no visor process behind it — just the encrypted connection and a pubkey identity. Plus the usual CXO/pairing reconnect hardening and the start of a CI mux-route probe.
 
 ### Skywire: IPv6 Dual-Stack (#1525)
 
@@ -24,15 +24,15 @@ Skywire's addressing has been IPv4-shaped end to end. Issue #1525 brings IPv6 th
 
 ### Skywire: Standalone Skychat — Encrypted TCP, Public-Key Identity
 
-A quietly important primitive lands: the chat app can run *standalone* — without a visor or router behind it — over a direct, encrypted, public-key-addressed TCP transport.
+A quietly important primitive lands: the chat app can run *standalone* — without a visor or router behind it — over a direct, encrypted, public-key-addressed TCP connection. (A note on vocabulary: in skywire a *transport* is a connection a visor creates and the router can route over; this standalone link is a bare *connection*, below that line.)
 
-**`2707` feat(skychat): noise-TCP direct transport — listener, peer dialer, CLI --via** — a noise-encrypted TCP transport with a listener and a peer dialer, addressed by public key. `--via tcp://<pk>@host:port` dials a peer directly with the noise handshake providing the encryption and the pubkey providing the identity. No discovery, no router — just the encrypted transport between two keys.
+**`2707` feat(skychat): noise-TCP direct transport — listener, peer dialer, CLI --via** — a noise-encrypted TCP connection with a listener and a peer dialer, addressed by public key. `--via tcp://<pk>@host:port` dials a peer directly with the noise handshake providing the encryption and the pubkey providing the identity. No discovery, no router — just the encrypted connection between two keys.
 
-**`2708` feat(skychat): --standalone mode (skip PROC_CONFIG, keep TCP-direct + HTTP control)** — runs the chat app on its own: it skips the visor `PROC_CONFIG` handshake (which normally binds an app to a parent visor) but keeps the TCP-direct transport and the HTTP control surface. The chat app becomes a self-contained binary that two peers can run and talk through, each identified by its key.
+**`2708` feat(skychat): --standalone mode (skip PROC_CONFIG, keep TCP-direct + HTTP control)** — runs the chat app on its own: it skips the visor `PROC_CONFIG` handshake (which normally binds an app to a parent visor) but keeps the TCP-direct connection and the HTTP control surface. The chat app becomes a self-contained binary that two peers can run and talk through, each identified by its key.
 
 Followed immediately by the inevitable hardening: nil-deref guards in the standalone HTTP handlers (#2709) and a `/message` guard plus a CLI `--via` implicit-recipient convenience (#2710).
 
-This is more foundational than a chat feature. It isolates the layer the whole system is built on — an encrypted transport with the public key as identity — into something you can run by itself. Everything else (the router, the overlay, the apps) is what you build *on top* of that primitive.
+This is more foundational than a chat feature. It isolates the layer the whole system is built on — an encrypted connection with the public key as identity — into something you can run by itself. Everything else (the router, transports, the overlay, the apps) is what you build *on top* of that primitive.
 
 ### Skywire: CXO / Pairing — Reconnect Hardening
 

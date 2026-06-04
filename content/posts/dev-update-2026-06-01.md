@@ -10,9 +10,9 @@ The standalone chat path reaches its purest form: CXO-backed group messaging ove
 
 ### Skywire: Standalone Skychat — CXO Over Native TCP, No DMSG
 
-**`2950` feat(skychat): CXO-backed messaging over native TCP in standalone (P2P, no dmsg)** — the standalone chat app can now run its CXO-backed group messaging directly over a noise-encrypted native-TCP transport between peers, with **no dmsg layer at all**. Each instance is identified by its public key; the noise handshake encrypts the link; CXO feeds carry the messages. Two (or more) peers point at each other's `pk@host:port` and have a working, encrypted, public-key-authenticated group — no visor, no router, no dmsg server, no discovery service.
+**`2950` feat(skychat): CXO-backed messaging over native TCP in standalone (P2P, no dmsg)** — the standalone chat app can now run its CXO-backed group messaging directly over a noise-encrypted native-TCP connection between peers, with **no dmsg layer at all**. Each instance is identified by its public key; the noise handshake encrypts the link; CXO feeds carry the messages. Two (or more) peers point at each other's `pk@host:port` and have a working, encrypted, public-key-authenticated group — no visor, no router, no dmsg server, no discovery service.
 
-This is the foundation laid bare. Strip away the router, the overlay, and the discovery infrastructure, and what's left is the primitive everything else is built on: an encrypted transport addressed by public key, carrying data between two keys that have authenticated each other. The standalone skychat is that primitive made runnable — and it has been genuinely useful as a resilient side-channel that survives visor and dmsg outages.
+This is the foundation laid bare. Strip away the router, the overlay, and the discovery infrastructure, and what's left is the primitive everything else is built on: an encrypted connection addressed by public key, carrying data between two keys that have authenticated each other. The standalone skychat is that primitive made runnable — and it has been genuinely useful as a resilient side-channel that survives visor and dmsg outages.
 
 ### Skywire: Hypervisor — Transitive Trust
 
