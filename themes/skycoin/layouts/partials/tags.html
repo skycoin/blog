@@ -4,7 +4,7 @@
     <a class="tags__item" href="{{ "/tags/" | relLangURL }}{{ $name | urlize }}">{{ $name }}</a>
   {{ end }}
 </ul>
-<a href="https://skycoin.com/blog/index.xml" target="_blank" class="rss-button">
+<a href="{{ with .Site.Home.OutputFormats.Get "rss" }}{{ .Permalink }}{{ end }}" target="_blank" class="rss-button">
   <i class="fas fa-rss"></i>
   RSS FEED
 </a>
