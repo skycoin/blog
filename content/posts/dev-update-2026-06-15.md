@@ -1,0 +1,21 @@
++++
+date = "2026-06-15"
+tags = ["Development", "Skywire"]
+title = "Development Update — June 15"
+image = "img/skywire-the-next-internet.png"
+image_position = "left bottom"
++++
+
+A short but consequential day, with two changes that each close a gap the old code couldn't see. The router gains a per-leg end-to-end liveness probe, so a multiplexed route whose path dies *beyond* the first hop is detected and dropped instead of silently black-holing traffic. And the rewards regional-saturation formula is reworked so that running more visors at a country's IP grows the country's pot proportionally rather than freezing it at the single-visor amount — fixing a case where adding visors actively diluted everyone's reward.
+
+### Skywire: Per-Leg Liveness — Detecting Black-Holing Mux Legs
+
+**`3114` feat(router): per-leg end-to-end liveness probe — detect & drop black-holing mux legs** closes a blind spot in how the router prunes dead paths. `pruneDeadTransports` only sees a dead *local* (first-hop) transport via `tp.IsClosed()` — but a transport that dies *beyond* the first hop leaves the local transport open, so the mux leg silently black-holes and the selector keeps choosing it until the whole route group closes. The keepalive loop can't catch this either, because it's send-only and forward-only: it refreshes each hop's rule TTL but is never ack'd. The fix adds a per-leg liveness probe (every 30s, for mux groups with two or more legs) that sends a `Ping` down each leg which the destination echoes as a `Pong`; a leg that misses three consecutive echoes is declared black-holing and dropped from the mux — *without* closing the possibly-shared transport — which then triggers the existing self-heal to re-dial a live replacement.
+
+The design is careful about not making things worse. It's source-side only and reuses the existing `Ping`→`Pong` echo (the destination echoes the send-timestamp verbatim), so there's no wire-format change and no remote-version dependency — it works on a mixed-version fleet. Each probe's unique send-timestamp correlates the echo back to the leg it tested. The blast radius is bounded: it never drops the last leg, and a false positive only triggers a self-heal re-dial rather than an outage. Single-leg and non-mux groups are skipped entirely, so the common case carries zero overhead. It mirrors the existing transport-level pong-liveness pattern, one layer up — end-to-end per leg instead of first-hop.
+
+### Skywire: Rewards — Regional Saturation Stops Freezing Country Pots
+
+**`3112` fix(rewards): regional saturation no longer freezes country pots at the single-visor amount** reworks a formula that was quietly undoing the per-IP visor cap. The previous `applyRegionalSaturation` computed a country pot from `N^exponent` (default square-root) of the country's unique IPs, then split that *fixed* pot equally across every visor in the country — so a country's total reward was identical whether 1 or 12 visors ran at its sole IP, and adding visors 2 through 12 at the same IP cut each visor's reward by up to 12x at the cap. The per-IP visor cap that `calcPresenceShare` enforces (8 normally, 12 in June 2026) was effectively cancelled out by the regional step.
+
+The new formulation applies the regional weight as a per-visor scale (`visor.Share *= unique_ips_country ^ (exponent - 1)`) rather than a country-pot allocation. A country's total reward now grows linearly with visor count up to the per-IP cap, so filling the cap at an existing IP no longer dilutes — the pot grows proportionally and per-visor reward stays essentially flat. The exponent semantics are preserved exactly (1.0 = no derating, 0.5 = the default `1/sqrt(N)`, 0.0 = every country's total equal), and dense-IP countries still get the lower per-visor reward the regional correction was always meant to apply. Modeled against the June 13 network (975 visors, 277 IPs): a lone 1-visor/1-IP country drops from its outsized single-visor floor, a country filling 10 visors at one IP nearly doubles its total, and a very dense country like ID is discounted more aggressively — which is exactly the "half the network shouldn't be a single country" correction the regional step was originally for. The total pool sum is unchanged, renormalized downstream.
