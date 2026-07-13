@@ -1,0 +1,29 @@
++++
+date = "2026-07-09"
+tags = ["Development", "Skywire"]
+title = "Development Update — July 9"
+image = "img/skywire-the-next-internet.png"
+image_position = "left bottom"
++++
+
+A broad hardening day. The centerpiece was a subtle autoconnect bug that could silently stop a visor from ever building transports again — root-caused from a five-day-old goroutine dump on a live node. Around it, skychat's federated groups grew the machinery to actually *converge*: a receive-side roster reconciler, a roster broadcast so late joiners catch up, and genuine sender-side unsend. A "message me" deep-link, a Windows-installer upgrade fix, and a couple of infrastructure moves rounded it out.
+
+### Skywire: The Autoconnect Wedge
+
+**`3421`** fix(visor): bound autoconnect transport dials so a stuck WebRTC dial can't wedge the loop chases down a report of visors with `public_autoconnect: true` making **zero** transports. A goroutine dump from one such node — pulled live over its dmsg log server — showed the autoconnect goroutine parked in `SaveTransport` for 7479 minutes, about 5.2 days, since boot. The cause: the autoconnect loop hands its *visor-lifetime* context straight into `SaveTransport`, which blocks on an async dial's error channel; the last-resort Phase-4 WebRTC path negotiates ICE to an unreachable peer that never completes *and* never errors, so with a context that is never canceled the `select` waits forever. One un-answerable WebRTC target and the entire autoconnect loop is wedged — no further ticks, no transports of any kind, permanently. That is why freshly-restarted visors in a fleet had transports while long-running ones sat at zero: they simply hadn't hit the wall yet. The fix bounds each attempt with a 30-second per-attempt deadline in the shared `visorcore` dialer, so a stuck dial returns `DeadlineExceeded` and the loop advances to the next target instead of parking — and because it lives in `visorcore`, it covers both the native and the wasm visor.
+
+### Skychat: Groups That Actually Converge
+
+Federated group chat could create and join rooms, but a late-joining member often never saw the full roster — the gossip that carried membership was write-only. Two fixes close that, and a third makes deletes real.
+
+**`3427`** fix(skychat/group): receive-side roster reconciler + stop self-echo is the core fix. `PublishRosterMutation` had been writing `roster/<seq>` leaves that every subscriber ignored — they watched `msgs/` only — so a joiner never converged past its `[owner, self]` bootstrap (observed live: a wasm member showed two members while the owner showed four). Subscribers now also watch `roster/` and `admin/`, and a new reconciler decodes each leaf, verifies its signature, gates it behind an authority check — the issuer must be a current admin, or it is rejected as a forgery — and then applies the Add/Remove/Promote/Demote idempotently and persists it, so `group info` reflects convergence and survives a restart. The same PR fixes a self-echo: a non-admin reads an admin's feed, and the admin republishes every verified leaf verbatim including the member's own sends, so a member saw its own message bounce back; delivery now skips messages whose sender is the local visor, since the UI already shows local sends optimistically.
+
+**`3429`** fix(skychat/group): broadcast roster on session open so late joiners converge handles the one gap the reconciler couldn't: a member added at *create time* leaves no `roster/` leaf for anyone to replay, so a late joiner could never learn it. `BroadcastRoster` re-publishes the current member and admin set as signed gossip on session open (deferred a few seconds so the publisher settles), admin-only and idempotent on receipt, so a joiner now hydrates the *full* roster — create-time members included.
+
+**`3425`** feat(skychat/group): sender-side unsend — genuinely delete a group message makes unsend a real delete rather than a hide. A message is a leaf on the sender's own CXO feed, so pruning it is inherently sender-scoped — a publisher owns only its own feed, and CXO's snapshot-diff replication reports the removal to every subscriber, dropping the leaf from members' replicas. The message is addressed by the UnixNano timestamp already carried in each delivered message, so nothing on the send path had to change. The unavoidable caveat, true of any federated store, is that an offline or archiving client cannot be forced to forget.
+
+**`3424`** feat(wasm-hv): skydm deep-link — open a 1:1 skychat from a shared link extends the existing `?skynet=…&kiosk=1` gateway with a chat verb: a `?skydm=<pk>` link opens the browser wasm-visor straight into a 1:1 skychat pre-addressed to that public key, so someone can share a "message me" link and a visitor lands in a chat with them. `hv-boot.js` captures the parameter before Angular strips the query string, and `browse.js` opens the chat window pre-addressed via a new `initialPeer` option; a sibling `?skygroup=<invite>` is captured here for the Angular group UI to handle in a later slice.
+
+### Skywire: Windows, Rewards, and CI
+
+**`3422`** fix(win_installer): close running skywire on upgrade so postinstall runs the new binary fixes a Windows upgrade that silently kept the old binary — the installer now stops the running service before postinstall so the freshly-installed executable is the one that comes back up. **`3420`** chore(rewards): reward UI → reward.theskywirenetwork.net repoints the reward interface at its own subdomain. **`3419`** ci(release): retry raw.github fetches steadies the flaky Windows and ARM release jobs, which had been failing on transient `raw.github` fetches, by retrying them. **`3431`** chore(wasm-visor): re-embed blob from develop refreshes the committed browser-visor blob so the reconciler, unsend, and deep-link work is present in a from-source build.
