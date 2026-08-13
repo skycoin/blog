@@ -1,0 +1,21 @@
++++
+date = "2026-08-07"
+tags = ["Development", "Skywire"]
+title = "Development Update — August 7"
+image = "img/skywire-the-next-internet.png"
+image_position = "left bottom"
++++
+
+A lighter day, with one substantive CXO fix behind it. The blank network-uptime page and empty proxy/VPN server pickers on hypervisor visors were traced to a pair of CXO problems — a cold snapshot read before the first sync, and a per-feed dmsg-port collision — and both were fixed. The mobile SkyDEX screen was taught to follow the app's theme instead of arriving as the one dark page in a light app, and the accumulated golangci-lint debt on develop was cleared so every open PR goes green again.
+
+### Skywire: Cold CXO Snapshots and a Port Collision
+
+**`3799`** fix(cxo): serve cold CXO snapshots + fix subscribe port collision fixes the blank network-uptime page (`/#/nodes/uptime`) and empty server pickers, which turned out to be two dependent problems. First, CXO feeds are lazy — `AcquireFor` only *starts* the subscription cycle — so a short-lived reader (a CLI call, or a UI request) reads before the first async sync completes and always misses, silently falling back to dmsg-http; since CXO is itself over dmsg it should be the source of truth, so on a cold snapshot it now blocks briefly via `RefreshNow`, bounded by the feed's first-sync timeout, before reporting a miss. That introduced a second concurrent `syncOnce` caller, and each `syncOnce` binds a *fixed per-feed dmsg port* (52=uptime, 53=sd, …) for one subscribe→snapshot→close cycle — so on a hypervisor visor, where the HV/autoconnect/tpviz keep a cycle running, a `RefreshNow` mid-cycle collided with `create subscriber: dmsg listen on port 52: port already occupied`, killing every deployment feed. A per-feed `syncMu` held for the whole `syncOnce` restores the sequential-per-feed invariant the fixed-port design relies on, and the sd-services first-sync budget is raised to the 45s already used for all-transports (it's a ~1000-server tree that timed out at 10s on a cold subscribe). Validated live: `GET /api/network/visor-uptime?days=7` returns 200 with 2.37 MB after the fix.
+
+### Skywire: SkyDEX Follows the App's Theme
+
+The mobile trading UI is a vendored single-theme page — dark navy, six custom properties on `:root` — so on a phone set to Light it arrived as the one dark screen in the app. **`fix(mobile)`: SkyDEX follows the app's theme** re-points the page's own tokens under a class this side controls, the same way the embedded chat does: dark keeps the page's design on the app's navy ground, light rebases every hard-coded translucent-dark value (white-on-navy arithmetic that turns to mud on white) onto ink or the brand — inputs, trade legs, address boxes, the progress track, the shadows — with two deliberate exceptions where the primary button keeps white text on brand blue and the trade builder's amount stays transparent to read as a figure. It commits from `onPageCommitVisible` so a light load never flashes navy, and re-applies live when the theme changes with the page open, carrying `color-scheme` and the platform's own `window.confirm` dialog along with it. Two chrome fixes ride with it: the Cards/List switch now appears only where there are rows to read (the DOM's test, not a tab-name list) and rides in the heading rather than a bar of its own, and Clear-history moves into Settings, away from a mis-tap beside the list it wipes.
+
+### Skywire: Clearing Lint Debt on develop
+
+**`3801`** fix(lint): clear golangci-lint debt on develop unblocks CI. Every open PR was red on the linux/darwin/windows jobs because golangci-lint 2.12.2 flagged seven pre-existing issues in files no PR touches — they reached develop through merge commits that skip CI, so every branch cut from develop inherited the failure. The fixes are minimal: check `tm.GetTransport`'s error instead of a blank discard (check-blank is on) and `//nolint:errcheck` the two httptest `w.Write` calls; three misspell corrections in comments; and a `//nolint:unparam` on `doHealthProbe`, whose `transport` param is always `"dmsg"` today but is kept for the intended multi-transport probe API. Verified locally at 0 issues with the CI's exact linter version; open PRs need a rebase onto this.
