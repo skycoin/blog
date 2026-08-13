@@ -1,12 +1,12 @@
 +++
 date = "2026-07-24"
-tags = ["Development", "Skywire"]
+tags = ["Development", "Skywire", "Skycoin"]
 title = "Development Update — July 24"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-Today's work is a rescue. For days the fleet's reward uptime had silently collapsed — hundreds of visors that were plainly online were recording almost no uptime and earning nothing for it — and the outage stayed invisible because every layer that could have shouted about it was logging at Debug or discarding the error entirely. The investigation ran the failure down to two independent causes, both fixed: the reward-critical TPD heartbeat had been quietly disabled when the standalone uptime tracker was decommissioned, and the visors that *were* heartbeating were losing an httpauth nonce race that 401'd most of their requests. Around those two fixes sits a ring of hardening — the residual TPD memory leaks closed, latent unbounded-timeout and unbounded-map bugs guarded, and the silent-failure logging that hid all of it turned up to Warn. The bottom line for operators: **current-fleet visors must update to v1.3.89 to earn rewards correctly** — the heartbeat fix is visor-side, and the release raises the auto-incrementing version floor. Also today, the `.dmsg`/`.skynet` LAN gateway got a config-safe path so one board can serve a whole home-router LAN.
+Today's work is a rescue. For days the fleet's reward uptime had silently collapsed — hundreds of visors that were plainly online were recording almost no uptime and earning nothing for it — and the outage stayed invisible because every layer that could have shouted about it was logging at Debug or discarding the error entirely. The investigation ran the failure down to two independent causes, both fixed: the reward-critical TPD heartbeat had been quietly disabled when the standalone uptime tracker was decommissioned, and the visors that *were* heartbeating were losing an httpauth nonce race that 401'd most of their requests. Around those two fixes sits a ring of hardening — the residual TPD memory leaks closed, latent unbounded-timeout and unbounded-map bugs guarded, and the silent-failure logging that hid all of it turned up to Warn. The bottom line for operators: **current-fleet visors must update to v1.3.89 to earn rewards correctly** — the heartbeat fix is visor-side, and the release raises the auto-incrementing version floor. Also today, the `.dmsg`/`.skynet` LAN gateway got a config-safe path so one board can serve a whole home-router LAN. On the Skycoin side, the day was dependency housekeeping — the open Dependabot PRs batched into one branch.
 
 ### Skywire: The Heartbeat That Stopped
 
@@ -27,3 +27,7 @@ A second gateway path landed alongside the transparent mesh gateway: use the exi
 ### Skywire: Release
 
 **`3575`** chore(vendor): bump skycoin to develop HEAD vendors the current skycoin for the release — only embedded explorer web files change, no Go code. **`3577`** chore(changelog): v1.3.89 cuts the release: reward uptime restored via the visor-side heartbeat decouple and the nonce fix, the TPD memory leaks closed, and the LAN `.dmsg`/`.skynet` gateway — 15 PRs since v1.3.88. Because the heartbeat fix lives in the visor and the release raises the auto-incrementing version floor, **the current fleet needs to update to v1.3.89 to record reward uptime correctly** — a visor left on an older build will keep failing quietly, which is exactly the outage this release ends.
+
+### Skycoin: Dependency Housekeeping
+
+**`2954`** build(deps): batch dependabot updates lands the open Dependabot PRs in one branch — github-actions bumps, `axios`, `electron`, and the grouped explorer front-end updates — so they merge together rather than through separate rebase cycles.

@@ -1,12 +1,12 @@
 +++
 date = "2026-07-29"
-tags = ["Development", "Skywire"]
+tags = ["Development", "Skywire", "Skycoin"]
 title = "Development Update — July 29"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-Two threads today. The larger is a test-coverage pass over skychat that, by exercising the previously-untested code, turned up and fixed four latent bugs — including a data race in a shared CXO package and an empty-string public key that reached five endpoints as a real peer. The smaller thread is a run of wasm-hypervisor UI polish: the onboarding tour became non-blocking and told the real dmsg-carrier story, the wallet config overlay that had collapsed to an unusable strip was fixed, and the node info card now shows *how* a visor reached each dmsg server.
+Two threads today. The larger is a test-coverage pass over skychat that, by exercising the previously-untested code, turned up and fixed four latent bugs — including a data race in a shared CXO package and an empty-string public key that reached five endpoints as a real peer. The smaller thread is a run of wasm-hypervisor UI polish: the onboarding tour became non-blocking and told the real dmsg-carrier story, the wallet config overlay that had collapsed to an unusable strip was fixed, and the node info card now shows *how* a visor reached each dmsg server. Skycoin, meanwhile, spent the day on dependency maintenance ahead of the front-end toolchain work to come.
 
 ### Skywire: Coverage That Found Four Bugs
 
@@ -15,3 +15,7 @@ Two threads today. The larger is a test-coverage pass over skychat that, by exer
 ### Skywire: wasm Hypervisor UI Polish
 
 **`3628`** feat(wasmhv): tour in a non-blocking WinBox window + accurate dmsg-carrier⇄transport story reworks the onboarding tour, which had been a full-screen modal that blocked the hypervisor UI until dismissed. It now renders in a draggable WinBox window with a light `pointer-events:none` highlight ring, so the UI behind stays fully interactive — verified live that clicks pass straight through the ring to the real underlying control. It also corrects the connection-model copy now that the transport taxonomy has converged: the four carriers a visor uses to reach a dmsg server (`tcp`, `ws/wss`, `webtransport`, `quic`) are the same four protocols skywire uses for direct transports — dmsg being the relayed version — plus the two that only make sense peer-to-peer (`sudph` holepunch and `webrtc`). **`3629`** fix(wasmhv): size the tour window to its content (no dead space / no clipped "more" panel) follows up on two layout issues from the window being a fixed height: short steps left a large empty gap, and long drill-down panels double-scrolled and pushed the back/skip controls off-screen, trapping the reader. The window now sizes to the rendered step (clamped to `[170px, 82vh]`), drops the inner panel scroll for a single scroll container, and makes the button row sticky. **`3627`** fix(wasmhv): wallet config overlay collapses to a thin strip (skysocks-exit controls unreachable) fixes a functional blocker where the wallet's config overlay rendered as a ~35px strip — only its header showing — because a WinBox global rule made the bare iframe `position:absolute`, pulling it out of the flex flow so its percentage height no longer resolved. The controls underneath (the skysocks-exit PK input that routes BTC to its electrum server, the servers dropdown, the random button) were unreachable; the fix gives the overlay its own relative flex container, mirroring the main wallet iframe's wrapper. **`3630`** feat(visor/ui): show the dmsg-server connection type (carrier) in the node info card surfaces the carrier — `tcp`/`ws`/`wss`/`webtransport`/`quic` — that the visor already knows for each dmsg server but the HV UI never showed. `DMSGServerInfo` gains `Carrier`/`Protocol`, populated by matching each connected server PK to its live session (the wasm mirror struct gets the same), and the shared HV UI renders a small protocol badge next to each server — so an operator can see at a glance that a browser tab reaches its servers over wss while a native visor uses tcp.
+
+### Skycoin: Dependency Maintenance
+
+**`2959`** replicates the open Dependabot updates, runs `go get -u ./...`, and adds `/cmd/skydex-client` to the grouped Dependabot config so the new subproject's dependencies are tracked alongside the rest — routine upkeep that clears the decks for the following day's Angular 22 and strict-TypeScript rollout.

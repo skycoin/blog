@@ -1,12 +1,12 @@
 +++
 date = "2026-07-21"
-tags = ["Development", "Skywire"]
+tags = ["Development", "Skywire", "Skycoin"]
 title = "Development Update — July 21"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-Two of today's fixes were the kind that take a service down or make it lie. One was a nil-dereference in `IsRoot()` that, on the static musl release binary, crash-looped every `skywire` command from `init()` — and had already taken the main hypervisor offline behind a wall of 502s. The other was the reward JSON endpoints returning each visor's raw bandwidth byte count where the SKY amount should have been, so the hypervisor UI showed a visor's 13-SKY reward as over a million. Alongside those, the VPN-router app finally got a config surface so it can be enabled the normal way, a wasm deep-link overlay stopped spinning against a visor that was already connected, and a routine vendor bump picked up a secp256k1 allocation win.
+Two of today's fixes were the kind that take a service down or make it lie. One was a nil-dereference in `IsRoot()` that, on the static musl release binary, crash-looped every `skywire` command from `init()` — and had already taken the main hypervisor offline behind a wall of 502s. The other was the reward JSON endpoints returning each visor's raw bandwidth byte count where the SKY amount should have been, so the hypervisor UI showed a visor's 13-SKY reward as over a million. Alongside those, the VPN-router app finally got a config surface so it can be enabled the normal way, a wasm deep-link overlay stopped spinning against a visor that was already connected, and a routine vendor bump picked up a secp256k1 allocation win. That win came from the skycoin monorepo, where the ECmult precomp tables moved onto the stack for ~41% fewer bytes per ECDH.
 
 ### Skywire: A Crash in init()
 
@@ -23,3 +23,7 @@ Two of today's fixes were the kind that take a service down or make it lie. One 
 ### Skywire: A Deep-Link Overlay and a Vendor Bump
 
 **`3527`** fix(wasm): deep-link connecting overlay spins on an already-connected visor fixes a wasm deep-link path that showed "Connecting to the mesh… dmsg sessions: 0 · still connecting" for a full ~30s timeout even when the shared visor was already connected with 18 transports registered — a plain tab load never hit it, only the reward-redirect deep-link render path did. `browse.js` keyed its connected check off `st.dmsg_connected` and `st.dmsg_sessions`, but the wasm visor's `jsStatus` never populated them — it only set `st.dmsg`, meaning "the client exists," not "has a live session" — so the check was always false and the counter always read zero. The fix populates `dmsg_sessions = len(dmsgC.AllSessions())` and `dmsg_connected = count > 0` in `jsStatus`, and additionally teaches `browse.js` to treat "client exists AND transports > 0" as connected, since transports run over dmsg sessions; that second half makes the fix work against already-deployed wasm blobs the moment the served `browse.js` updates, with no blob re-embed needed. **`3529`** chore(vendor): bump skycoin (secp256k1 ECmult stack precomp) picks up skycoin#2955, which stack-allocates ECmult's precomp tables for a 41% cut in bytes-per-op per ECDH — trimming exactly the GC pressure behind dmsg-discovery's high CPU under the pre-keep-alive handshake load from earlier in the week. Vendored-files only, `go build ./...` clean.
+
+### Skycoin: Cheaper ECDH
+
+**`2955`** perf(secp256k1): stack-allocate the ECmult precomp tables cuts allocation in `ECmult`, the scalar-point multiply run once per ECDH, which had been allocating two precomp tables on the heap on every call. `winA` is the compile-time constant 5, so each table is a fixed `1<<(winA-2)=8` elements (~1 KB) of scratch that dies at the end of the call — no reason to be on the heap — so splitting the fill loop out of `precomp` into `precompInto([]XYZ)` and having `ECmult` pass two stack-allocated `[8]XYZ` arrays keeps byte-identical crypto output (the full secp256k1-go and -go2 suites pass) while dropping `BenchmarkECDHAllocs` from 5065 to 2986 B/op — −2079, ~41%, exactly the two tables now on the stack. The one-time init path (`precomp(WINDOW_G)`, 4096 elements) is unchanged. It matters downstream: skywire's dmsg-discovery opens a fresh stream — hence a fresh Noise handshake — per request under the pre-keep-alive load, and the ECDH allocation churn had GC (`runtime.scanObject`) at ~60% of CPU, so fewer bytes/op means proportionally less to scan. Skywire's #3529 vendors it the same day.

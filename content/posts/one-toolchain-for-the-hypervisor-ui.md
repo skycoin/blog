@@ -1,18 +1,30 @@
 +++
 date = "2026-08-12"
-tags = ["Development", "Skywire"]
-title = "One Toolchain for the Hypervisor UI: Strict TypeScript, Angular 22, and a Bundle That Can't Drift"
+tags = ["Development", "Skywire", "Skycoin"]
+title = "One Toolchain, Two Repositories: A Cross-Repo Front-End Modernization"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
 
-The Skywire hypervisor's web UI — the "manager" interface where you watch your visors, transports, rewards, and the network graph — is an Angular application. It is also *embedded*: the built bundle is compiled into the visor binary and served straight off the node, so the copy in the repository and the copy shipping in `pkg/visor/static` have to stay in lockstep. Over the past week that UI got a top-to-bottom toolchain modernization, bringing it up to the same strict frontend standard the rest of the Skycoin ecosystem already runs, and wrapping it in CI guards so it can't quietly regress.
+Over the past two weeks, every Angular front-end in the Skycoin and Skywire ecosystem was pulled onto one strict, modern build toolchain — the desktop wallet, the web wallet, the block explorer, and the Skywire hypervisor's "manager" UI. It happened across two separate repositories, in the same window, converging on a single shared standard. This is the story of that convergence, because the interesting part isn't any one upgrade — it's that four independently-maintained UIs ended up governed by the same rules on purpose.
 
-None of this changes what the UI *does*. It changes how much the compiler and the build can prove about it before it ever reaches a browser.
+None of this changes what any of these UIs *do*. It changes how much the compiler and the build can prove about them before they ever reach a browser.
 
-### Matching a standard that lives in another repository
+### One standard, defined once
 
-Skycoin maintains a shared ESLint base config — a single set of correctness rules — used across its front-end projects. Skywire's manager UI lives in a *different* repository, so it can't simply import that file. The parity has to be kept by hand: the new flat `eslint.config.js` in the manager UI re-implements the same rule set, and a comment in the file says so explicitly, naming the shared config it's mirroring. That is the through-line of the whole effort — pulling one of the ecosystem's UIs onto the same modern, strict footing as the others, even across a repository boundary that prevents literally sharing the file.
+The spine of the effort is a **shared ESLint base config**. Rather than let four front-ends drift into four subtly different notions of "correct," Skycoin's repository now defines one `eslint.base.config.js` — a single correctness rule set — and its three front-ends (desktop wallet, web wallet, explorer) all extend it. Alongside it, `tsconfig` strictness was aligned so the same TypeScript guarantees hold everywhere.
+
+Skywire's manager UI is the fourth front-end — and it lives in a *different* repository, so it can't simply import that file. The parity has to be kept by hand: the manager UI's new flat `eslint.config.js` re-implements the same rule set, and a comment in the file says so explicitly, naming the shared Skycoin config it's mirroring. Lint policy now originates in one place and is deliberately shared between the two repositories, a boundary and all.
+
+### The modernization, in both repos
+
+The rule-sharing rode on top of a full toolchain upgrade that landed on both sides within days of each other:
+
+- **Angular 21 → 22**, with `@ngx-translate` moved to its v18 API and a matching TypeScript bump — thousands of lockfile lines across every project.
+- **Strict TypeScript, in stages.** `strict`, `strictTemplates`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, and finally `strictNullChecks` — each turned on across the wallets, the explorer, and the manager UI, with the resulting "this might be null" fallout fixed honestly rather than suppressed.
+- **A new build tool.** The old webpack-based Angular builder was swapped for `@angular/build`, the esbuild/Vite "application" builder, in the desktop wallet, the web wallet, the explorer, and the manager UI alike. It emits a different, content-hashed bundle layout (`chunk-*.js`, `main-*.js`, fonts under `media/`).
+- **Explicit change detection, ahead of the framework.** Angular 22 makes certain change-detection behavior implicit; every project declared **OnPush** explicitly *first* — desktop wallet, web wallet, explorer, and manager UI — so the upgrade couldn't silently shift rendering semantics, with lint scripts and tests now guarding that the marks stay in place.
+- **CI that builds everything.** Skycoin's CI now builds, lints, and tests every Angular front-end (and runs the explorer's e2e suite against a pinned blockchain database); Dependabot is stopped from proposing TypeScript majors that would break the pinned Angular.
 
 The modernization that rides along with it is substantial:
 
