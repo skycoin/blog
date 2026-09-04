@@ -109,3 +109,15 @@
     margin: 18px 24px 0 24px;
   }
 }
+
+.list__intro {
+  max-width: 46rem;
+  margin: 0 auto 1.5rem;
+  padding: 0 2rem;
+  font-size: 15px;
+  line-height: 26px;
+  color: #55606e;
+
+  p { margin: 0 0 1rem; }
+  a { color: #0072ff; }
+}

@@ -7,10 +7,10 @@
   <div class="post__container">
     <section class="post__content">
       {{ $img := .Params.image | default "img/skycoin-banner.png" }}
-      <img src="{{ $img | relURL }}">
+      <img src="{{ $img | relURL }}" alt="{{ .Title | plainify }}" loading="lazy">
       <div class="meta">
         {{ if .Params.date }}
-          <span class="meta__date">{{ .Date.Format "Jan 2 2006" }}</span>
+          <time class="meta__date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "Jan 2 2006" }}</time>
         {{ end }}
         <div class="meta__tag-list">
           {{ range $i := (slice "tags") }}

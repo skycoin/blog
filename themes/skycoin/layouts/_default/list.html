@@ -1,3 +1,4 @@
+{{ $paginator := .Paginate (where .Data.Pages "Section" "!=" "") 12 }}
 {{ partial "header.html" . }}
 
 <main class="list">
@@ -9,6 +10,7 @@
       {{ end }}
       <h1 class="list__top-title">{{ .Title }}</h1>
     {{ end }}
+    {{ with .Content }}<div class="list__intro">{{ . }}</div>{{ end }}
     <div id="searchOnTopOfList">
       <form id="search-form-list">
         {{ partial "search.html" .}}
@@ -16,8 +18,7 @@
     </div>
     <div class="list__container">
       <section class="list__posts">
-        {{ $paginator := .Paginate (where .Data.Pages  "Section" "!=" "") 12 }}
-        <ul class="list__list">
+                <ul class="list__list">
           {{ range $paginator.Pages }}
             <li class="list__item">
               <a class="list__link" href="{{ .Permalink | relLangURL }}">

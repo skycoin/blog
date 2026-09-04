@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Client-side search pages produce no indexable content.
+Disallow: /search/
+Disallow: /*/search/
+
+Sitemap: {{ "sitemap.xml" | absURL }}
