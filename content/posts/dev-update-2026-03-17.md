@@ -1,7 +1,7 @@
 +++
 date = "2026-03-17"
 tags = ["Development", "Skycoin", "Skywire"]
-title = "Development Update — March 17"
+title = "Skywire Development Update — March 17, 2026"
 +++
 
 ### Happy Birthday, Skycoin Blockchain

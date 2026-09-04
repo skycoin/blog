@@ -1,7 +1,7 @@
 +++
 date = "2026-03-18"
 tags = ["Development", "Skycoin", "Skywire"]
-title = "Development Update — March 18"
+title = "Skywire Development Update — March 18, 2026"
 +++
 
 ### Skycoin: BIP32 Panic Fixes and Fibercoin CI

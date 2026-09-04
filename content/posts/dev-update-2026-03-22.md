@@ -1,7 +1,7 @@
 +++
 date = "2026-03-22"
 tags = ["Development", "Skycoin"]
-title = "Development Update — March 22"
+title = "Skywire Development Update — March 22, 2026"
 +++
 
 ### Skycoin: Code Quality and Windows Release

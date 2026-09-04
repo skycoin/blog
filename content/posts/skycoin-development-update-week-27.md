@@ -3,7 +3,7 @@ aliases = []
 date = "2019-07-06T00:00:00+00:00"
 description = "Updates about the Skycoin ecosystem development of the week. "
 image = "/img/711674AD-99AB-48A0-BFCA-34161B7CE762.png"
-tags = ["Skycoin ", "Development "]
+tags = ["Skycoin", "Development"]
 title = "Skycoin Development Update  - Week 27 "
 
 +++

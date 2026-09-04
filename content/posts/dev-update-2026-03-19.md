@@ -1,7 +1,7 @@
 +++
 date = "2026-03-19"
 tags = ["Development", "Skycoin"]
-title = "Development Update — March 19"
+title = "Skywire Development Update — March 19, 2026"
 +++
 
 ### Skycoin: BIP44 Chain Selection and Release Build Fixes

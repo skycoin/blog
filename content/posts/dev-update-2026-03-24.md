@@ -1,7 +1,7 @@
 +++
 date = "2026-03-24"
 tags = ["Development", "Skycoin", "Skywire"]
-title = "Development Update — March 24"
+title = "Skywire Development Update — March 24, 2026"
 +++
 
 ### Skycoin: pprof for Explorer and Web Wallet

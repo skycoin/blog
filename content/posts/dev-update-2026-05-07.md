@@ -1,7 +1,7 @@
 +++
 date = "2026-05-07"
 tags = ["Development", "Skywire"]
-title = "Development Update — May 7"
+title = "Skywire Development Update — May 7, 2026"
 image = "img/skywire-the-next-internet.png"
 image_position = "left bottom"
 +++
