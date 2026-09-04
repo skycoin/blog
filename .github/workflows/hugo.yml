@@ -41,7 +41,9 @@ jobs:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
           HUGO_ENVIRONMENT: production
           TZ: America/New_York
-        run: hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+        # baseURL comes from config.toml (the custom domain), not from the Pages
+        # default URL — otherwise every canonical tag points at github.io.
+        run: hugo --minify
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:

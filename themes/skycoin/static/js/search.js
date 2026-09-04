@@ -5,7 +5,7 @@ function initLunr() {
   var request = new XMLHttpRequest();
   request.open(
     'GET',
-    window.location.origin + '/blog/js/lunr/PagesIndex.json',
+    window.location.origin + '/js/lunr/PagesIndex.json',
     true
   );
 
@@ -114,7 +114,7 @@ function renderResults(results) {
   results.forEach(function(result) {
     var li = document.createElement('li');
     var ahref = document.createElement('a');
-    ahref.href = window.location.origin + `/blog/posts${result.href}`;
+    ahref.href = window.location.origin + `/posts${result.href}`;
     ahref.text = result.title;
     li.append(ahref);
     $results.appendChild(li);

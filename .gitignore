@@ -16,3 +16,9 @@ yarn.lock
 *.swo
 *.orig
 
+
+# Hugo build lock
+.hugo_build.lock
+
+# Generated CSS sourcemap (grunt)
+themes/skycoin/static/css/main.css.map

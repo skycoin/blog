@@ -1,10 +1,14 @@
-baseURL = "https://skycoin.github.io/blog/"
+baseURL = "https://blog.theskywirenetwork.net/"
 languageCode = "en-us"
 title = "Skycoin Blog"
 defaultContentLanguage = "en"
 
-relativeURLs = true
+# Served from the root of a custom domain, so absolute URLs are correct and
+# unambiguous for crawlers. canonifyURLs keeps root-relative links written in
+# post markdown (/img/foo.png) resolving against baseURL.
+relativeURLs = false
 canonifyURLs = true
+enableRobotsTXT = true
 
 [markup]
   [markup.goldmark]
@@ -53,12 +57,18 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [params]
   author = "Skycoin"
-  keywords = "skycoin"
+  defaultLang = "en"
+  # Used as the <title> suffix on the home page and in JSON-LD.
+  tagline = "Skywire Development Updates"
+  keywords = "skywire, skycoin, skywire development updates, mesh network, decentralized internet, dmsg, visor, skywire vpn, cxo, skycoin blockchain"
   rss = "/index.xml"
   telegram = "https://t.me/Skycoin"
-  description = "Skycoin Project Updates"
+  description = "Daily Skywire development updates and Skycoin project announcements — the decentralized mesh network, its visors, transports, routing and apps."
   email = ""
   github = "skycoin"
+  twitter = "@Skycoinproject"
+  logo = "images/logo-outlined.svg"
+  ogImage = "img/skycoin-banner.png"
 
 [[params.social]]
   name = "Github (Skycoin)"
@@ -80,7 +90,7 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 [Languages]
 [Languages.en]
 	weight = -1
-	title = "Blog"
+	title = "Skycoin Blog"
 	languageName = "English"
 
 [Languages.zh]
@@ -91,47 +101,47 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
 
 [Languages.ru]
 	weight = 2
-	title = "Блог"
+	title = "Блог Skycoin"
 	languageName = "Русский"
 
 [Languages.ko]
 	weight = 3
-	title = "블로그"
+	title = "Skycoin 블로그"
 	languageName = "한국어"
 
 [Languages.es]
 	weight = 4
-	title = "Blog"
+	title = "Blog de Skycoin"
 	languageName = "Español"
 
 [Languages.de]
 	weight = 5
-	title = "Blog"
+	title = "Skycoin Blog"
 	languageName = "Deutsch"
 
 [Languages.ja]
     weight = 6
-    title = "Blog"
+    title = "Skycoin ブログ"
     languageName = "日本語"
 
 [Languages.el]
     weight = 7
-    title = "Blog"
+    title = "Ιστολόγιο Skycoin"
     languageName = "Ελληνικά"
 
 [Languages.fr]
     weight = 8
-    title = "Blog"
+    title = "Blog Skycoin"
     languageName = "Français"
 
 [Languages.pt]
     weight = 9
-    title = "Blog"
+    title = "Blog da Skycoin"
     languageName = "Português"
 
 [Languages.it]
     weight = 10
-    title = "Blog"
+    title = "Blog di Skycoin"
     languageName = "Italiano"
 
 [[menu.languages]]
@@ -190,3 +200,41 @@ ignoreFiles = ["\\.Rmd$", "_files$", "_cache$"]
   [security.http]
     methods = ['(?i)GET|POST']
     urls = ['.*']
+
+# Per-language title suffix and meta description. Without these, every
+# translated page is titled and described in English, which reads as a
+# duplicate of the English site to search engines.
+# NOTE: these translations have not been reviewed by native speakers.
+[Languages.en.params]
+  tagline = "Skywire Development Updates"
+  description = "Daily Skywire development updates and Skycoin project announcements — the decentralized mesh network, its visors, transports, routing and apps."
+[Languages.zh.params]
+  tagline = "Skywire 开发更新"
+  description = "Skycoin 与 Skywire 的开发更新和项目公告——去中心化网状网络及其节点、传输、路由与应用。"
+[Languages.ru.params]
+  tagline = "Обновления разработки Skywire"
+  description = "Обновления разработки Skywire и анонсы проекта Skycoin — децентрализованная ячеистая сеть, её узлы, транспорты, маршрутизация и приложения."
+[Languages.ko.params]
+  tagline = "Skywire 개발 업데이트"
+  description = "Skywire 개발 업데이트와 Skycoin 프로젝트 공지 — 탈중앙화 메시 네트워크와 바이저, 트랜스포트, 라우팅 및 앱."
+[Languages.es.params]
+  tagline = "Novedades de desarrollo de Skywire"
+  description = "Novedades de desarrollo de Skywire y anuncios del proyecto Skycoin: la red mesh descentralizada, sus visors, transportes, enrutamiento y aplicaciones."
+[Languages.de.params]
+  tagline = "Skywire-Entwicklungsupdates"
+  description = "Skywire-Entwicklungsupdates und Ankündigungen zum Skycoin-Projekt — das dezentrale Mesh-Netzwerk, seine Visors, Transports, Routing und Apps."
+[Languages.ja.params]
+  tagline = "Skywire 開発アップデート"
+  description = "Skywire の開発アップデートと Skycoin プロジェクトのお知らせ — 分散型メッシュネットワークとそのバイザー、トランスポート、ルーティング、アプリ。"
+[Languages.el.params]
+  tagline = "Ενημερώσεις ανάπτυξης Skywire"
+  description = "Ενημερώσεις ανάπτυξης του Skywire και ανακοινώσεις του έργου Skycoin — το αποκεντρωμένο δίκτυο mesh, οι visors, οι μεταφορές, η δρομολόγηση και οι εφαρμογές του."
+[Languages.fr.params]
+  tagline = "Mises à jour du développement de Skywire"
+  description = "Mises à jour du développement de Skywire et annonces du projet Skycoin — le réseau maillé décentralisé, ses visors, transports, routage et applications."
+[Languages.pt.params]
+  tagline = "Atualizações de desenvolvimento do Skywire"
+  description = "Atualizações de desenvolvimento do Skywire e anúncios do projeto Skycoin — a rede mesh descentralizada, seus visors, transportes, roteamento e aplicativos."
+[Languages.it.params]
+  tagline = "Aggiornamenti sullo sviluppo di Skywire"
+  description = "Aggiornamenti sullo sviluppo di Skywire e annunci del progetto Skycoin — la rete mesh decentralizzata, i suoi visor, trasporti, routing e app."
