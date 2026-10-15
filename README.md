@@ -2,7 +2,7 @@
 
 # Skycoin Blog
 
-https://skycoin.github.io/blog/
+https://blog.skycoin.com/
 
 This blog uses [Hugo](https://gohugo.io/) to generate a static website from markdown files.
 

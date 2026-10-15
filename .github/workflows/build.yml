@@ -1,0 +1,45 @@
+name: Build
+
+# Each push to main builds the blog and replaces the one "site" release with
+# it. The skycoin server's blog-skycoin-com-update timer installs that release
+# and serves it at blog.skycoin.com.
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: 0.157.0
+    steps:
+      - name: Install Hugo CLI
+        run: |
+          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
+          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
+      - uses: actions/checkout@v6
+      - name: Build with Hugo
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          HUGO_ENVIRONMENT: production
+          TZ: America/New_York
+        run: hugo --minify
+      - name: Replace the site release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tar -C public -czf blog.skycoin.com.tar.gz .
+          sha256sum blog.skycoin.com.tar.gz > blog.skycoin.com.tar.gz.sha256
+          gh release delete site --cleanup-tag --yes || true
+          gh release create site --target "$GITHUB_SHA" --title "blog.skycoin.com" \
+            --notes "The blog as built from $GITHUB_SHA." \
+            blog.skycoin.com.tar.gz blog.skycoin.com.tar.gz.sha256
