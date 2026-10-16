@@ -26,9 +26,9 @@ The fifteenth of October was about reaching mesh names from more places. A Linux
 
 **`5694`** made home.skynet resolve everywhere. It had been answered only inside the visor's resolving proxy, so it did not resolve through SkyDNS, the skynet proxy or a Wisp guest, and it listed only the deployment's own services. "home" is now an alias for the visor itself in the resolvers, SkyDNS and the VPN client, and the visor serves the directory on its landing port for home.skynet or home.dmsg. The directory adds the roughly 1,900 visors the address resolver knows, each linked by its base32 .skynet name, with a filter box. It was tested on a native visor through the resolving proxy and through SkyDNS, but not yet in a Wisp guest.
 
-**`5691`** made a config generated as root on Linux with systemd-resolved start SkyDNS by default, so `curl http://<base32 key>.skynet` works after installing skywire and starting the service. It then takes only the dmsg and skynet zones. Without systemd-resolved it would rewrite `/etc/resolv.conf`, so it stays opt-in there, and an explicit setting in skywire.conf still wins. SkyDNS also turns off LLMNR and mDNS on its interface. Both paths were tested on a Linux host with the visor as root, but the default-on path through a regenerated config has not yet been verified on a real host.
+**`5691`** made a config generated as root on Linux with systemd-resolved start SkyDNS by default, so `curl http://<base32 key>.skynet` works after installing skywire and starting the service. It then takes only the dmsg and skynet zones. Without systemd-resolved it would rewrite `/etc/resolv.conf`, so it stays opt-in there, and an explicit setting in skywire.conf still wins. SkyDNS also turns off LLMNR and mDNS on its interface. Both paths were tested on a Linux host with the visor as root. A host that updated itself to a build with the change regenerated its config and started SkyDNS on its own, and .skynet names resolved there.
 
-### Skywire: Rewards Tooling, Docs
+### Skywire: Tooling and Docs
 
 **`5686`** let the reward system rely on the surveys visors push, adding `cli log --no-fetch` so the hourly cycle runs only the survey cleanup instead of fetching every survey over dmsg first. **`5687`** and **`5690`** pointed the docs at blog.skycoin.com and dropped the dead GitHub Pages mirror link.
 
