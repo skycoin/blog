@@ -1,0 +1,35 @@
++++
+date = "2026-10-17"
+tags = ["Development", "Skywire"]
+title = "Skywire Development Update — October 17, 2026"
+image = "img/skywire-the-next-internet.png"
+image_position = "left bottom"
++++
+
+The seventeenth of October brought the deployment services onto skynet. Until now a visor reached transport discovery, dmsg discovery, the address resolver and service discovery only over dmsg, paying a fresh stream and handshake for each connection even when it already had a transport to the host that runs them. A chain of changes lets that host hand skynet streams to the services, lets visors find and verify it, moves their CXO feeds onto the same path, and folds four feeds per visor into one. Alongside that, relayed skynet streams are now encrypted end to end, three exposure bugs were closed, and SkyDNS learned to answer browsers that use secure DNS.
+
+### Skywire: Deployment Services over Skynet
+
+The deployment services run inside one visor under their own keys. **`5713`** is the host side: a skynet port request may now carry the key of a service the visor hosts, and the visor hands the stream to that service's own dmsg listener, attributed to the caller, and echoes the key back so a caller can tell a new host from an old one. It also adds a `local` transport type, which a host publishes for each service it runs so visors can find it in the transport graph. These entries are kept out of the route finder, the routing feed and uptime, since the services take no routing rules.
+
+**`5715`** is the client side. The host signs with each service's key that it is the host, and a visor dialing a deployment service looks up the `local` transport, reaches the host over a direct transport or a single relay, never a full route, and names the service. It accepts the stream only when the host echoes the service and presents a signature naming the visor the stream actually reached, so a visor that merely registers a `local` transport cannot stand in for a service. Otherwise it falls back to dmsg and skips skynet for that service for two minutes. The tests pair the real host handler with the real client handshake and check that proofs for another host, unhosted keys, unused ports and stopped services are all refused.
+
+**`5716`** moved the CXO feeds onto that path, both a visor's feeds to the services and its subscriptions to theirs, keeping at least half of each deadline for the dmsg fallback. But a visor's feeds connect at startup, usually before it has any transport to the host, so they fell back to dmsg and stayed there. **`5717`** lets the feed ask a hook about a live connection and redial when the hook says to, which the visor does for a dmsg stream to a known host at most once every ten minutes per feed. Live, a visor on the branch had all four of its feeds and both of its subscriptions running over skynet within 13 minutes of starting.
+
+**`5718`** then cut the number of feeds. Each visor ran one feed per service it registers with, and the day-old profile counted about 6,100 inbound CXO connections and 18,400 goroutines on the deployment host, costing 14 to 15 percent of its visor's CPU, mostly for three feeds per visor that carry a few hundred bytes and change only when a registration does. When dmsg discovery, the address resolver and service discovery run in transport discovery's process, a visor now puts their registrations on its single system feed under per-service prefixes, and the aggregator hands each service its part in process. A visor switches only once the host labels its `local` link `sysfeed`, and any other arrangement keeps the old feeds, with no configuration involved. **`5720`** made that label take effect, since transport discovery had ignored label changes until a restart. dmsg clients also now reach a dmsg server in the same process over a pipe instead of loopback QUIC.
+
+### Skywire: Relays That Cannot Read
+
+A visor relaying a skynet stream spliced the bytes between its two transports as they came. Each transport encrypts only its own hop, so the relay could read relayed .skynet requests in the clear, while a dmsg server only ever forwards ciphertext. **`5707`** runs a Noise KK handshake with the ML-KEM hybrid over every relayed stream before handing it to either end, with both keys known from the signed opening frame, and direct streams are unchanged. A three-node test checks data both ways and that no frame through the relay carries the plaintext. An old visor sends no handshake, so its relayed streams fail and fall back to dmsg as on any relay failure.
+
+**`5710`** closed an open proxy. The skysocks client listened on port 1080 on every interface with no authentication, so any host on the LAN could browse through the user's exit under the user's key, which was confirmed from another LAN address. It now listens on loopback by default, though a regenerated config keeps an existing address until it is changed. **`5708`** fixed a whitelisted site forwarded on port 80 serving its index page to any key, because the root route skipped the check the other paths used.
+
+### Skywire: Secure DNS in the Browser
+
+A browser with secure DNS set to a provider, as Brave's custom setting does, sends every lookup there and never asks the system resolver, so .skynet and .dmsg names failed in the browser while curl worked. **`5706`** made SkyDNS also answer DNS over HTTPS at its own resolver address with a certificate from the resolver's CA, so setting that address as the browser's secure DNS provider makes mesh names resolve and passes other names upstream. **`5709`** then closed the gap that certificate relied on. The CA is constrained to the mesh domains, but a name constraint does not limit IP addresses under RFC 5280 section 4.2.1.10, so its key could have signed a certificate for any IP, such as a home router. New CAs permit only SkyDNS's own address range, and a test that verified a certificate for 192.168.1.1 before the change now fails to.
+
+### Skywire: Transport Discovery and Tooling
+
+Two fixes followed the uptime archive and telemetry changes of the day before. **`5711`** kept a transport's timeline until its day has been archived, since a transport last seen early in the UTC day could expire before the archive pass read it and vanish from its history. **`5712`** retried a telemetry batch whose write failed, which had been logged quietly and dropped after the pacer had already counted the rows as written.
+
+**`5714`** fixed installs that set a reward address. The generator's install command passes `--rewardaddr` to autoconfig, which passed a flag config gen does not have, so the run failed with "unknown flag". A user reported it on an Orange Pi Prime, and a new test checks that every flag the environment maps name exists. **`5719`** made `help` work on leaf commands, where `skywire visor help` had started a visor instead of printing its help. On skycoin.com, **`79`** made the Skywire article call the visors a route passes through hops rather than relays, matching the term used elsewhere.
