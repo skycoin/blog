@@ -21,7 +21,7 @@
                 <ul class="list__list">
           {{ range $paginator.Pages }}
             <li class="list__item">
-              <a class="list__link" href="{{ .Permalink | relLangURL }}">
+              <a class="list__link" href="{{ .RelPermalink }}">
                 <div class="list__item-inner">
                   {{ $rawImg := .Params.image | default "img/skycoin-banner.png" }}
                   {{ with strings.TrimLeft "/" $rawImg }}
